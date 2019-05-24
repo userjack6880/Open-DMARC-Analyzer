@@ -1,6 +1,6 @@
 <?php
 /*
-OpenDAnalyzer - Open Source DMARC	Analyzer
+OpenDAnalyzer - Open Source DMARC Analyzer
 index.php
 2019 - John Bradley (userjack6880)
 
