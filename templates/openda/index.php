@@ -1,7 +1,7 @@
 <?php
 /*
 OpenDAnalyzer - Open Source DMARC Analyzer
-ncludes/template.php
+templates/openda/index.php
 2019 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/opendanalyzer
@@ -21,28 +21,10 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// General Page Templates
-function page_title() {
-	debug (basename($_SERVER['PHP_SELF'],".php"));
-	if (basename($_SERVER['PHP_SELF'],".php") == 'index') { echo "OpenDAnalyzer - Dashboard"; }
-	else { echo "OpenDAnalyzer"; }
-}
+// Header
+function page_header () { include_once("header.php"); }
 
-// Dashboard Templates
-function dashboard_table_start() {
-	echo "<table id='dash'>\n";
-	echo "\t<tr class='dash_head'>\n";
-	echo "\t\t<th>Domain</th>\n";
-	echo "\t\t<th>Volume</th>\n";
-	echo "\t\t<th>DMARC Policy</th>\n";
-	echo "\t\t<th>DMARC Compliance</th>\n";
-	echo "\t\t<th>DKIM</th>\n";
-	echo "\t\t<th>SPF</th>\n";
-	echo "\t</tr>\n";
-}
-
-function dashboard_table_end() {
-	echo "</table>\n";
-}
+// Footer
+function page_footer () { include_once("footer.php"); }
 
 ?>

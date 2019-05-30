@@ -24,7 +24,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Includes
 include_once 'includes.php';
 
-// Header
+// Get Date Stuff
 $mysqli = dbConn();
 if (!empty($_GET['range'])) { 
 	debug("Using GET date value: ".$_GET['range']);
@@ -34,10 +34,15 @@ if (!empty($_GET['range'])) {
 	$dateRange = DATE_RANGE; 
 }
 
+page_header();
+
 // Dashboard
 dashboard($mysqli, $dateRange);
 
 // Footer
+
+page_footer();
+
 $mysqli->close();
 
 debug("\o/");

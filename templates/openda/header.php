@@ -1,7 +1,7 @@
 <?php
 /*
 OpenDAnalyzer - Open Source DMARC Analyzer
-ncludes/template.php
+templates/openda/header.php
 2019 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/opendanalyzer
@@ -21,28 +21,14 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// General Page Templates
-function page_title() {
-	debug (basename($_SERVER['PHP_SELF'],".php"));
-	if (basename($_SERVER['PHP_SELF'],".php") == 'index') { echo "OpenDAnalyzer - Dashboard"; }
-	else { echo "OpenDAnalyzer"; }
-}
-
-// Dashboard Templates
-function dashboard_table_start() {
-	echo "<table id='dash'>\n";
-	echo "\t<tr class='dash_head'>\n";
-	echo "\t\t<th>Domain</th>\n";
-	echo "\t\t<th>Volume</th>\n";
-	echo "\t\t<th>DMARC Policy</th>\n";
-	echo "\t\t<th>DMARC Compliance</th>\n";
-	echo "\t\t<th>DKIM</th>\n";
-	echo "\t\t<th>SPF</th>\n";
-	echo "\t</tr>\n";
-}
-
-function dashboard_table_end() {
-	echo "</table>\n";
-}
-
 ?>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="templates/openda/style.css" />
+		<title><?php page_title(); ?></title>
+	</head>
+	<body>

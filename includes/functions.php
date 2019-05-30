@@ -33,7 +33,7 @@ function report_data($mysqli, $dateRange = DATE_RANGE) {
 	// pull the serial number of all reports within date range
 	$startDate = start_date($dateRange);
 	debug("Start Date: $startDate");
-	$query = "SELECT * FROM `report` WHERE `mindate` BETWEEN '$startDate' AND NOW()";
+	$query = "SELECT * FROM `report` WHERE `mindate` BETWEEN '$startDate' AND NOW() ORDER BY `domain`";
 	$result = $mysqli->query($query);
 	$rows = [];
 	while ($row = $result->fetch_array()) { array_push($rows, $row); }
