@@ -31,16 +31,33 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 body {
 	-webkit-font-smoothing: antialiased;
 	font-smoothing: antialiased;
+	text-align: center;
+	font-family: Sans-serif;
+	background-color:#101118;
 }
 
-// Dashboard Table
+#wrapper {
+	width: 100%;
+	margin: 50px auto 10px auto;
+	padding: 15px;
+	border: 1px solid #000;
+	background-color:#1E555C;
+}
+
+.centered {
+	margin: 0px auto 0px auto;
+}
 
 table {
-	border-collapse: collapse;
-	width: 100%;
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+	border: 1px dashed #738290;
+	min-width: 80%;
+	text-align: center;
+	background-color: #F4D8CD;
+}
+
+tr:nth-child(1) {
+	background-color:#738290;
+	color: #FFF;
 }
 
 #footer {

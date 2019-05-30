@@ -23,7 +23,8 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ?>
 
-	<div id="footer"><span><a href="https://github.com/userjack6880/opendanalyzer">OpenDAnalyzer</a> - 2019 John Bradley</span></div>
+	</div>
+	<div id="footer"><p><a href="https://github.com/userjack6880/opendanalyzer">OpenDAnalyzer</a> - 2019 John Bradley</p></div>
 
 	</body>
 </html>

@@ -32,3 +32,5 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 		<title><?php page_title(); ?></title>
 	</head>
 	<body>
+		<div id="wrapper">
+

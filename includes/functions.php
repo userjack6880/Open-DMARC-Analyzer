@@ -102,7 +102,7 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 		echo "\t\t<td>".$SPFpass."% Pass ".$alignSPF."% Aligned</td>\n";
 	}
 
-	dashboard_table_end();
+	echo "</table>";
 }
 
 // Misc Functions //

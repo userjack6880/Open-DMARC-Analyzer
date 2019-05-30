@@ -30,8 +30,8 @@ function page_title() {
 
 // Dashboard Templates
 function dashboard_table_start() {
-	echo "<table id='dash'>\n";
-	echo "\t<tr class='dash_head'>\n";
+	echo "<table class='centered'>\n";
+	echo "\t<tr>\n";
 	echo "\t\t<th>Domain</th>\n";
 	echo "\t\t<th>Volume</th>\n";
 	echo "\t\t<th>DMARC Policy</th>\n";
@@ -39,10 +39,6 @@ function dashboard_table_start() {
 	echo "\t\t<th>DKIM</th>\n";
 	echo "\t\t<th>SPF</th>\n";
 	echo "\t</tr>\n";
-}
-
-function dashboard_table_end() {
-	echo "</table>\n";
 }
 
 ?>
