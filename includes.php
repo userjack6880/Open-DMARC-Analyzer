@@ -105,10 +105,10 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 		echo "\t\t<td>".$data->hfrom."</td>\n";
 		echo "\t\t<td>".$data->rcount."</td>\n";
 
-		$alignDKIM = 100 * ($data->alignDKIM  / $data->numReport);
-		$alignSPF  = 100 * ($data->alignSPF   / $data->numReport);
-		$DKIMpass  = 100 * ($data->resultDKIM / $data->numReport);
-		$SPFpass   = 100 * ($data->resultSPF  / $data->numReport);
+		$alignDKIM = number_format(100 * ($data->alignDKIM  / $data->numReport));
+		$alignSPF  = number_format(100 * ($data->alignSPF   / $data->numReport));
+		$DKIMpass  = number_format(100 * ($data->resultDKIM / $data->numReport));
+		$SPFpass   = number_format(100 * ($data->resultSPF  / $data->numReport));
 		$compliance = max($alignDKIM, $alignSPF);
 
 		echo "\t\t<td>".$data->policyPct."% ".$data->policy."</td>\n";
