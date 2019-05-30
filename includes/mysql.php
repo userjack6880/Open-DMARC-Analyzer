@@ -1,7 +1,7 @@
 <?php
 /*
 OpenDAnalyzer - Open Source DMARC Analyzer
-include.php
+includes/mysql.php
 2019 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/opendanalyzer
@@ -21,9 +21,15 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-include_once 'config.php';
-include_once 'includes/template.php';
-include_once 'includes/functions.php';
-include_once 'includes/mysql.php';
+// Connect to DB //
+function dbConn() {
+	debug("Connecting to MySQL");
+	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+	if ($mysqli->connect_errno) {
+		die("\nCould not connect to $db: ".$mysqli->connect_error."\n");
+	}
+	debug("Connection Successful\n");
+	return $mysqli;
+}
 
 ?>
