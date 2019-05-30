@@ -43,7 +43,7 @@ function report_data($mysqli, $dateRange = DATE_RANGE) {
 	// using said serial numbers, pull all rpt record data
 	// run through each row, and count total emails, the alignment counts, and results
 	foreach ($rows as $data) {
-		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial'];
+		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial']." ORDER BY `identifier_hfrom`";
 		$result = $mysqli->query($query);
 		while ($row = $result->fetch_array()) {
 			$id = strtolower($row['identifier_hfrom']);
