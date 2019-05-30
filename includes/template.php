@@ -1,7 +1,7 @@
 <?php
 /*
 OpenDAnalyzer - Open Source DMARC Analyzer
-index.php
+ncludes/template.php
 2019 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/opendanalyzer
@@ -21,25 +21,20 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// Includes
-include_once 'includes.php';
-
-// Header
-$mysqli = dbConn();
-if (!empty($_GET['range'])) { 
-	debug("Using GET date value: ".$_GET['range']);
-	$dateRange = $_GET['range']; 
-} else { 
-	debug("Using default date value: ".DATE_RANGE);
-	$dateRange = DATE_RANGE; 
+function dashboard_table_start() {
+	echo "<table id='dash'>\n";
+	echo "\t<tr class='dash_head'>\n";
+	echo "\t\t<th>Domain</th>\n";
+	echo "\t\t<th>Volume</th>\n";
+	echo "\t\t<th>DMARC Policy</th>\n";
+	echo "\t\t<th>DMARC Compliance</th>\n";
+	echo "\t\t<th>DKIM</th>\n";
+	echo "\t\t<th>SPF</th>\n";
+	echo "\t</tr>\n";
 }
 
-// Dashboard
-dashboard($mysqli, $dateRange);
-
-// Footer
-$mysqli->close();
-
-debug("\o/");
+function dashboard_table_end() {
+	echo "</table>\n";
+}
 
 ?>

@@ -21,8 +21,17 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// MySQLi Functions //
+// Includes
+include_once 'config.php';
+include_once 'includes/template.php';
 
+// Debug Functions //
+function debug($string, $debugLevel = DEBUG) {
+	if ($debugLevel == 1 && php_sapi_name() === 'cli') { echo "$string\n"; } // Basic CLI Debug Level
+	if ($debugLevel == 2) { echo "$string<br>\n"; } // Web Debug Level
+}
+
+// MySQLi Functions //
 function dbConn() {
 	debug("Connecting to MySQL");
 	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
@@ -33,7 +42,10 @@ function dbConn() {
 	return $mysqli;
 }
 
+// Get Data //
 function report_data($mysqli, $dateRange = DATE_RANGE) {
+
+	// pull the serial number of all reports within date range
 	$startDate = start_date($dateRange);
 	debug("Start Date: $startDate");
 	$query = "SELECT * FROM `report` WHERE `mindate` BETWEEN '$startDate' AND NOW()";
@@ -41,27 +53,11 @@ function report_data($mysqli, $dateRange = DATE_RANGE) {
 	$rows = [];
 	while ($row = $result->fetch_array()) { array_push($rows, $row); }
 	$result->close();
-	return $rows;
-}
-
-// Debug Functions //
-function debug($string, $debugLevel = DEBUG) {
-	if ($debugLevel == 1) { echo "$string\n"; } // Basic CLI Debug Level
-}
-
-// Dashboard //
-
-function dashboard($mysqli, $dateRange = DATE_RANGE) {
-	debug("\nCompliance Overview\n");
-
-	// pull the serial number of all reports within date range
-	$rData = report_data($mysqli, $dateRange);
 
 	$counts = [];
 	// using said serial numbers, pull all rpt record data
 	// run through each row, and count total emails, the alignment counts, and results
-	foreach ($rData as $data) {
-		debug("Serial: ".$data['serial']);
+	foreach ($rows as $data) {
 		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial'];
 		$result = $mysqli->query($query);
 		while ($row = $result->fetch_array()) {
@@ -79,47 +75,49 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 				$counts[$id]->policy     = $data['policy_p'];
 				$counts[$id]->policyPct  = $data['policy_pct'];
 				$counts[$id]->reports    = [];
-				debug("New Domain: ".$counts[$id]->hfrom);
 			}
 			$counts[$id]->numReport++;
 			$counts[$id]->rcount += $row['rcount'];
-			if ($row['dkimresult'] == 'pass')  { $counts[$id]->resultDKIM++; }
-			if ($row['spfresult'] == 'pass')   { $counts[$id]->resultSPF++; }
-			if ($row['dkim_align'] == 'pass' ) { $counts[$id]->alignDKIM++; }
-			if ($row['spf_align'] == 'pass')   { $counts[$id]->alignSPF++; }
+			if ($row['dkimresult'] == 'pass')   { $counts[$id]->resultDKIM++; }
+			if ($row['spfresult']  == 'pass')   { $counts[$id]->resultSPF++;  }
+			if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
+			if ($row['spf_align']  == 'pass')   { $counts[$id]->alignSPF++;   }
 			if (empty($counts[$id]->reports[$data['org']])) { $counts[$id]->reports[$data['org']] = 0; }
 			$counts[$id]->reports[$data['org']]++;
 		}
 	}
 
-	debug("\nCount Object Values");
+	return $counts;
+}
+
+// Dashboard //
+
+function dashboard($mysqli, $dateRange = DATE_RANGE) {
+	dashboard_table_start();
 
 	// Now we calculate the volume of mail, the DMARC compliance, and the verification percentages
 	// and each organization and number of reports... and print it out into a table
 
-	foreach ($counts as $count) {
-		debug(var_dump(get_object_vars($count)));
-		echo "From Domain: ".$count->hfrom."\n";
-		echo "Volume: ".$count->rcount."\n";
+	$rdata = report_data($mysqli, $dateRange);	
 
-		$alignDKIM = 100 * ($count->alignDKIM / $count->numReport);
-		$alignSPF = 100 * ($count->alignSPF / $count->numReport);
-		$DKIMpass = 100 * ($count->resultDKIM / $count->numReport);
-		$SPFpass = 100 * ($count->resultSPF / $count->numReport);
+	foreach ($rdata as $data) {
+		echo "\t<tr class='dash_row'>\n";
+		echo "\t\t<td>".$data->hfrom."</td>\n";
+		echo "\t\t<td>".$data->rcount."</td>\n";
+
+		$alignDKIM = 100 * ($data->alignDKIM  / $data->numReport);
+		$alignSPF  = 100 * ($data->alignSPF   / $data->numReport);
+		$DKIMpass  = 100 * ($data->resultDKIM / $data->numReport);
+		$SPFpass   = 100 * ($data->resultSPF  / $data->numReport);
 		$compliance = max($alignDKIM, $alignSPF);
 
-		debug("DMARC Compliance: $compliance");
-		debug("DMARC Policy: ".$count->policyPct." ".$count->policy);
-		debug("DKIM Pass: $DKIMpass");
-		debug("DKIM Align: $alignDKIM");
-		debug("SPF Pass: $SPFpass");
-		debug("SPF Align: $alignSPF");
-
-		foreach ($count->reports as $org => $report) {
-			debug("Report Org: $org");
-			debug("Num Reports: $report");
-		}
+		echo "\t\t<td>".$data->policyPct."% ".$data->policy."</td>\n";
+		echo "\t\t<td>".$compliance."%</td>\n";
+		echo "\t\t<td>".$DKIMpass."% Pass ".$alignDKIM."% Aligned</td>\n";
+		echo "\t\t<td>".$SPFpass."% Pass ".$alignSPF."% Aligned</td>\n";
 	}
+
+	dashboard_table_end();
 }
 
 // Misc Functions //
@@ -128,19 +126,23 @@ function format_date($date) {
 }
 
 function date_range($dateRange = DATE_RANGE) {
+	debug("Date Range: $dateRange");
+	if ($dateRange == DATE_RANGE) { return $dateRange; }
 	preg_match('/(\d+)(\w+)/', $dateRange, $match);
 	$range = "-$match[1] ";
 
 	// work out if it's week, month, or day
-	if ($match[2] == 'w') { $range += 'week'; }
-	if ($match[2] == 'm') { $range += 'month'; }
-	if ($match[2] == 'y') { $range += 'year'; }
+	if ($match[2] == 'w') { $range .= 'week'; }
+	if ($match[2] == 'm') { $range .= 'month'; }
+	if ($match[2] == 'y') { $range .= 'year'; }
+
+	debug("Date Range Formatted: $range");
 
 	return $range;
 }
 
 function start_date($dateRange = DATE_RANGE) {
-	return format_date(strtotime($dateRange));
+	return format_date(strtotime(date_range($dateRange)));
 }
 
 

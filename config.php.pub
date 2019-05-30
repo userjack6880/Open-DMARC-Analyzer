@@ -25,13 +25,17 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'dmarc');
-define('DB_PASS', 'password');
+define('DB_PASS', '');
 define('DB_NAME', 'dmarc');
 define('DB_PORT', '3306'); // default port 3306
 
 // Debug Settings
 
-define('DEBUG', 0);
+define('DEBUG', 1);
+
+// Template Settings
+
+define('TEMPLATE', 'openda');
 
 // Defaults
 
