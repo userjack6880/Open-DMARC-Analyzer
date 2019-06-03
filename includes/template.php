@@ -33,6 +33,7 @@ function dashboard_table_start($dateRange) {
 	echo "<h2>DMARC Compliance - Since $dateRange</h2>\n";
 
 	echo "<table id='sorted_dashboard_table' class='centered'>\n";
+	echo "\t<thead>\n";
 	echo "\t<tr>\n";
 	echo "\t\t<th>Domain</th>\n";
 	echo "\t\t<th>Volume</th>\n";
@@ -41,6 +42,7 @@ function dashboard_table_start($dateRange) {
 	echo "\t\t<th width='15%'>DKIM Alignment</th>\n";
 	echo "\t\t<th width='15%'>SPF Alignment</th>\n";
 	echo "\t</tr>\n";
+	echo "\t</thead>\n";
 }
 
 ?>
