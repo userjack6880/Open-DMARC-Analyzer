@@ -30,9 +30,9 @@ function page_title() {
 
 // Dashboard Templates
 function dashboard_table_start($dateRange) {
-	echo "<h2>Since $dateRange</h2>";
+	echo "<h2>DMARC Compliance - Since $dateRange</h2>\n";
 
-	echo "<table class='centered'>\n";
+	echo "<table id='sorted_dashboard_table' class='centered'>\n";
 	echo "\t<tr>\n";
 	echo "\t\t<th>Domain</th>\n";
 	echo "\t\t<th>Volume</th>\n";
