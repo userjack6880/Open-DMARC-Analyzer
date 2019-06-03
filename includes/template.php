@@ -21,6 +21,11 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+// Versioning
+function oda_version() {
+	echo "0-&alpha;1";
+}
+
 // General Page Templates
 function page_title() {
 	debug (basename($_SERVER['PHP_SELF'],".php"));

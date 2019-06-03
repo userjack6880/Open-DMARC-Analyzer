@@ -39,12 +39,12 @@ body {
 
 a:link {
 	text-decoration: none;
-	color: #8C98A4;
+	color: #FFF;
 }
 
 a:visited {
 	text-decoration: none;
-	color: #8C98A4;
+	color: #FFF;
 }
 
 a:active {
@@ -109,7 +109,8 @@ td {
 	font-size: 12px;
 }
 
-tr:nth-child(1) {
+/* tr:nth-child(1) { */
+thead {
 	background-color: #738290;
 	color: #FFF;
 }
@@ -118,7 +119,7 @@ tr:nth-child(1) {
 	width: 100%;
 	margin: 0px auto 0px auto;
 	padding: 15px;
-	text-align: center;
+	font-size: 10px;
 }
 
 .perc-bar {
