@@ -78,7 +78,7 @@ function report_data($mysqli, $dateRange = DATE_RANGE) {
 // Dashboard //
 
 function dashboard($mysqli, $dateRange = DATE_RANGE) {
-	dashboard_table_start();
+	dashboard_table_start(start_date($dateRange));
 
 	// Now we calculate the volume of mail, the DMARC compliance, and the verification percentages
 	// and each organization and number of reports... and print it out into a table
@@ -97,7 +97,13 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 		$compliance = max($alignDKIM, $alignSPF);
 
 		echo "\t\t<td>".$data->policyPct."% ".$data->policy."</td>\n";
-		echo "\t\t<td>".$compliance."%</td>\n";
+
+		echo "\t\t<td>\n";
+		echo "\t\t\t<div class='perc-bar'>\n";
+		echo "\t\t\t\t<div class='green-per' style='width:$compliance%'></div>\n";
+		echo "\t\t\t\t<div class='perc-text'><span>$compliance%</span></div>\n";
+		echo "\t\t\t</div>\n";
+		echo "\t\t</td>\n";
 		echo "\t\t<td>".$DKIMpass."% Pass ".$alignDKIM."% Aligned</td>\n";
 		echo "\t\t<td>".$SPFpass."% Pass ".$alignSPF."% Aligned</td>\n";
 	}

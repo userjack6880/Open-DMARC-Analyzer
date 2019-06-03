@@ -29,15 +29,17 @@ function page_title() {
 }
 
 // Dashboard Templates
-function dashboard_table_start() {
+function dashboard_table_start($dateRange) {
+	echo "<h2>Since $dateRange</h2>";
+
 	echo "<table class='centered'>\n";
 	echo "\t<tr>\n";
 	echo "\t\t<th>Domain</th>\n";
 	echo "\t\t<th>Volume</th>\n";
-	echo "\t\t<th>DMARC Policy</th>\n";
-	echo "\t\t<th>DMARC Compliance</th>\n";
-	echo "\t\t<th>DKIM</th>\n";
-	echo "\t\t<th>SPF</th>\n";
+	echo "\t\t<th width='150px'>DMARC Policy</th>\n";
+	echo "\t\t<th width='15%'>DMARC Compliance</th>\n";
+	echo "\t\t<th width='15%'>DKIM Alignment</th>\n";
+	echo "\t\t<th width='15%'>SPF Alignment</th>\n";
 	echo "\t</tr>\n";
 }
 

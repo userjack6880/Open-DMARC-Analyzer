@@ -31,17 +31,55 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 body {
 	-webkit-font-smoothing: antialiased;
 	font-smoothing: antialiased;
-	text-align: center;
+	text-align: left;
 	font-family: Sans-serif;
-	background-color:#101118;
+	background-color: #101118;
+	color: #738290;
+}
+
+a:link {
+	text-decoration: none;
+	color: #8C98A4;
+}
+
+a:visited {
+	text-decoration: none;
+	color: #8C98A4;
+}
+
+a:active {
+	text-decoration: none;
+	color: #ABB4BC;
+}
+
+a:hover {
+	text-decoration: none;
+	color: #ABB4BC;
+}
+
+#header {
+	width: 100%;
+	margin: 0px auto 0px auto;
+	padding: 15px;
+	border: none;
+	text-align: left;
+}
+
+h1.header {
+	font-size: 48px;
+	color: #738290;
 }
 
 #wrapper {
 	width: 100%;
-	margin: 50px auto 10px auto;
+	margin: 0 auto 0 auto;
 	padding: 15px;
-	border: 1px solid #000;
-	background-color:#1E555C;
+}
+
+h2 {
+	font-size: 24px;
+	color: #738290;
+	margin: 0 0 10px 0;
 }
 
 .centered {
@@ -49,29 +87,74 @@ body {
 }
 
 table {
-	border: 1px dashed #738290;
-	min-width: 80%;
+	border-collapse: collapse;;
+	min-width: 100%;
+	margin: 10px 10px 10px 10px;
 	text-align: center;
-	background-color: #F4D8CD;
+}
+
+table, th, td {
+	border: 1px solid #738290;
+}
+
+th, td {
+	padding: 0;
 }
 
 th {
 	cursor: pointer;
 }
 
+td {
+	font-size: 12px;
+}
+
 tr:nth-child(1) {
-	background-color:#738290;
+	background-color: #738290;
 	color: #FFF;
 }
 
 #footer {
 	width: 100%;
-	padding: 3px;
-	display: inline-block;
+	margin: 0px auto 0px auto;
+	padding: 15px;
+	text-align: center;
 }
 
-#footer > div {
+.perc-bar {
+	background-color: #EB5160;
+	display: block;
+	width: 100%;
+	height: 20px;
+	position: relative;
+}
+
+.gray-per {
+	background-color: #8C98A4;
+	height: 20px;
+	position: absolute;
+	left: 0;
+}
+
+.green-per {
+	background-color: #708D81;
+	height: 20px;
+	position: absolute;
+	left: 0;
+}
+
+.perc-text {
+	color: #101118;
+	width: 100%;
 	text-align: center;
-	height: 100%;
-	padding: 10px;
+	position: absolute;
+	font-size: 10px;
+	height: 20px;
+	line-height: 20px;
+}
+
+.perc-test > span {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: normal;
 }
