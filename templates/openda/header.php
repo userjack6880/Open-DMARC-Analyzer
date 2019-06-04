@@ -35,7 +35,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 	</head>
 	<body>
 		<div id="header">
-			<h1 class="header">Open DMARC Analyzer</h1>
+			<a href="index.php"><h1 class="header">Open DMARC Analyzer</h1></a>
 		</div>
 		<div id="wrapper">
 
