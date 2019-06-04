@@ -32,7 +32,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 		<script type="text/javascript" src="templates/openda/gs_sortable.js"></script>
 		<script>
-			var TSort_Data = new Array('sorted_dashboard_table','s','i','','h','','');
+			var TSort_Data = new Array('sorted_dashboard_table','s','i','','i','','');
 			tsRegister();
 		</script>
 
