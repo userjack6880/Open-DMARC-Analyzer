@@ -36,6 +36,19 @@ if (!empty($_GET['range'])) {
 
 page_header();
 
+?>
+
+<script>
+	var TSort_Data = new Array('domain_reports','','s','s');
+	var TSort_Cookie = 'domain_reports';
+	tsRegister();
+
+	var TSort_Data = new Array('dmarc_reports','s','s','i','s','s','s','s','s','s');
+	var TSort_Cookie = 'dmarc_reports';
+	tsRegister();
+</script>
+
+<?php
 // Dashboard
 if (!empty($_GET['domain'])) { domain_reports($_GET['domain'], $mysqli, $dateRange); }
 else { echo "<h2>Sorry, Need a Domain</h2>\n"; }
