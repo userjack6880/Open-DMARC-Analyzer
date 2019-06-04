@@ -121,14 +121,58 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 			echo "\t\t<td>".$row['disposition']."</td>\n";
 			echo "\t\t<td>".$row['reason']."</td>\n";
 			echo "\t\t<td>".$row['dkimdomain']."</td>\n";
-			echo "\t\t<td>".$row['dkimresult']."</td>\n";
+			echo "\t\t<td>Result: ".$row['dkimresult']." | Alignment: ".$row['dkim_align']."</td>\n";
 			echo "\t\t<td>".$row['spfdomain']."</td>\n";
-			echo "\t\t<td>".$row['spfresult']."</td>\n";
+			echo "\t\t<td>Result: ".$row['spfresult']." | Alignment: ".$row['spf_align']."</td>\n";
 			echo "\t</tr>\n";
 		} 
 	}
 	echo "</table>\n";
 
+}
+
+// Single Report Table //
+
+function single_report($serial, $mysqli) {
+	$serial = $mysqli->real_escape_string($serial);
+
+	// let's get some data from the report that matches this serial number
+	$query = "SELECT * FROM `report` WHERE `serial` = '$serial'";
+	$result = $mysqli->query($query);
+
+	$data = $result->fetch_array(); // this should only return one row
+
+	echo "<h2>Details for Report ".$data['reportid']."</h2>\n";
+	echo "<p>Date Range: ".$data['mindate']." - ".$data['maxdate']."<br />\n";
+	echo "Domain: ".$data['domain']."<br />\n";
+	echo "Reporting Org: ".$data['org']."<br />\n";
+	echo "Domain DMARC Policy: ".$data['policy_p'].
+	     " | Subdomain Policy: ".$data['policy_sp'].
+	     " | Enforcement Percentage: ".$data['policy_pct']."<br />\n";
+	echo "DKIM Policy: ".$data['policy_adkim']." | SPF Policy: ".$data['policy_aspf']."<br />\n";
+
+	// Now print a detailed table...
+	reports_table_start();
+
+	$query = "SELECT * FROM `rptrecord` WHERE `serial` = '$serial'";
+	debug ($query);
+	$result = $mysqli->query($query);
+
+	while ($row = $result->fetch_array()) {
+		echo "\t<tr>\n";
+		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
+		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
+		echo "\t\t<td>".$row['rcount']."</td>\n";
+		echo "\t\t<td>".$row['disposition']."</td>\n";
+		echo "\t\t<td>".$row['reason']."</td>\n";
+		echo "\t\t<td>".$row['dkimdomain']."</td>\n";
+		echo "\t\t<td>Result: ".$row['dkimresult']." | Alignment: ".$row['dkim_align']."</td>\n";
+		echo "\t\t<td>".$row['spfdomain']."</td>\n";
+		echo "\t\t<td>Result: ".$row['spfresult']." | Alignment: ".$row['spf_align']."</td>\n";
+		echo "\t</tr>\n";
+	}
+
+	echo "</table>\n";
 }
 
 // Dashboard //

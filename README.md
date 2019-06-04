@@ -2,7 +2,7 @@ New project, not much to see here right now. Will write a full readme later.
 
 ## Open DMARC Analyzer
 
-This is Open DMARC Analyzer version 0 alpha-1 (0-α1) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
+This is Open DMARC Analyzer version 0 alpha-2 (0-α2) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
 
 ## License
 
