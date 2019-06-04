@@ -100,7 +100,7 @@ table {
 }
 
 table, th, td {
-	border: 1px solid #738290;
+	border: 1px solid #2A3035;
 }
 
 th, td {
@@ -113,7 +113,7 @@ td {
 
 /* tr:nth-child(1) { */
 thead {
-	background-color: #738290;
+	background-color: #2A3035;
 	color: #FFF;
 }
 
