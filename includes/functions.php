@@ -1,14 +1,14 @@
 <?php
 /*
-OpenDAnalyzer - Open Source DMARC Analyzer
+Open DMARC Analyzer - Open Source DMARC Analyzer
 includes/functions.php
 2019 - John Bradley (userjack6880)
 
-Available at: https://github.com/userjack6880/opendanalyzer
+Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
-This file is part of OpenDAnalyzer.
+This file is part of Open DMARC Analyzer.
 
-OpenDAnalyzer is free software: you can redistribute it and/or modify it under
+Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
 version.
