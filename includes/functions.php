@@ -28,21 +28,31 @@ function debug($string, $debugLevel = DEBUG) {
 }
 
 // Get Data //
-function report_data($mysqli, $dateRange = DATE_RANGE) {
+function report_data($mysqli, $dateRange = DATE_RANGE, $domain = null) {
 
 	// pull the serial number of all reports within date range
 	$startDate = start_date($dateRange);
 	debug("Start Date: $startDate");
-	$query = "SELECT * FROM `report` WHERE `mindate` BETWEEN '$startDate' AND NOW() ORDER BY `domain`";
+	$query = "SELECT * FROM `report` WHERE ";
+	if (isset($domain)) { 
+		$domain = $mysqli->real_escape_string($domain);
+		$query .= "`domain` = '$domain' AND ";  
+	}
+	$query .= "`mindate` BETWEEN '$startDate' AND NOW() ORDER BY `domain`";
 	$result = $mysqli->query($query);
 	$rows = [];
 	while ($row = $result->fetch_array()) { array_push($rows, $row); }
 	$result->close();
+	return $rows;
+}
+
+function dmarc_data($mysqli, $dateRange = DATE_RANGE) {
+	$rdata = report_data($mysqli, $dateRange);
 
 	$counts = [];
 	// using said serial numbers, pull all rpt record data
 	// run through each row, and count total emails, the alignment counts, and results
-	foreach ($rows as $data) {
+	foreach ($rdata as $data) {
 		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial']." ORDER BY `identifier_hfrom`";
 		$result = $mysqli->query($query);
 		while ($row = $result->fetch_array()) {
@@ -75,6 +85,52 @@ function report_data($mysqli, $dateRange = DATE_RANGE) {
 	return $counts;
 }
 
+// Domain Reports //
+
+function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
+	echo "<h2>Domain Details - Since ".start_date($dateRange)."</h2>\n";
+
+	// pull serial numbers of reports within date range and with specific domain
+	$rdata = report_data($mysqli, $dateRange, $domain);
+
+	// list out the reports
+	domain_reports_table_start();
+	
+	foreach ($rdata as $data) {
+		echo "\t<tr>\n";
+		echo "\t\t<td>".$data['mindate']." - ".$data['maxdate']."</td>\n";
+		echo "\t\t<td>".$data['org']."</td>\n";
+		echo "\t\t<td><a href='report.php?serial=".$data['serial']."'>".$data['reportid']."</a></td>\n";
+		echo "\t<tr>\n";
+	}
+	echo "</table>\n";
+
+	// now let's just list out all the details
+	reports_table_start();
+
+	foreach ($rdata as $data) {
+		$query = "SELECT * FROM `rptrecord` WHERE `serial` = ".$data['serial']." AND `identifier_hfrom` = '".$data['domain']."'";
+		debug ($query);
+		$result = $mysqli->query($query);
+		while ($row = $result->fetch_array()) {
+			debug ("printing row");
+			echo "\t<tr>\n";
+			echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
+			echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
+			echo "\t\t<td>".$row['rcount']."</td>\n";
+			echo "\t\t<td>".$row['disposition']."</td>\n";
+			echo "\t\t<td>".$row['reason']."</td>\n";
+			echo "\t\t<td>".$row['dkimdomain']."</td>\n";
+			echo "\t\t<td>".$row['dkimresult']."</td>\n";
+			echo "\t\t<td>".$row['spfdomain']."</td>\n";
+			echo "\t\t<td>".$row['spfresult']."</td>\n";
+			echo "\t</tr>\n";
+		} 
+	}
+	echo "</table>\n";
+
+}
+
 // Dashboard //
 
 function dashboard($mysqli, $dateRange = DATE_RANGE) {
@@ -85,11 +141,11 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 	// Now we calculate the volume of mail, the DMARC compliance, and the verification percentages
 	// and each organization and number of reports... and print it out into a table
 
-	$rdata = report_data($mysqli, $dateRange);	
+	$rdata = dmarc_data($mysqli, $dateRange);	
 
 	foreach ($rdata as $data) {
 		echo "\t<tr class='dash_row'>\n";
-		echo "\t\t<td>".$data->hfrom."</td>\n";
+		echo "\t\t<td><a href='domain.php?domain=".$data->hfrom."'>".$data->hfrom."</a></td>\n";
 		echo "\t\t<td>".$data->rcount."</td>\n";
 
 		$alignDKIM = number_format(100 * ($data->alignDKIM  / $data->numReport));

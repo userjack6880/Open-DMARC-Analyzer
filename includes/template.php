@@ -50,4 +50,38 @@ function dashboard_dmarc_table_start($dateRange) {
 	echo "\t</thead>\n";
 }
 
+// Domain Reports Table
+function domain_reports_table_start() {
+	echo "<h3><a id='reports'></a>Reports</h2>\n";
+
+	echo "<table id='domain_reports' class='centered'>\n";
+	echo "\t<thead>\n";
+	echo "\t<tr>\n";
+	echo "\t\t<th>Date Range</th>\n";
+	echo "\t\t<th>Reporting Org</th>\n";
+	echo "\t\t<th>Report ID</th>\n";
+	echo "\t<tr>\n";
+	echo "\t</thead>\n";
+}
+
+// Individual Reports Table
+function reports_table_start() {
+	echo "<h3><a id='report_detail'></a>Report Details</h2>\n";
+
+	echo "<table id='dmarc_reports' class='centered'>\n";
+	echo "\t<thead>\n";
+	echo "\t<tr>\n";
+	echo "\t\t<th>Sender IP</th>\n";
+	echo "\t\t<th>Sender Domain</th>\n";
+	echo "\t\t<th>Message Count</th>\n";
+	echo "\t\t<th>Disposition</th>\n";
+	echo "\t\t<th>Reason</th>\n";
+	echo "\t\t<th>DKIM Domain</th>\n";
+	echo "\t\t<th>DKIM Result</th>\n";
+	echo "\t\t<th>SPF Domain</th>\n";
+	echo "\t\t<th>SPF Result</th>\n";
+	echo "\t</tr>\n";
+	echo "\t</thead>\n";
+}
+
 ?>

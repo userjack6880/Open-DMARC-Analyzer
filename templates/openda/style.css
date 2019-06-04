@@ -85,7 +85,7 @@ h2 {
 h3 {
 	font-size: 20px;
 	color: #738290;
-	margin: 0 0 10px 0;
+	margin: 10px 0 10px 0;
 }
 
 .centered {
@@ -105,10 +105,6 @@ table, th, td {
 
 th, td {
 	padding: 0;
-}
-
-th {
-	cursor: pointer;
 }
 
 td {
