@@ -88,7 +88,7 @@ function dmarc_data($mysqli, $dateRange = DATE_RANGE) {
 // Domain Reports //
 
 function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
-	echo "<h2>Domain Details - Since ".start_date($dateRange)."</h2>\n";
+	echo "<h2>Domain Details for $domain - Since ".start_date($dateRange)."</h2>\n";
 
 	// pull serial numbers of reports within date range and with specific domain
 	$rdata = report_data($mysqli, $dateRange, $domain);
