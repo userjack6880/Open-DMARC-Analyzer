@@ -125,36 +125,34 @@ thead {
 .perc-bar {
 	background-color: #EB5160;
 	display: block;
-	width: 80%;
-	height: 20px;
+	width: 100%;
+	height: 10px;
 	position: relative;
-	float: right;
 }
 
 .gray-per {
 	background-color: #8C98A4;
-	height: 20px;
+	height: 10px;
 	position: absolute;
 	left: 0;
 }
 
 .green-per {
 	background-color: #708D81;
-	height: 20px;
+	height: 10px;
 	position: absolute;
 	left: 0;
 }
 
 .perc-text {
 	color: #738290;
-	width: 20%;
+	width: 100%;
 	text-align: center;
 	position: relative;
 	font-size: 10px;
 	height: 20px;
 	line-height: 20px;
 	display: block;
-	float: left;
 }
 
 .perc-test > span {
