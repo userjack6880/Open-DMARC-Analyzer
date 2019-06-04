@@ -34,8 +34,8 @@ function page_title() {
 }
 
 // Dashboard Templates
-function dashboard_table_start($dateRange) {
-	echo "<h2>DMARC Compliance - Since $dateRange</h2>\n";
+function dashboard_dmarc_table_start($dateRange) {
+	echo "<h3><a id='compliance'></a>DMARC Compliance - Since $dateRange</h3>\n";
 
 	echo "<table id='sorted_dashboard_table' class='centered'>\n";
 	echo "\t<thead>\n";

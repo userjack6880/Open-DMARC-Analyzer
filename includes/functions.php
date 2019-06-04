@@ -78,7 +78,9 @@ function report_data($mysqli, $dateRange = DATE_RANGE) {
 // Dashboard //
 
 function dashboard($mysqli, $dateRange = DATE_RANGE) {
-	dashboard_table_start(start_date($dateRange));
+	echo "<h2>Dashboard</h2>\n";
+
+	dashboard_dmarc_table_start(start_date($dateRange));
 
 	// Now we calculate the volume of mail, the DMARC compliance, and the verification percentages
 	// and each organization and number of reports... and print it out into a table
