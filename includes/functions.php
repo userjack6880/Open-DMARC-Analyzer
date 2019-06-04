@@ -108,7 +108,7 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 		echo "\t\t<td>\n";
 		echo "\t\t\t<div class='perc-text'><span>$alignDKIM%</span></div>\n";
 		echo "\t\t\t<div class='perc-bar'>\n";
-		echo "\t\t\t\t<div class='gray-per style='width:$DKIMpass%'></div>\n";
+		echo "\t\t\t\t<div class='gray-per' style='width:$DKIMpass%'></div>\n";
 		echo "\t\t\t\t<div class='green-per' style='width:$alignDKIM%'></div>\n";
 		echo "\t\t\t</div>\n";
 		echo "\t\t</td>\n";
@@ -116,7 +116,7 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 		echo "\t\t<td>\n";
 		echo "\t\t\t<div class='perc-text'><span>$alignSPF%</span></div>\n";
 		echo "\t\t\t<div class='perc-bar'>\n";
-		echo "\t\t\t\t<div class='gray-per style='width:$SPFpass%'></div>\n";
+		echo "\t\t\t\t<div class='gray-per' style='width:$SPFpass%'></div>\n";
 		echo "\t\t\t\t<div class='green-per' style='width:$alignSPF%'></div>\n";
 		echo "\t\t\t</div>\n";
 		echo "\t\t</td>\n";
