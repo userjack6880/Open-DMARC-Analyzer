@@ -37,7 +37,7 @@ function page_title() {
 function dashboard_dmarc_table_start($dateRange) {
 	echo "<h3><a id='compliance'></a>DMARC Compliance - Since $dateRange</h3>\n";
 
-	echo "<table id='sorted_dashboard_table' class='centered'>\n";
+	echo "<table id='compliance_table' class='centered'>\n";
 	echo "\t<thead>\n";
 	echo "\t<tr>\n";
 	echo "\t\t<th>Domain</th>\n";
