@@ -12,4 +12,4 @@ OpenDAnalyzer is released under GNU GPLv3. See LICENSE.
 
 OpenDAnalyzer contains componenets from other software developers:
 
-gs_sortable.js v1.8 is copyright 2007 - 2010 Gennadiy Shvets, released under GNU GPLv3
+gs_sortable.js v1.9 is copyright 2007 - 2012 Gennadiy Shvets, released under GNU GPLv3

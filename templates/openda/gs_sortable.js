@@ -1,10 +1,10 @@
-// Copyright 2007 - 2010 Gennadiy Shvets
+// Copyright 2007 - 2012 Gennadiy Shvets
 // The program is distributed under the terms of the GNU General
 // Public License 3.0
 //
 // See http://www.allmyscripts.com/Table_Sort/index.html for usage details.
 
-// Script version 1.8
+// Script version 1.9
 
 var TSort_Store;
 var TSort_All;
@@ -14,8 +14,11 @@ function TSort_StoreDef () {
 	this.nodes = [];
 	this.rows = [];
 	this.row_clones = [];
+	this.row_nosort = [];
 	this.sort_state = [];
 	this.initialized = 0;
+	this.append_classes = 0;
+	this.n_columns = 3;
 //	this.last_sorted = -1;
 	this.history = [];
 	this.sort_keys = [];
@@ -44,15 +47,37 @@ function tsInit()
 		return;
 	var table_id = TSort_Data[0];
 	var table = document.getElementById(table_id);
-	// Find thead
+	// Find thead & tbody data
+	var cols, i, node, len, tr;
 	var thead = table.getElementsByTagName('thead')[0];
+	var tbody = table.getElementsByTagName('tbody')[0];
 	if	(thead == null)
 	{
-		alert ('Cannot find THEAD tag!');
-		return;
+		thead = document.createElement('thead');
+		table.insertBefore (thead, tbody);
+		tr = tbody.getElementsByTagName('tr');
+		len = tr.length;
+		if	(len == 0)
+		{
+			alert ('Cannot find THEAD and TH tags!');
+			return;
+		}
+		var trh = new Array ();
+		for (i = 0; i < len; i++)
+		{
+			cols = tr[i].getElementsByTagName('th');
+			if	(!cols.length)	continue;
+			trh.push (tr[i]);
+		}
+		len = trh.length;
+		for (i = 0; i < len; i++)
+		{
+			tbody.removeChild (trh[i]);
+			thead.appendChild (trh[i]);
+		}
 	}
-	var tr = thead.getElementsByTagName('tr');
-	var cols, i, node, len;
+	tr = thead.getElementsByTagName('tr');
+	if	(tr.length == 0)	return;
 	if	(tr.length > 1)
 	{
 		var	cols0 = tr[0].getElementsByTagName('th');
@@ -91,8 +116,8 @@ function tsInit()
 		if	(cols.length == 0)
 			cols = tr[0].getElementsByTagName('td');
 	}
-	len = cols.length;
-	for (var i = 0; i < len; i++)
+	var cols_len = cols.length;
+	for (var i = 0; i < cols_len; i++)
 	{
 		if	(i >= TSort_Data.length - 1)
 			break;
@@ -113,27 +138,44 @@ function tsInit()
 		}
 	}
 
-	// Get body data
-	var tbody = table.getElementsByTagName('tbody')[0];
-	if	(tbody == null)	return;
-	// Get TR rows
+	// Parse body rows
 	var rows = tbody.getElementsByTagName('tr');
+	if	(rows.length == 0)	return;
 	var date = new Date ();
-	var len, text, a;
-	for (i = 0; i < rows.length; i++)
+	var text, a, cn, k;
+	var attached = TSort_Store.row_nosort;
+	for (i = 0, k = -1; i < rows.length; i++)
 	{
 		var row = rows[i];
+		cn = row.className;
+		if	((cn != null)&&(cn.match(/(^| )_nosort( |$)/)))
+		{
+			// Save a reference to the TR element
+			var new_row = row.cloneNode(true);
+			if	(attached[k + 1] == null)
+				attached[k + 1] = new Array (new_row);
+			else
+				attached[k + 1].push (new_row);
+			continue;
+		}
+
 		var cols = row.getElementsByTagName('td');
+		len = cols.length;
 		var row_data = [];
-		for (j = 0; j < cols.length; j++)
+		for (j = 0; j < len; j++)
 		{
 			// Get cell text
-			text = cols[j].innerHTML.replace(/^\s+/, '');
-			text = text.replace(/\s+$/, '');
+			text = cols[j].innerHTML;
 			var sorting = TSort_Store.sorting[j];
-			if	(sorting == 'h')
+			if	(sorting != 's')
 			{
 				text = text.replace(/<[^>]+>/g, '');
+				text = text.replace(/\&nbsp;/, ' ');
+			}
+			text = text.replace(/^\s+/, '');
+			text = text.replace(/\s+$/, '');
+			if	(sorting == 'h')
+			{
 				text = text.toLowerCase();
 			}
 			else if	(sorting == 's')
@@ -151,7 +193,7 @@ function tsInit()
 			}
 			else if (sorting == 'c')
 			{
-				text = text.replace(/^\$/, '');
+				text = text.replace(/^(\-?)\$/, "$1");
 				text = text.replace(/(\d)\,(?=\d\d\d)/g, "$1");
 				text = parseFloat(text);
 				if	(isNaN(text))	text = 0;
@@ -178,14 +220,28 @@ function tsInit()
 				}
 				else
 					text = Date.parse(text);
+				if	(isNaN(text))	text = 0;
 			}
+			row_data.push(text);
+		}
+		//	Initialize the rest of the columns, that are not in <tr>
+		for (; j < cols_len; j++)
+		{
+			// Get cell text
+			var sorting = TSort_Store.sorting[j];
+			text = '';
+			if	((sorting == 'h')||(sorting == 's'))
+				text = '';
+			else
+				text = 0;
 			row_data.push(text);
 		}
 		TSort_Store.rows.push(row_data);
 		// Save a reference to the TR element
 		var new_row = row.cloneNode(true);
-		new_row.tsort_row_id = i;
-		TSort_Store.row_clones[i] = new_row;
+		k++;
+		new_row.tsort_row_id = k;
+		TSort_Store.row_clones[k] = new_row;
 	}
 	TSort_Store.initialized = 1;
 
@@ -294,7 +350,7 @@ function tsDraw(p_id, p_table)
 		}
 		i++;
 	}
-	if	(len > 3)
+	if	(len > TSort_Store.n_columns)
 	{
 		i = sort_keys.pop();
 		obj = document.getElementById ('TS_' + i + '_' + table_id);
@@ -310,22 +366,72 @@ function tsDraw(p_id, p_table)
 	var row_clones = TSort_Store.row_clones;
 	len = row_clones.length;
 	var classes = TSort_Store.classes;
+	var alen, j, cn;
+	var arows = TSort_Store.row_nosort[0];
 	if	(classes == null)
 	{
+		if	(arows != null)
+		{
+			alen = arows.length;
+			for (j = 0; j < alen; j++)
+				new_tbody.appendChild (arows[j].cloneNode(true));
+		}
+
 		for (i = 0; i < len; i++)
-			new_tbody.appendChild (row_clones[i].cloneNode(true));
+		{
+			row = row_clones[i];
+			new_tbody.appendChild (row.cloneNode(true));
+			arows = TSort_Store.row_nosort[row.tsort_row_id + 1];
+			if	(arows == null)	continue;
+			alen = arows.length;
+			for (j = 0; j < alen; j++)
+				new_tbody.appendChild (arows[j].cloneNode(true));
+		}
 	}
 	else
 	{
 		var clone;
-		var j = 0;
+		var cl = 0;
 		var cl_len = classes.length;
+		var append = TSort_Store.append_classes;
+		if	(arows != null)
+		{
+			alen = arows.length;
+			for (j = 0; j < alen; j++)
+			{
+				clone = arows[j].cloneNode(true);
+				cn = clone.className;
+				clone.className = ((append)&&(cn != null)&&(cn.length > 0))?
+					cn + ' ' + classes[cl]: classes[cl];
+				new_tbody.appendChild (clone);
+			}
+			cl++;
+			if	(cl >= cl_len)  cl = 0;
+		}
+
 		for (i = 0; i < len; i++)
 		{
-			clone = row_clones[i].cloneNode(true);
-			clone.className = classes[j++];
-			if	(j >= cl_len)  j = 0;
+			row = row_clones[i];
+			clone = row.cloneNode(true);
+			cn = clone.className;
+			clone.className = ((append)&&(cn != null)&&(cn.length > 0))?
+				cn + ' ' + classes[cl]: classes[cl];
 			new_tbody.appendChild (clone);
+			arows = TSort_Store.row_nosort[row.tsort_row_id + 1];
+			if	(arows != null)
+			{
+				alen = arows.length;
+				for (j = 0; j < alen; j++)
+				{
+					clone = arows[j].cloneNode(true);
+					cn = clone.className;
+					clone.className = ((append)&&(cn != null)&&(cn.length > 0))?
+						cn + ' ' + classes[cl]: classes[cl];
+					new_tbody.appendChild (clone);
+				}
+			}
+			cl++;
+			if	(cl >= cl_len)  cl = 0;
 		}
 	}
 
@@ -392,6 +498,7 @@ function tsSort(a, b)
 
 function tsRegister()
 {
+	if	(typeof TSort_Data == 'undefined')	return;
 	if	(TSort_All == null)
 		TSort_All = new Object();
 
@@ -420,6 +527,18 @@ function tsRegister()
 	}
 	if	(ts_obj.icons == null)
 		ts_obj.icons = new Array ("\u2193", "\u2191");
+	if	(typeof TSort_AppendClasses != 'undefined')
+	{
+		ts_obj.append_classes = TSort_AppendClasses;
+		TSort_AppendClasses = null;
+	}
+	if	(typeof TSort_NColumns != 'undefined')
+	{
+		ts_obj.n_columns = TSort_NColumns;
+		TSort_NColumns = null;
+		if	(ts_obj.n_columns == null)
+			ts_obj.n_columns = 3;
+	}
 
 	if	(ts_obj.sort_data != null)
 		TSort_All[ts_obj.sort_data[0]] = ts_obj;
