@@ -43,7 +43,7 @@ page_header();
 	var TSort_Cookie = 'domain_reports';
 	tsRegister();
 
-	var TSort_Data = new Array('dmarc_reports','s','s','i','s','s','s','s','s','s');
+	var TSort_Data = new Array('dmarc_reports','s','s','s','i','s','s','s','s','s','s');
 	var TSort_Cookie = 'dmarc_reports';
 	tsRegister();
 </script>

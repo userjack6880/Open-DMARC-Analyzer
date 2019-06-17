@@ -115,6 +115,7 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 		while ($row = $result->fetch_array()) {
 			debug ("printing row");
 			echo "\t<tr>\n";
+			echo "\t\t<td><a href='report.php?serial=".$data['serial']."'>".$data['reportid']."</a></td>\n";
 			echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
 			echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
 			echo "\t\t<td>".$row['rcount']."</td>\n";

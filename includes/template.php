@@ -71,6 +71,7 @@ function reports_table_start() {
 	echo "<table id='dmarc_reports' class='centered'>\n";
 	echo "\t<thead>\n";
 	echo "\t<tr>\n";
+	echo "\t\t<th>Report ID</th>\n";
 	echo "\t\t<th>Sender IP</th>\n";
 	echo "\t\t<th>Sender Domain</th>\n";
 	echo "\t\t<th>Message Count</th>\n";
