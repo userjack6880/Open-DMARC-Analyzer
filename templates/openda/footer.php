@@ -24,7 +24,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 ?>
 
 	</div>
-	<div id="footer"><p><a href="https://github.com/userjack6880/Open-DMAC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?></p></div>
+	<div id="footer"><p><a href="https://github.com/userjack6880/Open-DMARC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?></p></div>
 
 	</body>
 </html>
