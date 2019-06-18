@@ -137,6 +137,8 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 		echo "\t\t</td>\n";
 	}
 
+	echo "</table>\n";
+
 	// list out the reports
 	domain_reports_table_start();
 	
