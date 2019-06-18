@@ -92,7 +92,7 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 
 	// pull serial numbers of reports within date range and with specific domain
 	$rdata = report_data($mysqli, $dateRange, $domain);
-	$counts = dmarc_data($mysqli, $dateRange $domain);	
+	$counts = dmarc_data($mysqli, $dateRange, $domain);	
 
 	domain_reports_dkim_table_start();
 
