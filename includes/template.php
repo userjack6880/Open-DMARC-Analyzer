@@ -50,6 +50,23 @@ function dashboard_dmarc_table_start($dateRange) {
 	echo "\t</thead>\n";
 }
 
+// Domain Reports DKIM Table
+function domain_reports_dkim_table_start() {
+	echo "<h3><a id='compliance'></a>DMARC Compliance</h3>\n";
+
+	echo "<table id='compliance_table' class='centered'>\n";
+	echo "\t<thead>\n";
+	echo "\t<tr>\n";
+	echo "\t\t<th>Domain</th>\n";
+	echo "\t\t<th>Volume</th>\n";
+	echo "\t\t<th width='150px'>DMARC Policy</th>\n";
+	echo "\t\t<th width='15%'>DMARC Compliance</th>\n";
+	echo "\t\t<th width='15%'>DKIM Alignment</th>\n";
+	echo "\t\t<th width='15%'>SPF Alignment</th>\n";
+	echo "\t</tr>\n";
+	echo "\t</thead>\n";
+}
+
 // Domain Reports Table
 function domain_reports_table_start() {
 	echo "<h3><a id='reports'></a>Reports</h2>\n";

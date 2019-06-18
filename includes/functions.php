@@ -46,8 +46,8 @@ function report_data($mysqli, $dateRange = DATE_RANGE, $domain = null) {
 	return $rows;
 }
 
-function dmarc_data($mysqli, $dateRange = DATE_RANGE) {
-	$rdata = report_data($mysqli, $dateRange);
+function dmarc_data($mysqli, $dateRange = DATE_RANGE, $domain = null) {
+	$rdata = report_data($mysqli, $dateRange, $domain);
 
 	$counts = [];
 	// using said serial numbers, pull all rpt record data
@@ -92,6 +92,50 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 
 	// pull serial numbers of reports within date range and with specific domain
 	$rdata = report_data($mysqli, $dateRange, $domain);
+	$counts = dmarc_data($mysqli, $dateRange $domain);	
+
+	domain_reports_dkim_table_start();
+
+	foreach ($counts as $data) {
+		echo "\t<tr class='dash_row'>\n";
+		echo "\t\t<td><a href='domain.php?domain=".$data->hfrom."'>".$data->hfrom."</a></td>\n";
+		echo "\t\t<td>".$data->rcount."</td>\n";
+
+		$alignDKIM = number_format(100 * ($data->alignDKIM  / $data->numReport));
+		$alignSPF  = number_format(100 * ($data->alignSPF   / $data->numReport));
+		$DKIMpass  = number_format(100 * ($data->resultDKIM / $data->numReport));
+		$SPFpass   = number_format(100 * ($data->resultSPF  / $data->numReport));
+		$compliance = max($alignDKIM, $alignSPF);
+
+		echo "\t\t<td>".$data->policyPct."% ".$data->policy."</td>\n";
+
+		echo "\t\t<td>\n";
+		echo "\t\t\t<div class='perc-text'><span>$compliance% Compliant</span></div>\n";
+		echo "\t\t\t<div class='perc-bar'>\n";
+		echo "\t\t\t\t<div class='green-per' style='width:$compliance%'></div>\n";
+		echo "\t\t\t</div>\n";
+		echo "\t\t</td>\n";
+
+		echo "\t\t<td>\n";
+		echo "\t\t\t<div class='perc-text'>\n";
+		echo "\t\t\t\t<span>$alignDKIM% Aligned | $DKIMpass% Passed</span>\n";
+		echo "\t\t\t</div>\n";
+		echo "\t\t\t<div class='perc-bar'>\n";
+		echo "\t\t\t\t<div class='gray-per' style='width:$DKIMpass%'></div>\n";
+		echo "\t\t\t\t<div class='green-per' style='width:$alignDKIM%'></div>\n";
+		echo "\t\t\t</div>\n";
+		echo "\t\t</td>\n";
+
+		echo "\t\t<td>\n";
+		echo "\t\t\t<div class='perc-text'>\n";
+		echo "\t\t\t\t<span>$alignSPF% Aligned | $SPFpass% Passed</span>\n";
+		echo "\t\t\t</div>\n";
+		echo "\t\t\t<div class='perc-bar'>\n";
+		echo "\t\t\t\t<div class='gray-per' style='width:$SPFpass%'></div>\n";
+		echo "\t\t\t\t<div class='green-per' style='width:$alignSPF%'></div>\n";
+		echo "\t\t\t</div>\n";
+		echo "\t\t</td>\n";
+	}
 
 	// list out the reports
 	domain_reports_table_start();
