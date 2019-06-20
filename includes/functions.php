@@ -46,8 +46,7 @@ function report_data($mysqli, $dateRange = DATE_RANGE, $domain = null) {
 	return $rows;
 }
 
-function dmarc_data($mysqli, $dateRange = DATE_RANGE, $domain = null) {
-	$rdata = report_data($mysqli, $dateRange, $domain);
+function dmarc_data($mysqli, $rdata) {
 
 	$counts = [];
 	// using said serial numbers, pull all rpt record data
@@ -99,7 +98,7 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 
 	// pull serial numbers of reports within date range and with specific domain
 	$rdata = report_data($mysqli, $dateRange, $domain);
-	$counts = dmarc_data($mysqli, $dateRange, $domain);	
+	$counts = dmarc_data($mysqli, $rdata);	
 
 	domain_reports_dkim_table_start();
 
@@ -239,7 +238,7 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 	// Now we calculate the volume of mail, the DMARC compliance, and the verification percentages
 	// and each organization and number of reports... and print it out into a table
 
-	$rdata = dmarc_data($mysqli, $dateRange);	
+	$rdata = dmarc_data($mysqli, report_data($mysqli,$dateRange));	
 
 	foreach ($rdata as $data) {
 		echo "\t<tr class='dash_row'>\n";
