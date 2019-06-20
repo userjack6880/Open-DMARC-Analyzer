@@ -67,6 +67,7 @@ function dmarc_data($mysqli, $dateRange = DATE_RANGE, $domain = null) {
 				$counts[$id]->resultSPF  = 0;
 				$counts[$id]->alignDKIM  = 0;
 				$counts[$id]->alignSPF   = 0;
+				$counts[$id]->compliance = 0;
 				$counts[$id]->policy     = $data['policy_p'];
 				$counts[$id]->policyPct  = $data['policy_pct'];
 				$counts[$id]->reports    = [];
@@ -77,6 +78,12 @@ function dmarc_data($mysqli, $dateRange = DATE_RANGE, $domain = null) {
 			if ($row['spfresult']  == 'pass')   { $counts[$id]->resultSPF++;  }
 			if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
 			if ($row['spf_align']  == 'pass')   { $counts[$id]->alignSPF++;   }
+
+			// let's properly count compliance - if results and alignment pass for either SPF or DKIM, it's compliant
+			if (($row['dkimresult'] == 'pass' && $row['dkim_align'] == 'pass') || ($row['spfresult'] == 'pass' && $row['spf_align'] == 'pass')) {
+				$counts[$id]->compliance++;
+			}
+			
 			if (empty($counts[$id]->reports[$data['org']])) { $counts[$id]->reports[$data['org']] = 0; }
 			$counts[$id]->reports[$data['org']]++;
 		}
@@ -101,11 +108,11 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 		echo "\t\t<td><a href='domain.php?domain=".$data->hfrom."'>".$data->hfrom."</a></td>\n";
 		echo "\t\t<td>".$data->rcount."</td>\n";
 
-		$alignDKIM = number_format(100 * ($data->alignDKIM  / $data->numReport));
-		$alignSPF  = number_format(100 * ($data->alignSPF   / $data->numReport));
-		$DKIMpass  = number_format(100 * ($data->resultDKIM / $data->numReport));
-		$SPFpass   = number_format(100 * ($data->resultSPF  / $data->numReport));
-		$compliance = max($alignDKIM, $alignSPF);
+		$alignDKIM  = number_format(100 * ($data->alignDKIM  / $data->numReport));
+		$alignSPF   = number_format(100 * ($data->alignSPF   / $data->numReport));
+		$DKIMpass   = number_format(100 * ($data->resultDKIM / $data->numReport));
+		$SPFpass    = number_format(100 * ($data->resultSPF  / $data->numReport));
+		$compliance = number_format(100 * ($data->compliance / $data->numReport));
 
 		echo "\t\t<td>".$data->policyPct."% ".$data->policy."</td>\n";
 
