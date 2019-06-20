@@ -28,22 +28,39 @@ function debug($string, $debugLevel = DEBUG) {
 }
 
 // Get Data //
-function report_data($mysqli, $dateRange = DATE_RANGE, $domain = null) {
+function report_data($mysqli, $dateRange = DATE_RANGE, $serial = NULL) {
 
-	// pull the serial number of all reports within date range
+	// pull the data of all reports within date range
 	$startDate = start_date($dateRange);
 	debug("Start Date: $startDate");
 	$query = "SELECT * FROM `report` WHERE ";
-	if (isset($domain)) { 
-		$domain = $mysqli->real_escape_string($domain);
-		$query .= "`domain` = '$domain' AND ";  
+	if (isset($serial)) {
+		$serial = $mysqli->real_escape_string($serial);
+		$query .= "`serial` = '$serial' AND ";
 	}
-	$query .= "`mindate` BETWEEN '$startDate' AND NOW() ORDER BY `domain`";
+	$query .="`mindate` BETWEEN '$startDate' AND NOW() ORDER BY `domain`";
 	$result = $mysqli->query($query);
 	$rows = [];
 	while ($row = $result->fetch_array()) { array_push($rows, $row); }
 	$result->close();
 	return $rows;
+}
+
+function domain_data($mysqli, $dateRange = DATE_RANGE, $domain) {
+	// This function will only work if the domain is given
+	if (!isset($domain)) { die("critical error: must have domain name defined"); }
+
+	// since we know the domain, we need to get all of the serial numbers of reports associated with this domain
+	$domain = $mysqli->real_escape_string($domain);
+	$query = "SELECT `serial` FROM `rptrecord` WHERE `identifier_hfrom` = '$domain'"; 
+	$result = $mysqli->query($query);
+
+	// now that we have the serial numbers, let's get the data for each serial number
+	$rows = [];
+	while ($row = $result->fetch_array()) {
+		$rdata = report_data($mysqli, $dateRange, $row['serial']);
+		foreach ($rdata as $data) {	array_push($rows, $data);	}
+	}
 }
 
 function dmarc_data($mysqli, $rdata) {
@@ -97,7 +114,7 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 	echo "<h2>Domain Details for $domain - Since ".start_date($dateRange)."</h2>\n";
 
 	// pull serial numbers of reports within date range and with specific domain
-	$rdata = report_data($mysqli, $dateRange, $domain);
+	$rdata = domain_data($mysqli, $dateRange, $domain);
 	$counts = dmarc_data($mysqli, $rdata);	
 
 	domain_reports_dkim_table_start();
