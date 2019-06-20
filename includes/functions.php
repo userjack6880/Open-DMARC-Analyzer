@@ -53,7 +53,7 @@ function domain_data($mysqli, $dateRange = DATE_RANGE, $domain) {
 
 	// since we know the domain, we need to get all of the serial numbers of reports associated with this domain
 	$domain = $mysqli->real_escape_string($domain);
-	$query = "SELECT `serial` FROM `rptrecord` WHERE `identifier_hfrom` = '$domain'"; 
+	$query = "SELECT DISTINCT `serial` FROM `rptrecord` WHERE `identifier_hfrom` = '$domain'"; 
 	debug("Query: $query");
 	$result = $mysqli->query($query);
 
@@ -61,8 +61,11 @@ function domain_data($mysqli, $dateRange = DATE_RANGE, $domain) {
 	$rows = [];
 	while ($row = $result->fetch_array()) {
 		$rdata = report_data($mysqli, $dateRange, $row['serial']);
-		foreach ($rdata as $data) {	array_push($rows, $data);	}
+		// this will return an array of rows - we'll need to merge this with the existing blank rows array
+		array_merge($rows, $rdata);
 	}
+
+	return $rows;
 }
 
 function dmarc_data($mysqli, $rdata) {
