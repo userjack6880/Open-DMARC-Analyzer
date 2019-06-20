@@ -39,6 +39,7 @@ function report_data($mysqli, $dateRange = DATE_RANGE, $serial = NULL) {
 		$query .= "`serial` = '$serial' AND ";
 	}
 	$query .="`mindate` BETWEEN '$startDate' AND NOW() ORDER BY `domain`";
+	debug("Query: $query");
 	$result = $mysqli->query($query);
 	$rows = [];
 	while ($row = $result->fetch_array()) { array_push($rows, $row); }
@@ -53,6 +54,7 @@ function domain_data($mysqli, $dateRange = DATE_RANGE, $domain) {
 	// since we know the domain, we need to get all of the serial numbers of reports associated with this domain
 	$domain = $mysqli->real_escape_string($domain);
 	$query = "SELECT `serial` FROM `rptrecord` WHERE `identifier_hfrom` = '$domain'"; 
+	debug("Query: $query");
 	$result = $mysqli->query($query);
 
 	// now that we have the serial numbers, let's get the data for each serial number
