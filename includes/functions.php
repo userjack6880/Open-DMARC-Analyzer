@@ -72,13 +72,18 @@ function domain_data($mysqli, $dateRange = DATE_RANGE, $domain) {
 	return $rows;
 }
 
-function dmarc_data($mysqli, $rdata) {
+function dmarc_data($mysqli, $rdata, $domain = NULL) {
 
 	$counts = [];
 	// using said serial numbers, pull all rpt record data
 	// run through each row, and count total emails, the alignment counts, and results
 	foreach ($rdata as $data) {
-		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial']." ORDER BY `identifier_hfrom`";
+		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial'];
+		if (isset($domain) {
+			$domain = $mysqli->real_escape_string($domain);
+			$query .= " AND 'identifier_hfrom' = '$domain'";
+		}
+		$query .= " ORDER BY `identifier_hfrom`";
 		$result = $mysqli->query($query);
 		while ($row = $result->fetch_array()) {
 			$id = strtolower($row['identifier_hfrom']);
@@ -124,7 +129,7 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 
 	// pull serial numbers of reports within date range and with specific domain
 	$rdata = domain_data($mysqli, $dateRange, $domain);
-	$counts = dmarc_data($mysqli, $rdata);	
+	$counts = dmarc_data($mysqli, $rdata, $domain);	
 
 	domain_reports_dkim_table_start();
 
