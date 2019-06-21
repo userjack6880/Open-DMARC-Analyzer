@@ -192,7 +192,7 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 	reports_table_start();
 
 	foreach ($rdata as $data) {
-		$query = "SELECT * FROM `rptrecord` WHERE `serial` = ".$data['serial']." AND `identifier_hfrom` = '".$data['domain']."'";
+		$query = "SELECT * FROM `rptrecord` WHERE `serial` = ".$data['serial']." AND `identifier_hfrom` = '$domain'";
 		debug ($query);
 		$result = $mysqli->query($query);
 		while ($row = $result->fetch_array()) {
