@@ -231,7 +231,7 @@ function single_report($serial, $mysqli) {
 	echo "DKIM Policy: ".$data['policy_adkim']." | SPF Policy: ".$data['policy_aspf']."<br />\n";
 
 	// Now print a detailed table...
-	reports_table_start();
+	single_report_table_start();
 
 	$query = "SELECT * FROM `rptrecord` WHERE `serial` = '$serial'";
 	debug ($query);
@@ -271,11 +271,11 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 		echo "\t\t<td><a href='domain.php?domain=".$data->hfrom."'>".$data->hfrom."</a></td>\n";
 		echo "\t\t<td>".$data->rcount."</td>\n";
 
-		$alignDKIM = number_format(100 * ($data->alignDKIM  / $data->numReport));
-		$alignSPF  = number_format(100 * ($data->alignSPF   / $data->numReport));
-		$DKIMpass  = number_format(100 * ($data->resultDKIM / $data->numReport));
-		$SPFpass   = number_format(100 * ($data->resultSPF  / $data->numReport));
-		$compliance = max($alignDKIM, $alignSPF);
+		$alignDKIM  = number_format(100 * ($data->alignDKIM  / $data->numReport));
+		$alignSPF   = number_format(100 * ($data->alignSPF   / $data->numReport));
+		$DKIMpass   = number_format(100 * ($data->resultDKIM / $data->numReport));
+		$SPFpass    = number_format(100 * ($data->resultSPF  / $data->numReport));
+		$compliance = number_format(100 * ($data->compliance / $data->numReport));
 
 		echo "\t\t<td>".$data->policyPct."% ".$data->policy."</td>\n";
 

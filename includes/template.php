@@ -102,4 +102,23 @@ function reports_table_start() {
 	echo "\t</thead>\n";
 }
 
+// Single Individual Reports Table
+function single_report_table_start() {
+	echo "<h3><a id='report_detail'></a>Report Details</h2>\n";
+
+	echo "<table id='dmarc_reports' class='centered'>\n";
+	echo "\t<thead>\n";
+	echo "\t<tr>\n";
+	echo "\t\t<th>Sender IP</th>\n";
+	echo "\t\t<th>Sender Domain</th>\n";
+	echo "\t\t<th>Message Count</th>\n";
+	echo "\t\t<th>Disposition</th>\n";
+	echo "\t\t<th>Reason</th>\n";
+	echo "\t\t<th>DKIM Domain</th>\n";
+	echo "\t\t<th>DKIM Result</th>\n";
+	echo "\t\t<th>SPF Domain</th>\n";
+	echo "\t\t<th>SPF Result</th>\n";
+	echo "\t</tr>\n";
+	echo "\t</thead>\n";
+}
 ?>
