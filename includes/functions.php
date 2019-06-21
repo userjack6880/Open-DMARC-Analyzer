@@ -43,6 +43,7 @@ function report_data($mysqli, $dateRange = DATE_RANGE, $serial = NULL) {
 	$result = $mysqli->query($query);
 	$rows = [];
 	while ($row = $result->fetch_array()) { array_push($rows, $row); }
+	debug("report_data Array\n".print_r($rows,true));
 	$result->close();
 	return $rows;
 }
@@ -61,7 +62,6 @@ function domain_data($mysqli, $dateRange = DATE_RANGE, $domain) {
 	$rows = [];
 	while ($row = $result->fetch_array()) {
 		$rdata = report_data($mysqli, $dateRange, $row['serial']);
-		debug("RDATA Array\n".print_r($rdata,true));
 		// this will return an array of rows - we'll need to merge this with the existing blank rows array
 		debug("Merging arrays for ".$row['serial']);
 		array_merge($rows, $rdata);
