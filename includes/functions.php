@@ -64,7 +64,7 @@ function domain_data($mysqli, $dateRange = DATE_RANGE, $domain) {
 		$rdata = report_data($mysqli, $dateRange, $row['serial']);
 		// this will return an array of rows - we'll need to merge this with the existing blank rows array
 		debug("Merging arrays for ".$row['serial']);
-		array_merge($rows, $rdata);
+		$rows = array_merge($rows, $rdata);
 	}
 
 	$result->close();
