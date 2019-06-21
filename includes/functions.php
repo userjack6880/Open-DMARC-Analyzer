@@ -79,7 +79,7 @@ function dmarc_data($mysqli, $rdata, $domain = NULL) {
 	// run through each row, and count total emails, the alignment counts, and results
 	foreach ($rdata as $data) {
 		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial'];
-		if (isset($domain) {
+		if (isset($domain)) {
 			$domain = $mysqli->real_escape_string($domain);
 			$query .= " AND 'identifier_hfrom' = '$domain'";
 		}
