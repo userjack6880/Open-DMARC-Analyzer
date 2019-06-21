@@ -25,7 +25,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 include_once 'includes.php';
 
 // Get Date Stuff
-$mysqli = dbConn();
+$pdo = dbConn();
 if (!empty($_GET['range'])) { 
 	debug("Using GET date value: ".$_GET['range']);
 	$dateRange = $_GET['range']; 
@@ -48,13 +48,13 @@ page_header();
 <?php
 
 // Dashboard
-dashboard($mysqli, $dateRange);
+dashboard($pdo, $dateRange);
 
 // Footer
 
 page_footer();
 
-$mysqli->close();
+$pdo = null;
 
 debug("\o/");
 

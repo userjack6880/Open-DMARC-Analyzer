@@ -28,64 +28,62 @@ function debug($string, $debugLevel = DEBUG) {
 }
 
 // Get Data //
-function report_data($mysqli, $dateRange = DATE_RANGE, $serial = NULL) {
+function report_data($pdo, $dateRange = DATE_RANGE, $serial = NULL) {
 
 	// pull the data of all reports within date range
 	$startDate = start_date($dateRange);
-	debug("Start Date: $startDate");
-	$query = "SELECT * FROM `report` WHERE ";
 	if (isset($serial)) {
-		$serial = $mysqli->real_escape_string($serial);
-		$query .= "`serial` = '$serial' AND ";
+		$params = array(':startDate' => $startDate, ':serial' => $serial);
+		$query = $pdo->prepare("SELECT * FROM `report` WHERE `serial` = :serial AND `mindate` BETWEEN :startDate AND NOW() ORDER BY `domain`");
+	} else {
+		$params = array(':startDate' => $startDate);
+		$query = $pdo->prepare("SELECT * FROM `report` WHERE `mindate` BETWEEN :startDate AND NOW() ORDER BY `domain`");
 	}
-	$query .="`mindate` BETWEEN '$startDate' AND NOW() ORDER BY `domain`";
-	debug("Query: $query");
-	$result = $mysqli->query($query);
+	$query->execute($params);
 	$rows = [];
-	while ($row = $result->fetch_array()) { array_push($rows, $row); }
-	debug("report_data Array\n".print_r($rows,true));
-	$result->close();
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) { array_push($rows, $row); }
+	$query = null;
 	return $rows;
 }
 
-function domain_data($mysqli, $dateRange = DATE_RANGE, $domain) {
+function domain_data($pdo, $dateRange = DATE_RANGE, $domain) {
 	// This function will only work if the domain is given
 	if (!isset($domain)) { die("critical error: must have domain name defined"); }
 
 	// since we know the domain, we need to get all of the serial numbers of reports associated with this domain
-	$domain = $mysqli->real_escape_string($domain);
-	$query = "SELECT DISTINCT `serial` FROM `rptrecord` WHERE `identifier_hfrom` = '$domain'"; 
-	debug("Query: $query");
-	$result = $mysqli->query($query);
+	$params = array(':domain' => $domain);
+	$query = $pdo->prepare("SELECT DISTINCT `serial` FROM `rptrecord` WHERE `identifier_hfrom` = :domain");
+	$query->execute($params);
 
 	// now that we have the serial numbers, let's get the data for each serial number
 	$rows = [];
-	while ($row = $result->fetch_array()) {
-		$rdata = report_data($mysqli, $dateRange, $row['serial']);
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+		$rdata = report_data($pdo, $dateRange, $row['serial']);
 		// this will return an array of rows - we'll need to merge this with the existing blank rows array
 		debug("Merging arrays for ".$row['serial']);
 		$rows = array_merge($rows, $rdata);
 	}
 
-	$result->close();
+	$query = null;
 	debug("ROWS Array\n".print_r($rows,true));
 	return $rows;
 }
 
-function dmarc_data($mysqli, $rdata, $domain = NULL) {
+function dmarc_data($pdo, $rdata, $domain = NULL) {
 
 	$counts = [];
 	// using said serial numbers, pull all rpt record data
 	// run through each row, and count total emails, the alignment counts, and results
 	foreach ($rdata as $data) {
-		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial'];
 		if (isset($domain)) {
-			$domain = $mysqli->real_escape_string($domain);
-			$query .= " AND `identifier_hfrom` = '$domain'";
+			$params = array(':serial' => $data['serial'], ':domain' => $domain);
+			$query = $pdo->prepare("SELECT * from `rptrecord` WHERE `serial` = :serial AND `identifier_hfrom` = :domain ORDER BY `identifier_hfrom`");
+		} else {
+			$params = array(':serial' => $data['serial']);
+			$query = $pdo->prepare("SELECT * from `rptrecord` WHERE `serial` = :serial ORDER BY `identifier_hfrom`");
 		}
-		$query .= " ORDER BY `identifier_hfrom`";
-		$result = $mysqli->query($query);
-		while ($row = $result->fetch_array()) {
+		$query->execute($params);
+		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
 			$id = strtolower($row['identifier_hfrom']);
 
 			if (empty($counts[$id])) { 
@@ -117,6 +115,8 @@ function dmarc_data($mysqli, $rdata, $domain = NULL) {
 			if (empty($counts[$id]->reports[$data['org']])) { $counts[$id]->reports[$data['org']] = 0; }
 			$counts[$id]->reports[$data['org']]++;
 		}
+
+		$query = null;
 	}
 
 	return $counts;
@@ -124,12 +124,12 @@ function dmarc_data($mysqli, $rdata, $domain = NULL) {
 
 // Domain Reports //
 
-function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
+function domain_reports($domain, $pdo, $dateRange = DATE_RANGE) {
 	echo "<h2>Domain Details for $domain - Since ".start_date($dateRange)."</h2>\n";
 
 	// pull serial numbers of reports within date range and with specific domain
-	$rdata = domain_data($mysqli, $dateRange, $domain);
-	$counts = dmarc_data($mysqli, $rdata, $domain);	
+	$rdata = domain_data($pdo, $dateRange, $domain);
+	$counts = dmarc_data($pdo, $rdata, $domain);	
 
 	domain_reports_dkim_table_start();
 
@@ -192,10 +192,10 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 	reports_table_start();
 
 	foreach ($rdata as $data) {
-		$query = "SELECT * FROM `rptrecord` WHERE `serial` = ".$data['serial']." AND `identifier_hfrom` = '$domain'";
-		debug ($query);
-		$result = $mysqli->query($query);
-		while ($row = $result->fetch_array()) {
+		$params = array(':serial' => $data['serial'], ':domain' => $domain);
+		$query = $pdo->prepare("SELECT * FROM `rptrecord` WHERE `serial` = :serial AND `identifier_hfrom` = :domain");
+		$query->execute($params);
+		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
 			debug ("printing row");
 			echo "\t<tr>\n";
 			echo "\t\t<td><a href='report.php?serial=".$data['serial']."'>".$data['reportid']."</a></td>\n";
@@ -210,6 +210,7 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 			echo "\t\t<td>Result: ".$row['spfresult']." | Alignment: ".$row['spf_align']."</td>\n";
 			echo "\t</tr>\n";
 		} 
+		$query = null;
 	}
 	echo "</table>\n";
 
@@ -217,14 +218,13 @@ function domain_reports($domain, $mysqli, $dateRange = DATE_RANGE) {
 
 // Single Report Table //
 
-function single_report($serial, $mysqli) {
-	$serial = $mysqli->real_escape_string($serial);
-
+function single_report($serial, $pdo) {
 	// let's get some data from the report that matches this serial number
-	$query = "SELECT * FROM `report` WHERE `serial` = '$serial'";
-	$result = $mysqli->query($query);
+	$params = array(':serial' => $serial);
+	$query = $pdo->prepare("SELECT * FROM `report` WHERE `serial` = :serial");
+	$query->execute($params);
 
-	$data = $result->fetch_array(); // this should only return one row
+	$data = $query->fetch(PDO::FETCH_ASSOC); // this should only return one row
 
 	echo "<h2>Details for Report ".$data['reportid']."</h2>\n";
 	echo "<p>Date Range: ".$data['mindate']." - ".$data['maxdate']."<br />\n";
@@ -238,11 +238,11 @@ function single_report($serial, $mysqli) {
 	// Now print a detailed table...
 	single_report_table_start();
 
-	$query = "SELECT * FROM `rptrecord` WHERE `serial` = '$serial'";
-	debug ($query);
-	$result = $mysqli->query($query);
+	$query = null;
+	$query = $pdo->prepare("SELECT * FROM `rptrecord` WHERE `serial` = :serial");
+	$query->execute($params);
 
-	while ($row = $result->fetch_array()) {
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
 		echo "\t<tr>\n";
 		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
 		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
@@ -257,11 +257,12 @@ function single_report($serial, $mysqli) {
 	}
 
 	echo "</table>\n";
+	$query = null;
 }
 
 // Dashboard //
 
-function dashboard($mysqli, $dateRange = DATE_RANGE) {
+function dashboard($pdo, $dateRange = DATE_RANGE) {
 	echo "<h2>Dashboard</h2>\n";
 
 	dashboard_dmarc_table_start(start_date($dateRange));
@@ -269,7 +270,7 @@ function dashboard($mysqli, $dateRange = DATE_RANGE) {
 	// Now we calculate the volume of mail, the DMARC compliance, and the verification percentages
 	// and each organization and number of reports... and print it out into a table
 
-	$rdata = dmarc_data($mysqli, report_data($mysqli,$dateRange));	
+	$rdata = dmarc_data($pdo, report_data($pdo,$dateRange));	
 
 	foreach ($rdata as $data) {
 		echo "\t<tr class='dash_row'>\n";

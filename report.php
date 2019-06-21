@@ -25,7 +25,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 include_once 'includes.php';
 
 // Get Date Stuff
-$mysqli = dbConn();
+$pdo = dbConn();
 
 page_header();
 
@@ -39,14 +39,14 @@ page_header();
 
 <?php
 // Dashboard
-if (!empty($_GET['serial'])) { single_report($_GET['serial'], $mysqli); }
+if (!empty($_GET['serial'])) { single_report($_GET['serial'], $pdo); }
 else { echo "<h2>Sorry, Need a Report Serial</h2>\n"; }
 
 // Footer
 
 page_footer();
 
-$mysqli->close();
+$pdo = null;
 
 debug("\o/");
 

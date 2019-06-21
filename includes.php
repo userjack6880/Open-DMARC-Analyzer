@@ -23,7 +23,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 include_once 'config.php';
 include_once 'includes/template.php';
-include_once 'includes/mysql.php';
+include_once 'includes/db.php';
 include_once 'includes/functions.php';
 include_once 'includes/template-loader.php';
 

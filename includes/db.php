@@ -1,7 +1,7 @@
 <?php
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
-includes/mysql.php
+includes/db.php
 2019 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
@@ -23,13 +23,14 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Connect to DB //
 function dbConn() {
-	debug("Connecting to MySQL");
-	$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
-	if ($mysqli->connect_errno) {
-		die("\nCould not connect to $db: ".$mysqli->connect_error."\n");
+	debug("Connecting to DB");
+	try {
+		$pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME.";port=".DB_PORT, DB_USER, DB_PASS);
+	} catch (PDOException $e) {
+		echo 'Connection failed: '.$e->getMessage();
 	}
 	debug("Connection Successful\n");
-	return $mysqli;
+	return $pdo;
 }
 
 ?>
