@@ -6,17 +6,17 @@ Open DMARC Analyzer was written because there didn't seem to be a full-featured 
 
 # Changelog
 
-##0-α3
+## 0-α3
 
 - Fixed issue where a domain will be listed to have a non-zero volume, but on the domain page will have no reports. This page now properly shows all reports related to a single domain.
 - Improved the accuracy of the DMARC compliance graph. No longer does it take the larger of the two alignments, but instead counts a message as complaint if it is either DKIM or SPF aligned.
 - Moved away from mysqli to utilize PDO instead.
 
-##0-α2
+## 0-α2
 
 - Code now has most useful features now.
 
-##0-α1
+## 0-α1
 
 - Project started. It's absolutely terrible and nobody should use this.
 
