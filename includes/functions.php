@@ -81,7 +81,7 @@ function dmarc_data($mysqli, $rdata, $domain = NULL) {
 		$query = "SELECT * from `rptrecord` WHERE `serial` = ".$data['serial'];
 		if (isset($domain)) {
 			$domain = $mysqli->real_escape_string($domain);
-			$query .= " AND 'identifier_hfrom' = '$domain'";
+			$query .= " AND `identifier_hfrom` = '$domain'";
 		}
 		$query .= " ORDER BY `identifier_hfrom`";
 		$result = $mysqli->query($query);
