@@ -37,7 +37,7 @@ function report_data($pdo, $dateRange = DATE_RANGE, $serial = NULL) {
 		$query = $pdo->prepare("SELECT * FROM `report` WHERE `serial` = :serial AND `mindate` BETWEEN :startDate AND NOW() ORDER BY `domain`");
 	} else {
 		$params = array(':startDate' => $startDate);
-		$query = $pdo->prepare("SELECT * FROM `report` WHERE `mindate` BETWEEN :startDate AND NOW() ORDER BY `domain`");
+		$query = $pdo->prepare("SELECT * FROM `report` WHERE `mindate` BETWEEN :startDate AND NOW() ORDER BY `serial`");
 	}
 	$query->execute($params);
 	$rows = [];
@@ -258,6 +258,29 @@ function single_report($serial, $pdo) {
 
 	echo "</table>\n";
 	$query = null;
+}
+
+function senders_report($pdo, $dateRange = DATE_RANGE) {
+	$rdata = report_data($pdo, $dateRange);
+
+	senders_report_table_start();
+
+	$serials = [];
+	foreach ($rdata as $data) {
+		array_push($serials, $data['serial']);
+	}
+
+	$query = $pdo->prepare("SELECT DISTINCT `ip` FROM `rptrecord` WHERE `ip` IS NOT NULL AND `serial` IN ('".implode("', '",$serials)."') ORDER BY `ip`");
+	$query->execute();
+
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+		echo "\t<tr>\n";
+		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
+		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
+		echo "\t</tr>\n";
+	}
+
+	echo "</table>\n";
 }
 
 // Dashboard //

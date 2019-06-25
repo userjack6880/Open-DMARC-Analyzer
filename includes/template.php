@@ -121,4 +121,17 @@ function single_report_table_start() {
 	echo "\t</tr>\n";
 	echo "\t</thead>\n";
 }
+
+// Senders Report Table
+function senders_report_table_start() {
+	echo "<h3><a id='senders'></a>Sender's Report</h2>\n";
+
+	echo "<table id='senders_report' class='centered'>\n";
+	echo "\t<thead>\n";
+	echo "\t<tr>\n";
+	echo "\t\t<th>Sender IP</th>\n";
+	echo "\t\t<th>Sender Domain</th>\n";
+	echo "\t</td>\n";
+	echo "\t</thead>\n";
+}
 ?>
