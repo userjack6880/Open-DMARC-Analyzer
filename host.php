@@ -47,7 +47,7 @@ page_header();
 
 <?php
 // Dashboard
-senders_report($pdo, $dateRange);
+senders_report($pdo, $dateRange, $_GET['domain'], $_GET['ip']);
 
 // Footer
 

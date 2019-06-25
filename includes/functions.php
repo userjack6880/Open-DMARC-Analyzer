@@ -260,7 +260,7 @@ function single_report($serial, $pdo) {
 	$query = null;
 }
 
-function senders_report($pdo, $dateRange = DATE_RANGE) {
+function senders_report($pdo, $dateRange = DATE_RANGE, $domain = null, $ip = null) {
 	$rdata = report_data($pdo, $dateRange);
 
 	senders_report_table_start();
@@ -270,8 +270,11 @@ function senders_report($pdo, $dateRange = DATE_RANGE) {
 		array_push($serials, $data['serial']);
 	}
 
-	$query = $pdo->prepare("SELECT DISTINCT `ip` FROM `rptrecord` WHERE `ip` IS NOT NULL AND `serial` IN ('".implode("', '",$serials)."') ORDER BY `ip`");
-	$query->execute();
+	$params = array(':ip' => '%%', ':domain' => '%%');
+	if (isset($ip)) { $params[':ip'] = "%$ip%"; }
+	if (isset($domain)) { $params[':domain'] = "%$domain%"; }
+	$query = $pdo->prepare("SELECT DISTINCT `ip` FROM `rptrecord` WHERE `ip` IS NOT NULL AND `ip` LIKE :ip AND `identifier_hfrom` LIKE :domain AND `serial` IN ('".implode("', '",$serials)."') ORDER BY `ip`");
+	$query->execute($params);
 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
 		echo "\t<tr>\n";
