@@ -39,7 +39,7 @@ page_header();
 ?>
 
 <script>
-	var TSort_Data = new Array('senders_report','s','s');
+	var TSort_Data = new Array('senders_report','s','s','s');
 	var TSort_Cookie = 'domain_reports';
 	tsRegister();
 

@@ -34,6 +34,9 @@ if (!empty($_GET['range'])) {
 	$dateRange = DATE_RANGE; 
 }
 
+if (isset($_GET['disp'])) { $disp = $_GET['disp']; }
+else { $disp = 'none'; }
+
 page_header();
 
 ?>
@@ -50,7 +53,7 @@ page_header();
 
 <?php
 // Dashboard
-if (!empty($_GET['domain'])) { domain_reports($_GET['domain'], $pdo, $dateRange); }
+if (!empty($_GET['domain'])) { domain_reports($_GET['domain'], $pdo, $dateRange, $disp); }
 else { echo "<h2>Sorry, Need a Domain</h2>\n"; }
 
 // Footer
