@@ -65,6 +65,14 @@ a:hover {
 	text-align: left;
 }
 
+#controlbar {
+	width: 100%;
+	margin: 0px auto 0px auto;
+	padding: 15px;
+	border: none;
+	text-align: left;
+}
+
 h1.header {
 	font-size: 48px;
 	color: #738290;

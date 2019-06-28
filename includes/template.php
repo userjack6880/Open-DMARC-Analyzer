@@ -23,14 +23,71 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Versioning
 function oda_version() {
-	echo "0-&alpha;3";
+	echo "0-&alpha;4";
 }
 
 // General Page Templates
 function page_title() {
 	debug (basename($_SERVER['PHP_SELF'],".php"));
 	if (basename($_SERVER['PHP_SELF'],".php") == 'index') { echo "Open DMARC Analyzer - Dashboard"; }
+	elseif (basename($_SERVER['PHP_SELF'],".php") == 'domain') { echo "Open DMARC Analyzer - Domain Details for ".$_GET['domain']; }
 	else { echo "Open DMARC Analyzer"; }
+}
+
+// Control Bar
+function control_bar() {
+	
+	$basename = basename($_SERVER['PHP_SELF'],".php");
+
+	if ($basename == 'index' || $basename == 'domain') { echo "<div id=controlbar>\n"; }
+	else { return; } // we don't need to actually perform any of this logic if we don't need to
+
+	// Range Control
+	if (isset($_GET['range'])) { 
+		$dateRange = $_GET['range']; 
+
+	  preg_match('/(\d+)(\w+)/', $dateRange, $match);
+
+		if ($match[1] > '1') {	
+			$date = ($match[1]-1)."w";
+			$laterStartURL = $_SERVER['PHP_SELF']."?range=$date";
+		} else { $laterStartURL = $_SERVER['PHP_SELF']."?range=$dateRange"; }
+
+		$date = ($match[1]+1)."w";
+		$earlierStartURL = $_SERVER['PHP_SELF']."?range=$date";
+
+		$rangeOption = "&range=".$_GET['range'];
+	} else {
+		$earlierStartURL = $_SERVER['PHP_SELF']."?range=1w";
+		$laterStartURL = $_SERVER['PHP_SELF'];
+
+		$rangeOption = '';
+	}
+
+	// Disposition Options
+	if (isset($_GET['disp'])) { $dispOption = "&disp=".$_GET['disp']; }
+	else { $dispOption = ''; }
+
+	// Domain Options
+	if (isset($_GET['domain'])) { $domainOption = "&domain=".$_GET['domain']; }
+	else { $domainOption = ''; }
+
+	// URL Generate
+	$earlierStartURL = $earlierStartURL.$dispOption.$domainOption;
+	$laterStartURL = $laterStartURL.$dispOption.$domainOption;
+
+	$dispNoneURL   = $basename.".php?disp=none".$rangeOption.$domainOption;
+	$dispQuarURL   = $basename.".php?disp=quarantine".$rangeOption.$domainOption;
+	$dispRejectURL = $basename.".php?disp=reject".$rangeOption.$domainOption;
+
+	if ($basename == 'index' || $basename = 'domain') {
+		echo "\t&#91; Range Start: <a href='$earlierStartURL'>&larr; 1 Week</a> | <a href='$laterStartURL'>1 Week &rarr;</a> &#93;</br>\n"; 
+	}
+	if ($basename == 'index' || $basename = 'domain') {
+		echo "\t&#91; Disposition: <a href='$dispNoneURL'>none</a> | <a href='$dispQuarURL'>quarantine</a> | <a href='$dispRejectURL'>reject</a> &#93;</br>\n";
+	}
+
+	if ($basename == 'index' || $basename = 'domain') {	echo "</div>\n"; }
 }
 
 // Dashboard Templates
@@ -119,6 +176,20 @@ function single_report_table_start() {
 	echo "\t\t<th>SPF Domain</th>\n";
 	echo "\t\t<th>SPF Result</th>\n";
 	echo "\t</tr>\n";
+	echo "\t</thead>\n";
+}
+
+// Senders Report Table
+function senders_report_table_start() {
+	echo "<h3><a id='senders'></a>Sender's Report</h2>\n";
+
+	echo "<table id='senders_report' class='centered'>\n";
+	echo "\t<thead>\n";
+	echo "\t<tr>\n";
+	echo "\t\t<th>Sender IP</th>\n";
+	echo "\t\t<th>Sender Domain</th>\n";
+	echo "\t\t<th>Sent As</th>\n";
+	echo "\t</td>\n";
 	echo "\t</thead>\n";
 }
 ?>

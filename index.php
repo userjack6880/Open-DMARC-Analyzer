@@ -34,6 +34,9 @@ if (!empty($_GET['range'])) {
 	$dateRange = DATE_RANGE; 
 }
 
+if (isset($_GET['disp'])) { $disp = $_GET['disp']; }
+else { $disp = 'none'; }
+
 page_header();
 
 ?>
@@ -48,7 +51,7 @@ page_header();
 <?php
 
 // Dashboard
-dashboard($pdo, $dateRange);
+dashboard($pdo, $dateRange, $disp);
 
 // Footer
 

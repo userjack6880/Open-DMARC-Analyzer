@@ -1,7 +1,7 @@
 <?php
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
-domain.php
+host.php
 2019 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open DMARC Analyzer
@@ -34,27 +34,20 @@ if (!empty($_GET['range'])) {
 	$dateRange = DATE_RANGE; 
 }
 
-if (isset($_GET['disp'])) { $disp = $_GET['disp']; }
-else { $disp = 'none'; }
-
 page_header();
 
 ?>
 
 <script>
-	var TSort_Data = new Array('domain_reports','','s','s');
+	var TSort_Data = new Array('senders_report','s','s','s');
 	var TSort_Cookie = 'domain_reports';
 	tsRegister();
 
-	var TSort_Data = new Array('dmarc_reports','s','s','s','i','s','s','s','s','s','s');
-	var TSort_Cookie = 'dmarc_reports';
-	tsRegister();
 </script>
 
 <?php
 // Dashboard
-if (!empty($_GET['domain'])) { domain_reports($_GET['domain'], $pdo, $dateRange, $disp); }
-else { echo "<h2>Sorry, Need a Domain</h2>\n"; }
+senders_report($pdo, $dateRange, $_GET['domain'], $_GET['ip']);
 
 // Footer
 

@@ -37,7 +37,7 @@ function report_data($pdo, $dateRange = DATE_RANGE, $serial = NULL) {
 		$query = $pdo->prepare("SELECT * FROM `report` WHERE `serial` = :serial AND `mindate` BETWEEN :startDate AND NOW() ORDER BY `domain`");
 	} else {
 		$params = array(':startDate' => $startDate);
-		$query = $pdo->prepare("SELECT * FROM `report` WHERE `mindate` BETWEEN :startDate AND NOW() ORDER BY `domain`");
+		$query = $pdo->prepare("SELECT * FROM `report` WHERE `mindate` BETWEEN :startDate AND NOW() ORDER BY `serial`");
 	}
 	$query->execute($params);
 	$rows = [];
@@ -46,13 +46,13 @@ function report_data($pdo, $dateRange = DATE_RANGE, $serial = NULL) {
 	return $rows;
 }
 
-function domain_data($pdo, $dateRange = DATE_RANGE, $domain) {
+function domain_data($pdo, $dateRange = DATE_RANGE, $domain, $disp = 'none') {
 	// This function will only work if the domain is given
 	if (!isset($domain)) { die("critical error: must have domain name defined"); }
 
 	// since we know the domain, we need to get all of the serial numbers of reports associated with this domain
-	$params = array(':domain' => $domain);
-	$query = $pdo->prepare("SELECT DISTINCT `serial` FROM `rptrecord` WHERE `identifier_hfrom` = :domain");
+	$params = array(':domain' => $domain, ':disp' => $disp);
+	$query = $pdo->prepare("SELECT DISTINCT `serial` FROM `rptrecord` WHERE `identifier_hfrom` = :domain AND `disposition` = :disp");
 	$query->execute($params);
 
 	// now that we have the serial numbers, let's get the data for each serial number
@@ -69,74 +69,80 @@ function domain_data($pdo, $dateRange = DATE_RANGE, $domain) {
 	return $rows;
 }
 
-function dmarc_data($pdo, $rdata, $domain = NULL) {
+function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 
 	$counts = [];
 	// using said serial numbers, pull all rpt record data
 	// run through each row, and count total emails, the alignment counts, and results
+
+	$serials = [];
 	foreach ($rdata as $data) {
-		if (isset($domain)) {
-			$params = array(':serial' => $data['serial'], ':domain' => $domain);
-			$query = $pdo->prepare("SELECT * from `rptrecord` WHERE `serial` = :serial AND `identifier_hfrom` = :domain ORDER BY `identifier_hfrom`");
-		} else {
-			$params = array(':serial' => $data['serial']);
-			$query = $pdo->prepare("SELECT * from `rptrecord` WHERE `serial` = :serial ORDER BY `identifier_hfrom`");
-		}
-		$query->execute($params);
-		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-			$id = strtolower($row['identifier_hfrom']);
-
-			if (empty($counts[$id])) { 
-				$counts[$id] = new stdClass(); 
-				$counts[$id]->hfrom      = $id;
-				$counts[$id]->rcount     = 0;
-				$counts[$id]->numReport  = 0;
-				$counts[$id]->resultDKIM = 0;
-				$counts[$id]->resultSPF  = 0;
-				$counts[$id]->alignDKIM  = 0;
-				$counts[$id]->alignSPF   = 0;
-				$counts[$id]->compliance = 0;
-				$counts[$id]->policy     = $data['policy_p'];
-				$counts[$id]->policyPct  = $data['policy_pct'];
-				$counts[$id]->reports    = [];
-			}
-			$counts[$id]->numReport++;
-			$counts[$id]->rcount += $row['rcount'];
-			if ($row['dkimresult'] == 'pass')   { $counts[$id]->resultDKIM++; }
-			if ($row['spfresult']  == 'pass')   { $counts[$id]->resultSPF++;  }
-			if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
-			if ($row['spf_align']  == 'pass')   { $counts[$id]->alignSPF++;   }
-
-			// let's properly count compliance - if results and alignment pass for either SPF or DKIM, it's compliant
-			if (($row['dkimresult'] == 'pass' && $row['dkim_align'] == 'pass') || ($row['spfresult'] == 'pass' && $row['spf_align'] == 'pass')) {
-				$counts[$id]->compliance++;
-			}
-			
-			if (empty($counts[$id]->reports[$data['org']])) { $counts[$id]->reports[$data['org']] = 0; }
-			$counts[$id]->reports[$data['org']]++;
-		}
-
-		$query = null;
+		array_push($serials, $data['serial']);
 	}
+
+	if (isset($domain)) {
+		$params = array(':domain' => "$domain", ':disp' => $disp);
+	} else {
+		$params = array(':domain' => "%", ':disp' => $disp);
+	}
+	$query = $pdo->prepare("SELECT * from `rptrecord` WHERE `serial` IN ('".implode("', '",$serials)."') AND `identifier_hfrom` LIKE :domain AND disposition = :disp ORDER BY `identifier_hfrom`");
+	$query->execute($params);
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+		$id = strtolower($row['identifier_hfrom']);
+
+		if (empty($counts[$id])) { 
+			$counts[$id] = new stdClass(); 
+			$counts[$id]->hfrom      = $id;
+			$counts[$id]->rcount     = 0;
+			$counts[$id]->numReport  = 0;
+			$counts[$id]->resultDKIM = 0;
+			$counts[$id]->resultSPF  = 0;
+			$counts[$id]->alignDKIM  = 0;
+			$counts[$id]->alignSPF   = 0;
+			$counts[$id]->compliance = 0;
+			$counts[$id]->policy     = $data['policy_p'];
+			$counts[$id]->policyPct  = $data['policy_pct'];
+			$counts[$id]->reports    = [];
+		}
+		$counts[$id]->numReport++;
+		$counts[$id]->rcount += $row['rcount'];
+		if ($row['dkimresult'] == 'pass')   { $counts[$id]->resultDKIM++; }
+		if ($row['spfresult']  == 'pass')   { $counts[$id]->resultSPF++;  }
+		if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
+		if ($row['spf_align']  == 'pass')   { $counts[$id]->alignSPF++;   }
+
+		// let's properly count compliance - if results and alignment pass for either SPF or DKIM, it's compliant
+		if (($row['dkimresult'] == 'pass' && $row['dkim_align'] == 'pass') || ($row['spfresult'] == 'pass' && $row['spf_align'] == 'pass')) {
+			$counts[$id]->compliance++;
+		}
+			
+		if (empty($counts[$id]->reports[$data['org']])) { $counts[$id]->reports[$data['org']] = 0; }
+		$counts[$id]->reports[$data['org']]++;
+	}
+
+	$query = null;
 
 	return $counts;
 }
 
 // Domain Reports //
 
-function domain_reports($domain, $pdo, $dateRange = DATE_RANGE) {
-	echo "<h2>Domain Details for $domain - Since ".start_date($dateRange)."</h2>\n";
+function domain_reports($domain, $pdo, $dateRange = DATE_RANGE, $disp = 'none') {
+	echo "<h2>";
+	if ($disp == 'quarantine') { echo "Quarantined "; }
+	if ($disp == 'reject') { echo "Rejected "; }
+	echo "Domain Details for $domain - Since ".start_date($dateRange)."</h2>\n";
 
 	// pull serial numbers of reports within date range and with specific domain
-	$rdata = domain_data($pdo, $dateRange, $domain);
-	$counts = dmarc_data($pdo, $rdata, $domain);	
+	$rdata = domain_data($pdo, $dateRange, $domain, $disp);
+	$counts = dmarc_data($pdo, $rdata, $domain, $disp);	
 
 	domain_reports_dkim_table_start();
 
 	foreach ($counts as $data) {
 		echo "\t<tr class='dash_row'>\n";
-		echo "\t\t<td><a href='domain.php?domain=".$data->hfrom."'>".$data->hfrom."</a></td>\n";
-		echo "\t\t<td>".$data->rcount."</td>\n";
+		echo "\t\t<td>$data->hfrom</td>\n";
+		echo "\t\t<td>$data->rcount</td>\n";
 
 		$alignDKIM  = number_format(100 * ($data->alignDKIM  / $data->numReport));
 		$alignSPF   = number_format(100 * ($data->alignSPF   / $data->numReport));
@@ -144,7 +150,7 @@ function domain_reports($domain, $pdo, $dateRange = DATE_RANGE) {
 		$SPFpass    = number_format(100 * ($data->resultSPF  / $data->numReport));
 		$compliance = number_format(100 * ($data->compliance / $data->numReport));
 
-		echo "\t\t<td>".$data->policyPct."% ".$data->policy."</td>\n";
+		echo "\t\t<td>$data->policyPct% $data->policy</td>\n";
 
 		echo "\t\t<td>\n";
 		echo "\t\t\t<div class='perc-text'><span>$compliance% Compliant</span></div>\n";
@@ -191,27 +197,34 @@ function domain_reports($domain, $pdo, $dateRange = DATE_RANGE) {
 	// now let's just list out all the details
 	reports_table_start();
 
+	$serials = [];
+	$reports = [];
 	foreach ($rdata as $data) {
-		$params = array(':serial' => $data['serial'], ':domain' => $domain);
-		$query = $pdo->prepare("SELECT * FROM `rptrecord` WHERE `serial` = :serial AND `identifier_hfrom` = :domain");
-		$query->execute($params);
-		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-			debug ("printing row");
-			echo "\t<tr>\n";
-			echo "\t\t<td><a href='report.php?serial=".$data['serial']."'>".$data['reportid']."</a></td>\n";
-			echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
-			echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
-			echo "\t\t<td>".$row['rcount']."</td>\n";
-			echo "\t\t<td>".$row['disposition']."</td>\n";
-			echo "\t\t<td>".$row['reason']."</td>\n";
-			echo "\t\t<td>".$row['dkimdomain']."</td>\n";
-			echo "\t\t<td>Result: ".$row['dkimresult']." | Alignment: ".$row['dkim_align']."</td>\n";
-			echo "\t\t<td>".$row['spfdomain']."</td>\n";
-			echo "\t\t<td>Result: ".$row['spfresult']." | Alignment: ".$row['spf_align']."</td>\n";
-			echo "\t</tr>\n";
-		} 
-		$query = null;
+		array_push($serials, $data['serial']);
+		$reports[$data['serial']] = $data['reportid'];
 	}
+
+	$params = array(':domain' => $domain, ':disp' => $disp);
+	$query = $pdo->prepare("SELECT * FROM `rptrecord` WHERE `serial` IN ('".implode("', '",$serials)."') AND `identifier_hfrom` = :domain AND `disposition` = :disp");
+	$query->execute($params);
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+		debug ("printing row");
+		echo "\t<tr>\n";
+		echo "\t\t<td><a href='report.php?serial=".$row['serial']."'>".$reports[$row['serial']]."</a></td>\n";
+		echo "\t\t<td><a href='host.php?ip=".long2ip($row['ip']);
+		if (date_range($dateRange) != DATE_RANGE) { echo "&range=$dateRange"; }
+		echo "'>".long2ip($row['ip'])."</a></td>\n";
+		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
+		echo "\t\t<td>".$row['rcount']."</td>\n";
+		echo "\t\t<td>".$row['disposition']."</td>\n";
+		echo "\t\t<td>".$row['reason']."</td>\n";
+		echo "\t\t<td>".$row['dkimdomain']."</td>\n";
+		echo "\t\t<td>Result: ".$row['dkimresult']." | Alignment: ".$row['dkim_align']."</td>\n";
+		echo "\t\t<td>".$row['spfdomain']."</td>\n";
+		echo "\t\t<td>Result: ".$row['spfresult']." | Alignment: ".$row['spf_align']."</td>\n";
+		echo "\t</tr>\n";
+	} 
+	$query = null;
 	echo "</table>\n";
 
 }
@@ -244,7 +257,7 @@ function single_report($serial, $pdo) {
 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
 		echo "\t<tr>\n";
-		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
+		echo "\t\t<td><a href='host.php?ip=".long2ip($row['ip'])."'>".long2ip($row['ip'])."</a></td>\n";
 		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
 		echo "\t\t<td>".$row['rcount']."</td>\n";
 		echo "\t\t<td>".$row['disposition']."</td>\n";
@@ -260,21 +273,58 @@ function single_report($serial, $pdo) {
 	$query = null;
 }
 
+// Senders (Host) Report Table //
+
+function senders_report($pdo, $dateRange = DATE_RANGE, $domain = null, $ip = null, $disp = 'none') {
+	$ip = ip2long($ip);
+	$rdata = report_data($pdo, $dateRange);
+
+	senders_report_table_start();
+
+	$serials = [];
+	foreach ($rdata as $data) {
+		array_push($serials, $data['serial']);
+	}
+
+	$params = array(':ip' => '%%', ':domain' => '%%', ':disp' => $disp);
+	if (isset($ip)) { $params[':ip'] = "%$ip%"; }
+	if (isset($domain)) { $params[':domain'] = "%$domain%"; }
+	$query = $pdo->prepare("SELECT DISTINCT `ip`,`identifier_hfrom` FROM `rptrecord` WHERE `ip` IS NOT NULL AND `ip` LIKE :ip AND `identifier_hfrom` LIKE :domain AND `serial` IN ('".implode("', '",$serials)."') AND `disposition` = :disp ORDER BY `ip`");
+	$query->execute($params);
+
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+		echo "\t<tr>\n";
+		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
+		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
+		echo "\t\t<td>".$row['identifier_hfrom']."</td>\n";
+		echo "\t</tr>\n";
+	}
+
+	echo "</table>\n";
+}
+
 // Dashboard //
 
-function dashboard($pdo, $dateRange = DATE_RANGE) {
-	echo "<h2>Dashboard</h2>\n";
+function dashboard($pdo, $dateRange = DATE_RANGE, $disp = 'none') {
+	echo "<h2>Dashboard";
+	if ($disp == 'quarantine') { echo " - Quarantined"; }
+	if ($disp == 'reject') { echo " - Rejected"; }
+	echo "</h2>\n";
 
 	dashboard_dmarc_table_start(start_date($dateRange));
 
 	// Now we calculate the volume of mail, the DMARC compliance, and the verification percentages
 	// and each organization and number of reports... and print it out into a table
 
-	$rdata = dmarc_data($pdo, report_data($pdo,$dateRange));	
+	$rdata = dmarc_data($pdo, report_data($pdo,$dateRange), null, $disp);	
 
 	foreach ($rdata as $data) {
 		echo "\t<tr class='dash_row'>\n";
-		echo "\t\t<td><a href='domain.php?domain=".$data->hfrom."'>".$data->hfrom."</a></td>\n";
+		echo "\t\t<td><a href='domain.php?domain=".$data->hfrom;
+		// optionals
+		if ($disp == 'quarantine' || $disp == 'reject') { echo "&disp=$disp"; }
+		if (date_range($dateRange) != DATE_RANGE) { echo "&range=$dateRange"; }
+		echo "'>".$data->hfrom."</a></td>\n";
 		echo "\t\t<td>".$data->rcount."</td>\n";
 
 		$alignDKIM  = number_format(100 * ($data->alignDKIM  / $data->numReport));

@@ -1,10 +1,16 @@
 # Open DMARC Analyzer
 
-This is Open DMARC Analyzer version 0 alpha-3 (0-α3) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
+This is Open DMARC Analyzer version 0 alpha-4 (0-α4) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 5.4+ and MySQL 15.1+.
 
 # Changelog
+
+## 0-α4
+- Added a control to change the start of the display period in 1 week steps.
+- Added disposition control to display a single disposition only.
+- Added a sender report to show senders for a single domain or what domains a single sender sent as.
+- Some code cleanup.
 
 ## 0-α3
 
