@@ -41,6 +41,8 @@ function report_data($pdo, $dateRange = DATE_RANGE, $serial = NULL) {
 	}
 	$query->execute($params);
 	$rows = [];
+
+	// push it into an array that we'll give back
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) { array_push($rows, $row); }
 	$query = null;
 	return $rows;
@@ -72,21 +74,25 @@ function domain_data($pdo, $dateRange = DATE_RANGE, $domain, $disp = 'none') {
 function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 
 	$counts = [];
-	// using said serial numbers, pull all rpt record data
-	// run through each row, and count total emails, the alignment counts, and results
-
 	$serials = [];
+
+	// extract the serial numbers from the array given and push into an array of just serial numbers
 	foreach ($rdata as $data) {
 		array_push($serials, $data['serial']);
 	}
 
+	// parameters are different based on if the domain is set
 	if (isset($domain)) {
 		$params = array(':domain' => "$domain", ':disp' => $disp);
 	} else {
 		$params = array(':domain' => "%", ':disp' => $disp);
 	}
+
+	// find all records with serials in the array of serials
 	$query = $pdo->prepare("SELECT * from `rptrecord` WHERE `serial` IN ('".implode("', '",$serials)."') AND `identifier_hfrom` LIKE :domain AND disposition = :disp ORDER BY `identifier_hfrom`");
 	$query->execute($params);
+
+	// run through each returned row and create some counts
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
 		$id = strtolower($row['identifier_hfrom']);
 
@@ -115,7 +121,8 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 		if (($row['dkimresult'] == 'pass' && $row['dkim_align'] == 'pass') || ($row['spfresult'] == 'pass' && $row['spf_align'] == 'pass')) {
 			$counts[$id]->compliance++;
 		}
-			
+
+		// still don't know if this is useful to me yet coming from this function			
 		if (empty($counts[$id]->reports[$data['org']])) { $counts[$id]->reports[$data['org']] = 0; }
 		$counts[$id]->reports[$data['org']]++;
 	}
@@ -188,7 +195,9 @@ function domain_reports($domain, $pdo, $dateRange = DATE_RANGE, $disp = 'none') 
 	foreach ($rdata as $data) {
 		echo "\t<tr>\n";
 		echo "\t\t<td>".$data['mindate']." - ".$data['maxdate']."</td>\n";
-		echo "\t\t<td>".$data['org']."</td>\n";
+		echo "\t\t<td><a href='org.php?org=".$data['org']."&domain=$domain";
+		if (date_range($dateRange) != DATE_RANGE) { echo "&range=$dateRange"; }
+		echo "'>".$data['org']."</a></td>\n";
 		echo "\t\t<td><a href='report.php?serial=".$data['serial']."'>".$data['reportid']."</a></td>\n";
 		echo "\t<tr>\n";
 	}
@@ -219,9 +228,9 @@ function domain_reports($domain, $pdo, $dateRange = DATE_RANGE, $disp = 'none') 
 		echo "\t\t<td>".$row['disposition']."</td>\n";
 		echo "\t\t<td>".$row['reason']."</td>\n";
 		echo "\t\t<td>".$row['dkimdomain']."</td>\n";
-		echo "\t\t<td>Result: ".$row['dkimresult']." | Alignment: ".$row['dkim_align']."</td>\n";
+		echo "\t\t<td>Result: <span class='".$row['dkimresult']."'>".$row['dkimresult']."</span> | Alignment: <span class='".$row['dkim_align']."'>".$row['dkim_align']."</span></td>\n";
 		echo "\t\t<td>".$row['spfdomain']."</td>\n";
-		echo "\t\t<td>Result: ".$row['spfresult']." | Alignment: ".$row['spf_align']."</td>\n";
+		echo "\t\t<td>Result: <span class='".$row['spfresult']."'>".$row['spfresult']."</span> | Alignment: <span class='".$row['spf_align']."'>".$row['spf_align']."</span></td>\n";
 		echo "\t</tr>\n";
 	} 
 	$query = null;
@@ -263,9 +272,9 @@ function single_report($serial, $pdo) {
 		echo "\t\t<td>".$row['disposition']."</td>\n";
 		echo "\t\t<td>".$row['reason']."</td>\n";
 		echo "\t\t<td>".$row['dkimdomain']."</td>\n";
-		echo "\t\t<td>Result: ".$row['dkimresult']." | Alignment: ".$row['dkim_align']."</td>\n";
+		echo "\t\t<td>Result: <span class='".$row['dkimresult']."'>".$row['dkimresult']."</span> | Alignment: <span class='".$row['dkim_align']."'>".$row['dkim_align']."</span></td>\n";
 		echo "\t\t<td>".$row['spfdomain']."</td>\n";
-		echo "\t\t<td>Result: ".$row['spfresult']." | Alignment: ".$row['spf_align']."</td>\n";
+		echo "\t\t<td>Result: <span class='".$row['dkimresult']."'>".$row['spfresult']."</span> | Alignment: <span class='".$row['spf_align']."'>".$row['spf_align']."</span></td>\n";
 		echo "\t</tr>\n";
 	}
 
@@ -273,9 +282,36 @@ function single_report($serial, $pdo) {
 	$query = null;
 }
 
+// Senders (Host) Report GeoIP info //
+function senders_report_info($ip = null) {
+	// if no IP is given, don't bother with anything
+	if (!isset($ip)) { return; }
+	// if GeoIP2 is disabled, don't bother with anything
+	elseif(!GEO_ENABLE) { return; }
+	// otherwise, let's get started with this
+	else {
+		echo "<h2>GeoIP Info for $ip</h2>\n";
+
+		require_once(GEO_LOADER); 
+
+		$reader = new MaxMind\Db\Reader(GEO_DB);
+
+		$data = $reader->get($ip);
+
+		echo "City: ".$data['city']['names']['en']."<br>\n";
+		echo "Region: ".$data['subdivisions']['0']['names']['en']."<br>\n";
+		echo "Country: ".$data['country']['names']['en']."<br>\n";
+		echo "Location: ".$data['location']['latitude'].",".$data['location']['longitude']."<br>\n";
+		echo "Hostname: ".gethostbyaddr($ip)."</td>\n";
+		debug(str_replace(array('&lt;?php&nbsp;','?&gt;'), '', highlight_string( '<?php ' .     var_export($data, true) . ' ?>', true ) ));
+
+		$reader->close();
+	}
+}
+
 // Senders (Host) Report Table //
 
-function senders_report($pdo, $dateRange = DATE_RANGE, $domain = null, $ip = null, $disp = 'none') {
+function senders_report_table($pdo, $dateRange = DATE_RANGE, $domain = null, $ip = null) {
 	$ip = ip2long($ip);
 	$rdata = report_data($pdo, $dateRange);
 
@@ -286,10 +322,10 @@ function senders_report($pdo, $dateRange = DATE_RANGE, $domain = null, $ip = nul
 		array_push($serials, $data['serial']);
 	}
 
-	$params = array(':ip' => '%%', ':domain' => '%%', ':disp' => $disp);
+	$params = array(':ip' => '%%', ':domain' => '%%');
 	if (isset($ip)) { $params[':ip'] = "%$ip%"; }
 	if (isset($domain)) { $params[':domain'] = "%$domain%"; }
-	$query = $pdo->prepare("SELECT DISTINCT `ip`,`identifier_hfrom` FROM `rptrecord` WHERE `ip` IS NOT NULL AND `ip` LIKE :ip AND `identifier_hfrom` LIKE :domain AND `serial` IN ('".implode("', '",$serials)."') AND `disposition` = :disp ORDER BY `ip`");
+	$query = $pdo->prepare("SELECT DISTINCT `ip`,`identifier_hfrom` FROM `rptrecord` WHERE `ip` IS NOT NULL AND `ip` LIKE :ip AND `identifier_hfrom` LIKE :domain AND `serial` IN ('".implode("', '",$serials)."') ORDER BY `ip`");
 	$query->execute($params);
 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -301,6 +337,37 @@ function senders_report($pdo, $dateRange = DATE_RANGE, $domain = null, $ip = nul
 	}
 
 	echo "</table>\n";
+	$query = null;
+}
+
+// ORG Report Table //
+
+function org_report($pdo, $dateRange = DATE_RANGE, $org = null, $domain = null) {
+	// This function will only work if the org is given
+	if (!isset($org)) { die("critical error: must have org defined"); }
+
+	if (isset($domain)) { $domainTxt = $domain; }
+	else { $domainTxt = "All Domains"; }
+
+	org_report_table_start($org, $domainTxt, start_date($dateRange));
+
+	if (isset($domain)) { $params = array(':org' => $org, ':domain' => $domain, ':startDate' => start_date($dateRange)); }
+	else { $params = array(':org' => $org, ':domain' => '%%', ':startDate' => start_date($dateRange)); }
+
+	$query = $pdo->prepare("SELECT * FROM `report` WHERE `org` = :org AND `domain` LIKE :domain AND `mindate` BETWEEN :startDate AND NOW() ORDER BY `serial`");
+	$query->execute($params);
+
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+		echo "\t<tr>\n";
+		echo "\t\t<td><a href='report.php?serial=".$row['serial']."'>".$row['reportid']."</a></td>\n";
+		echo "\t\t<td>".$row['domain']."</td>\n";
+		echo "\t\t<td>".$row['email']."</td>\n";
+		echo "\t\t<td>".$row['extra_contact_info']."</td>\n";
+		echo "\t</tr>\n";
+	}
+
+	echo "</table>\n";
+	$query = null;
 }
 
 // Dashboard //
