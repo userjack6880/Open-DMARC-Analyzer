@@ -38,7 +38,8 @@ page_header();
 </script>
 
 <?php
-// Dashboard
+
+// Single Report
 if (!empty($_GET['serial'])) { single_report($_GET['serial'], $pdo); }
 else { echo "<h2>Sorry, Need a Report Serial</h2>\n"; }
 

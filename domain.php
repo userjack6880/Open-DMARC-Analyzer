@@ -52,7 +52,8 @@ page_header();
 </script>
 
 <?php
-// Dashboard
+
+// Domain Report Table
 if (!empty($_GET['domain'])) { domain_reports($_GET['domain'], $pdo, $dateRange, $disp); }
 else { echo "<h2>Sorry, Need a Domain</h2>\n"; }
 

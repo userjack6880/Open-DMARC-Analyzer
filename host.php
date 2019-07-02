@@ -40,14 +40,17 @@ page_header();
 
 <script>
 	var TSort_Data = new Array('senders_report','s','s','s');
-	var TSort_Cookie = 'domain_reports';
+	var TSort_Cookie = 'senders_reports';
 	tsRegister();
 
 </script>
 
 <?php
-// Dashboard
-senders_report($pdo, $dateRange, $_GET['domain'], $_GET['ip']);
+// GeoIP Info
+senders_report_info($_GET['ip']);
+
+// Report Table
+senders_report_table($pdo, $dateRange, $_GET['domain'], $_GET['ip']);
 
 // Footer
 

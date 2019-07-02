@@ -23,7 +23,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Versioning
 function oda_version() {
-	echo "0-&alpha;4";
+	echo "0-&alpha;5";
 }
 
 // General Page Templates
@@ -39,7 +39,7 @@ function control_bar() {
 	
 	$basename = basename($_SERVER['PHP_SELF'],".php");
 
-	if ($basename == 'index' || $basename == 'domain') { echo "<div id=controlbar>\n"; }
+	if ($basename == 'index' || $basename == 'domain' || $basename == 'org') { echo "<div id=controlbar>\n"; }
 	else { return; } // we don't need to actually perform any of this logic if we don't need to
 
 	// Range Control
@@ -58,7 +58,11 @@ function control_bar() {
 
 		$rangeOption = "&range=".$_GET['range'];
 	} else {
-		$earlierStartURL = $_SERVER['PHP_SELF']."?range=1w";
+		preg_match('/\-(\d+)\s(\w+)/', DATE_RANGE, $defRange);
+
+		$date = ($defRange[1]+1)."w";
+
+		$earlierStartURL = $_SERVER['PHP_SELF']."?range=$date";
 		$laterStartURL = $_SERVER['PHP_SELF'];
 
 		$rangeOption = '';
@@ -72,22 +76,26 @@ function control_bar() {
 	if (isset($_GET['domain'])) { $domainOption = "&domain=".$_GET['domain']; }
 	else { $domainOption = ''; }
 
+	// Org Options
+	if (isset($_GET['org'])) { $orgOption = "&org=".$_GET['org']; }
+	else { $orgOption = ''; }
+
 	// URL Generate
-	$earlierStartURL = $earlierStartURL.$dispOption.$domainOption;
-	$laterStartURL = $laterStartURL.$dispOption.$domainOption;
+	$earlierStartURL = $earlierStartURL.$dispOption.$domainOption.$orgOption;
+	$laterStartURL = $laterStartURL.$dispOption.$domainOption.$orgOption;
 
 	$dispNoneURL   = $basename.".php?disp=none".$rangeOption.$domainOption;
 	$dispQuarURL   = $basename.".php?disp=quarantine".$rangeOption.$domainOption;
 	$dispRejectURL = $basename.".php?disp=reject".$rangeOption.$domainOption;
 
-	if ($basename == 'index' || $basename = 'domain') {
+	if ($basename == 'index' || $basename == 'domain' || $basename == 'org') {
 		echo "\t&#91; Range Start: <a href='$earlierStartURL'>&larr; 1 Week</a> | <a href='$laterStartURL'>1 Week &rarr;</a> &#93;</br>\n"; 
 	}
-	if ($basename == 'index' || $basename = 'domain') {
+	if ($basename == 'index' || $basename == 'domain') {
 		echo "\t&#91; Disposition: <a href='$dispNoneURL'>none</a> | <a href='$dispQuarURL'>quarantine</a> | <a href='$dispRejectURL'>reject</a> &#93;</br>\n";
 	}
 
-	if ($basename == 'index' || $basename = 'domain') {	echo "</div>\n"; }
+	if ($basename == 'index' || $basename == 'domain' || $basename == 'org') {	echo "</div>\n"; }
 }
 
 // Dashboard Templates
@@ -126,7 +134,7 @@ function domain_reports_dkim_table_start() {
 
 // Domain Reports Table
 function domain_reports_table_start() {
-	echo "<h3><a id='reports'></a>Reports</h2>\n";
+	echo "<h3><a id='reports'></a>Reports</h3>\n";
 
 	echo "<table id='domain_reports' class='centered'>\n";
 	echo "\t<thead>\n";
@@ -140,7 +148,7 @@ function domain_reports_table_start() {
 
 // Individual Reports Table
 function reports_table_start() {
-	echo "<h3><a id='report_detail'></a>Report Details</h2>\n";
+	echo "<h3><a id='report_detail'></a>Report Details</h3>\n";
 
 	echo "<table id='dmarc_reports' class='centered'>\n";
 	echo "\t<thead>\n";
@@ -161,7 +169,7 @@ function reports_table_start() {
 
 // Single Individual Reports Table
 function single_report_table_start() {
-	echo "<h3><a id='report_detail'></a>Report Details</h2>\n";
+	echo "<h3><a id='report_detail'></a>Report Details</h3>\n";
 
 	echo "<table id='dmarc_reports' class='centered'>\n";
 	echo "\t<thead>\n";
@@ -181,7 +189,7 @@ function single_report_table_start() {
 
 // Senders Report Table
 function senders_report_table_start() {
-	echo "<h3><a id='senders'></a>Sender's Report</h2>\n";
+	echo "<h3><a id='senders'></a>Sender's Report</h3>\n";
 
 	echo "<table id='senders_report' class='centered'>\n";
 	echo "\t<thead>\n";
@@ -189,7 +197,21 @@ function senders_report_table_start() {
 	echo "\t\t<th>Sender IP</th>\n";
 	echo "\t\t<th>Sender Domain</th>\n";
 	echo "\t\t<th>Sent As</th>\n";
-	echo "\t</td>\n";
+	echo "\t</tr>\n";
+	echo "\t</thead>\n";
+}
+
+function org_report_table_start($org, $domain, $dateRange) {
+	echo "<h3><a id='orgs'></a>Org Reports from $org for $domain - Since $dateRange</h3>\n";
+
+	echo "<table id='orgs_report' class='centered'>\n";
+	echo "\t<thead>\n";
+	echo "\t<tr>\n";
+	echo "\t\t<th>Report ID</th>\n";
+	echo "\t\t<th>Domain</th>\n";
+	echo "\t\t<th>Reporter Email</th>\n";
+	echo "\t\t<th>Extra Contact</th>\n";
+	echo "\t</tr>\n";
 	echo "\t</thead>\n";
 }
 ?>

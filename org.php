@@ -1,10 +1,10 @@
 <?php
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
-config.php
+org.php
 2019 - John Bradley (userjack6880)
 
-Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+Available at: https://github.com/userjack6880/Open DMARC Analyzer
 
 This file is part of Open DMARC Analyzer.
 
@@ -21,29 +21,41 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// MySQL Settings
+// Includes
+include_once 'includes.php';
 
-define('DB_HOST', 'localhost');
-define('DB_USER', 'dmarc');
-define('DB_PASS', '');
-define('DB_NAME', 'dmarc');
-define('DB_PORT', '3306'); // default port 3306
+// Get Date Stuff
+$pdo = dbConn();
+if (!empty($_GET['range'])) { 
+	debug("Using GET date value: ".$_GET['range']);
+	$dateRange = $_GET['range']; 
+} else { 
+	debug("Using default date value: ".DATE_RANGE);
+	$dateRange = DATE_RANGE; 
+}
 
-// Debug Settings
+page_header();
 
-define('DEBUG', 1);		// 0 - disable, 1 - CLI only, 2 - CLI and web
+?>
 
-// Template Settings
+<script>
+	var TSort_Data = new Array('orgs_report','s','s','s','s');
+	var TSort_Cookie = 'orgs_reports';
+	tsRegister();
 
-define('TEMPLATE', 'openda');
+</script>
 
-// GeoIP2 Settings
-define('GEO_ENABLE', 0);	// 0 - disable GeoIP2, 1 - enable GeoIP2
-define('GEO_LOADER', '');	// autoloader for GeoIP2 library
-define('GEO_DB', '');			// location of GeoIP2 database
+<?php
 
-// Defaults
+// Org Reports Table
+org_report($pdo, $dateRange, $_GET['org'], $_GET['domain']);
 
-define('DATE_RANGE', '-1 week');
+// Footer
+
+page_footer();
+
+$pdo = null;
+
+debug("\o/");
 
 ?>
