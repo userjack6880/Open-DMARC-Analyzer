@@ -22,6 +22,7 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 
 - Sort index by DMARC policy added.
 - Link to domain page from senders page.
+- Fixed policy listed on index.
 
 See `CHANGELOG.md` for full details of all changes.
 

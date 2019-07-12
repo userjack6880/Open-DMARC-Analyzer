@@ -3,6 +3,7 @@
 ## 0-α6
 - Sort index by DMARC policy added.
 - Link to domain page from senders page.
+- Fixed policy listed on index.
 
 ## 0-α5
 - Fixed behavior of the control that changes the start of the display period to take in account the default date range configured in `config.php`.
