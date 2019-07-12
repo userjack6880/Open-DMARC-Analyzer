@@ -111,7 +111,7 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 			$counts[$id]->alignSPF   = 0;
 			$counts[$id]->compliance = 0;
 			$counts[$id]->policy     = $policy[$row['serial'].'_p'];
-			$counts[$id]->policyPct  = $policy[$row['serial']'_pct'];
+			$counts[$id]->policyPct  = $policy[$row['serial'].'_pct'];
 			$counts[$id]->reports    = [];
 		}
 		$counts[$id]->numReport++;
