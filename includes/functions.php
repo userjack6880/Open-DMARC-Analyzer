@@ -81,6 +81,8 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 		array_push($serials, $data['serial']);
 	}
 
+	$policy = end($rdata); // move internal point to end of array to get policy data
+
 	// parameters are different based on if the domain is set
 	if (isset($domain)) {
 		$params = array(':domain' => "$domain", ':disp' => $disp);
@@ -106,8 +108,8 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 			$counts[$id]->alignDKIM  = 0;
 			$counts[$id]->alignSPF   = 0;
 			$counts[$id]->compliance = 0;
-			$counts[$id]->policy     = $data['policy_p'];
-			$counts[$id]->policyPct  = $data['policy_pct'];
+			$counts[$id]->policy     = $policy['policy_p'];
+			$counts[$id]->policyPct  = $policy['policy_pct'];
 			$counts[$id]->reports    = [];
 		}
 		$counts[$id]->numReport++;
