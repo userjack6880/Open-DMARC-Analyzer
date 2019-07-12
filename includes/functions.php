@@ -81,7 +81,7 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 		array_push($serials, $data['serial']);
 	}
 
-	$policy = end($rdata); // move internal point to end of array to get policy data
+	$policy = reset($rdata); // move internal point to end of array to get policy data
 
 	// parameters are different based on if the domain is set
 	if (isset($domain)) {
