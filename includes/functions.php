@@ -113,11 +113,16 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 			$counts[$id]->policy     = $policy[$row['serial'].'_p'];
 			$counts[$id]->policyPct  = $policy[$row['serial'].'_pct'];
 			$counts[$id]->reports    = [];
+			$counts[$id]->lastSerial = $row['serial'];
 		}
 		$counts[$id]->numReport++;
-		$counts[$id]->rcount   += $row['rcount'];
-		$counts[$id]->policy    = $policy[$row['serial'].'_p'];
-		$counts[$id]->policyPct = $policy[$row['serial'].'_pct'];
+		$counts[$id]->rcount += $row['rcount'];
+		// check if current serial is bigger than what is stored
+		if ($row['serial'] > $counts[$id]->lastSerial) {
+			$counts[$id]->policy     = $policy[$row['serial'].'_p'];
+			$counts[$id]->policyPct  = $policy[$row['serial'].'_pct'];
+			$counts[$id]->lastSerial = $row['serial'];
+		}
 		if ($row['dkimresult'] == 'pass')   { $counts[$id]->resultDKIM++; }
 		if ($row['spfresult']  == 'pass')   { $counts[$id]->resultSPF++;  }
 		if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
