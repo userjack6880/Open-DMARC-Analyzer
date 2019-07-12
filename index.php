@@ -42,7 +42,7 @@ page_header();
 ?>
 
 <script>
-	var TSort_Data = new Array('compliance_table','s','i','','i','i','i');
+	var TSort_Data = new Array('compliance_table','s','i','s','i','i','i');
 	var TSort_Cookie = 'compliance_table';
 	var TSort_NColumns = 1;
 	tsRegister();

@@ -332,7 +332,7 @@ function senders_report_table($pdo, $dateRange = DATE_RANGE, $domain = null, $ip
 		echo "\t<tr>\n";
 		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
 		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
-		echo "\t\t<td>".$row['identifier_hfrom']."</td>\n";
+		echo "\t\t<td><a href='domain.php?domain=".$row['identifier_hfrom']."'>".$row['identifier_hfrom']."</a></td>\n";
 		echo "\t</tr>\n";
 	}
 
