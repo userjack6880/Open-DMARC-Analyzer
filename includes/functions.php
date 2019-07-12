@@ -75,13 +75,15 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 
 	$counts = [];
 	$serials = [];
+	$policy = [];
 
 	// extract the serial numbers from the array given and push into an array of just serial numbers
+	// additionally, pair serial numbers with their policies
 	foreach ($rdata as $data) {
 		array_push($serials, $data['serial']);
+		$policy[$data['serial'].'_p'] = $data['policy_p'];
+		$policy[$data['serial'].'_pct'] = $data['policy_pct'];
 	}
-
-	$policy = reset($rdata); // move internal point to end of array to get policy data
 
 	// parameters are different based on if the domain is set
 	if (isset($domain)) {
@@ -108,12 +110,14 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 			$counts[$id]->alignDKIM  = 0;
 			$counts[$id]->alignSPF   = 0;
 			$counts[$id]->compliance = 0;
-			$counts[$id]->policy     = $policy['policy_p'];
-			$counts[$id]->policyPct  = $policy['policy_pct'];
+			$counts[$id]->policy     = $policy[$row['serial'].'_p'];
+			$counts[$id]->policyPct  = $policy[$row['serial']'_pct'];
 			$counts[$id]->reports    = [];
 		}
 		$counts[$id]->numReport++;
-		$counts[$id]->rcount += $row['rcount'];
+		$counts[$id]->rcount   += $row['rcount'];
+		$counts[$id]->policy    = $policy[$row['serial'].'_p'];
+		$counts[$id]->policyPct = $policy[$row['serial'].'_pct'];
 		if ($row['dkimresult'] == 'pass')   { $counts[$id]->resultDKIM++; }
 		if ($row['spfresult']  == 'pass')   { $counts[$id]->resultSPF++;  }
 		if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
