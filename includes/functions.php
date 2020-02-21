@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 includes/functions.php
-2019 - John Bradley (userjack6880)
+2020 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -298,23 +298,37 @@ function senders_report_info($ip = null) {
 	// if no IP is given, don't bother with anything
 	if (!isset($ip)) { return; }
 	// if GeoIP2 is disabled, don't bother with anything
-	elseif(!GEO_ENABLE) { return; }
+	elseif(!GEO_ENABLE) { 
+		echo "<h2>WHOIS Info for $ip</h2>\n";
+
+		require_once(AUTO_LOADER);
+
+		$whois = new phpWhois\Whois();
+		$result = $whois->lookup($ip,false);
+
+		echo "Organization: ".$result['regrinfo']['owner']['organization']."<br>\n";
+		echo "Hostname: ".gethostbyaddr($ip)."</td>\n";
+
+	}
 	// otherwise, let's get started with this
 	else {
 		echo "<h2>GeoIP Info for $ip</h2>\n";
 
-		require_once(GEO_LOADER); 
+		require_once(AUTO_LOADER); 
 
 		$reader = new MaxMind\Db\Reader(GEO_DB);
 
 		$data = $reader->get($ip);
 
+		$whois = new phpWhois\Whois();
+		$result = $whois->lookup($ip,false);
+
+		echo "Organization: ".$result['regrinfo']['owner']['organization']."<br>\n";
 		echo "City: ".$data['city']['names']['en']."<br>\n";
 		echo "Region: ".$data['subdivisions']['0']['names']['en']."<br>\n";
 		echo "Country: ".$data['country']['names']['en']."<br>\n";
 		echo "Location: ".$data['location']['latitude'].",".$data['location']['longitude']."<br>\n";
 		echo "Hostname: ".gethostbyaddr($ip)."</td>\n";
-		debug(str_replace(array('&lt;?php&nbsp;','?&gt;'), '', highlight_string( '<?php ' .     var_export($data, true) . ' ?>', true ) ));
 
 		$reader->close();
 	}
