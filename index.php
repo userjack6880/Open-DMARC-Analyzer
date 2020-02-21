@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 index.php
-2019 - John Bradley (userjack6880)
+2020 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open DMARC Analyzer
 
@@ -42,7 +42,7 @@ page_header();
 ?>
 
 <script>
-	var TSort_Data = new Array('compliance_table','s','i','','i','i','i');
+	var TSort_Data = new Array('compliance_table','s','i','s','i','i','i');
 	var TSort_Cookie = 'compliance_table';
 	var TSort_NColumns = 1;
 	tsRegister();

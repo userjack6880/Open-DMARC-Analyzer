@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 config.php
-2019 - John Bradley (userjack6880)
+2020 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -25,22 +25,24 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'dmarc');
-define('DB_PASS', '');
+define('DB_PASS', 'password');
 define('DB_NAME', 'dmarc');
 define('DB_PORT', '3306'); // default port 3306
 
 // Debug Settings
 
-define('DEBUG', 1);		// 0 - disable, 1 - CLI only, 2 - CLI and web
+define('DEBUG', 1);
 
 // Template Settings
 
 define('TEMPLATE', 'openda');
 
+// Package Loader
+define('AUTO_LOADER', 'vendor/autoload.php');	// autoloader for composer installed libraries
+
 // GeoIP2 Settings
-define('GEO_ENABLE', 0);	// 0 - disable GeoIP2, 1 - enable GeoIP2
-define('GEO_LOADER', '');	// autoloader for GeoIP2 library
-define('GEO_DB', '');			// location of GeoIP2 database
+define('GEO_ENABLE', 1);											// 0 - disable GeoIP2, 1 - enable GeoIP2
+define('GEO_DB', 'includes/geolite2.mmdb');		// location of GeoIP2 database
 
 // Defaults
 

@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 includes/functions.php
-2019 - John Bradley (userjack6880)
+2020 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -75,10 +75,14 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 
 	$counts = [];
 	$serials = [];
+	$policy = [];
 
 	// extract the serial numbers from the array given and push into an array of just serial numbers
+	// additionally, pair serial numbers with their policies
 	foreach ($rdata as $data) {
 		array_push($serials, $data['serial']);
+		$policy[$data['serial'].'_p'] = $data['policy_p'];
+		$policy[$data['serial'].'_pct'] = $data['policy_pct'];
 	}
 
 	// parameters are different based on if the domain is set
@@ -106,12 +110,19 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 			$counts[$id]->alignDKIM  = 0;
 			$counts[$id]->alignSPF   = 0;
 			$counts[$id]->compliance = 0;
-			$counts[$id]->policy     = $data['policy_p'];
-			$counts[$id]->policyPct  = $data['policy_pct'];
+			$counts[$id]->policy     = $policy[$row['serial'].'_p'];
+			$counts[$id]->policyPct  = $policy[$row['serial'].'_pct'];
 			$counts[$id]->reports    = [];
+			$counts[$id]->lastSerial = $row['serial'];
 		}
 		$counts[$id]->numReport++;
 		$counts[$id]->rcount += $row['rcount'];
+		// check if current serial is bigger than what is stored
+		if ($row['serial'] > $counts[$id]->lastSerial) {
+			$counts[$id]->policy     = $policy[$row['serial'].'_p'];
+			$counts[$id]->policyPct  = $policy[$row['serial'].'_pct'];
+			$counts[$id]->lastSerial = $row['serial'];
+		}
 		if ($row['dkimresult'] == 'pass')   { $counts[$id]->resultDKIM++; }
 		if ($row['spfresult']  == 'pass')   { $counts[$id]->resultSPF++;  }
 		if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
@@ -287,23 +298,37 @@ function senders_report_info($ip = null) {
 	// if no IP is given, don't bother with anything
 	if (!isset($ip)) { return; }
 	// if GeoIP2 is disabled, don't bother with anything
-	elseif(!GEO_ENABLE) { return; }
+	elseif(!GEO_ENABLE) { 
+		echo "<h2>WHOIS Info for $ip</h2>\n";
+
+		require_once(AUTO_LOADER);
+
+		$whois = new phpWhois\Whois();
+		$result = $whois->lookup($ip,false);
+
+		echo "Organization: ".$result['regrinfo']['owner']['organization']."<br>\n";
+		echo "Hostname: ".gethostbyaddr($ip)."</td>\n";
+
+	}
 	// otherwise, let's get started with this
 	else {
 		echo "<h2>GeoIP Info for $ip</h2>\n";
 
-		require_once(GEO_LOADER); 
+		require_once(AUTO_LOADER); 
 
 		$reader = new MaxMind\Db\Reader(GEO_DB);
 
 		$data = $reader->get($ip);
 
+		$whois = new phpWhois\Whois();
+		$result = $whois->lookup($ip,false);
+
+		echo "Organization: ".$result['regrinfo']['owner']['organization']."<br>\n";
 		echo "City: ".$data['city']['names']['en']."<br>\n";
 		echo "Region: ".$data['subdivisions']['0']['names']['en']."<br>\n";
 		echo "Country: ".$data['country']['names']['en']."<br>\n";
 		echo "Location: ".$data['location']['latitude'].",".$data['location']['longitude']."<br>\n";
 		echo "Hostname: ".gethostbyaddr($ip)."</td>\n";
-		debug(str_replace(array('&lt;?php&nbsp;','?&gt;'), '', highlight_string( '<?php ' .     var_export($data, true) . ' ?>', true ) ));
 
 		$reader->close();
 	}
@@ -332,7 +357,7 @@ function senders_report_table($pdo, $dateRange = DATE_RANGE, $domain = null, $ip
 		echo "\t<tr>\n";
 		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
 		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
-		echo "\t\t<td>".$row['identifier_hfrom']."</td>\n";
+		echo "\t\t<td><a href='domain.php?domain=".$row['identifier_hfrom']."'>".$row['identifier_hfrom']."</a></td>\n";
 		echo "\t</tr>\n";
 	}
 
