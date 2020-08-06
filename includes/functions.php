@@ -320,10 +320,10 @@ function senders_report_info($ip = null) {
 
 		$data = $reader->get($ip);
 
-		$whois = new phpWhois\Whois();
-		$result = $whois->lookup($ip,false);
+//		$whois = new phpWhois\Whois();
+//		$result = $whois->lookup($ip,false);
 
-		echo "Organization: ".$result['regrinfo']['owner']['organization']."<br>\n";
+//		echo "Organization: ".$result['regrinfo']['owner']['organization']."<br>\n";
 		echo "City: ".$data['city']['names']['en']."<br>\n";
 		echo "Region: ".$data['subdivisions']['0']['names']['en']."<br>\n";
 		echo "Country: ".$data['country']['names']['en']."<br>\n";
