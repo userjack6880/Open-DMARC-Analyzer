@@ -1,6 +1,6 @@
 # Open DMARC Analyzer
 
-This is Open DMARC Analyzer version 0 alpha-6 (0-α6) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
+This is Open DMARC Analyzer version 0 alpha-7 (0-α7) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 5.4+ and MySQL 15.1+.
 
@@ -23,7 +23,7 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 
 # Latest Changes
 
-## 0-α6
+## 0-α7
 
 - Sort index by DMARC policy added.
 - Link to domain page from senders page.
