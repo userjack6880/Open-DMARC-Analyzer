@@ -129,8 +129,6 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 		if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
 		if ($row['spf_align']  == 'pass')   { $counts[$id]->alignSPF++;   }
 
-		echo $counts[$id]->rcount;
-
 		debug($row['serial']." dkimresult: ".$row['dkimresult']." dkim_align: ".$row['dkim_align']." spfresult: ".$row['spfresult']." sfp_align: ".$row['spf_align']." reason: ".$row['reason']);
 		// let's properly count compliance - if results and alignment pass for either SPF or DKIM, it's compliant
 		if (($row['dkimresult'] == 'pass' && $row['dkim_align'] == 'pass') || ($row['spfresult'] == 'pass' && $row['spf_align'] == 'pass') || $row['reason'] == 'forwarded' || $row['reason'] == 'trusted_forwarder') {
