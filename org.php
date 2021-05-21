@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 org.php
-2020 - John Bradley (userjack6880)
+2021 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open DMARC Analyzer
 

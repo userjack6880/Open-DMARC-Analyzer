@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 includes/functions.php
-2020 - John Bradley (userjack6880)
+2021 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -34,7 +34,7 @@ function report_data($pdo, $dateRange = DATE_RANGE, $serial = NULL) {
 	$startDate = start_date($dateRange);
 	if (isset($serial)) {
 		$params = array(':startDate' => $startDate, ':serial' => $serial);
-		$query = $pdo->prepare("SELECT * FROM `report` WHERE `serial` = :serial AND `mindate` BETWEEN :startDate AND NOW() ORDER BY `domain`");
+		$query = $pdo->prepare("SELECT * FROM `report` WHERE FIND_IN_SET(`serial`,:serial) AND `mindate` BETWEEN :startDate AND NOW() ORDER BY `domain`");
 	} else {
 		$params = array(':startDate' => $startDate);
 		$query = $pdo->prepare("SELECT * FROM `report` WHERE `mindate` BETWEEN :startDate AND NOW() ORDER BY `serial`");
@@ -58,17 +58,18 @@ function domain_data($pdo, $dateRange = DATE_RANGE, $domain, $disp = 'none') {
 	$query->execute($params);
 
 	// now that we have the serial numbers, let's get the data for each serial number
-	$rows = [];
+	$serials = '';
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-		$rdata = report_data($pdo, $dateRange, $row['serial']);
-		// this will return an array of rows - we'll need to merge this with the existing blank rows array
-		debug("Merging arrays for ".$row['serial']);
-		$rows = array_merge($rows, $rdata);
+		debug("Adding ".$row['serial']);
+		if ($serials == '') { $serials .= $row['serial']; }
+		else { $serials .= ",".$row['serial']; }
 	}
+	debug ("Serials: $serials");
+	$rdata = report_data($pdo, $dateRange, $serials);
 
 	$query = null;
-	debug("ROWS Array\n".print_r($rows,true));
-	return $rows;
+	debug("ROWS Array\n".print_r($rdata,true));
+	return $rdata;
 }
 
 function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
@@ -128,10 +129,12 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 		if ($row['dkim_align'] == 'pass')   { $counts[$id]->alignDKIM++;  }
 		if ($row['spf_align']  == 'pass')   { $counts[$id]->alignSPF++;   }
 
+		debug($row['serial']." dkimresult: ".$row['dkimresult']." dkim_align: ".$row['dkim_align']." spfresult: ".$row['spfresult']." sfp_align: ".$row['spf_align']." reason: ".$row['reason']);
 		// let's properly count compliance - if results and alignment pass for either SPF or DKIM, it's compliant
-		if (($row['dkimresult'] == 'pass' && $row['dkim_align'] == 'pass') || ($row['spfresult'] == 'pass' && $row['spf_align'] == 'pass')) {
+		if (($row['dkimresult'] == 'pass' && $row['dkim_align'] == 'pass') || ($row['spfresult'] == 'pass' && $row['spf_align'] == 'pass') || $row['reason'] == 'forwarded' || $row['reason'] == 'trusted_forwarder') {
 			$counts[$id]->compliance++;
 		}
+		debug("Compliant: ". $counts[$id]->compliance);
 
 		// still don't know if this is useful to me yet coming from this function			
 		if (empty($counts[$id]->reports[$data['org']])) { $counts[$id]->reports[$data['org']] = 0; }
@@ -320,10 +323,10 @@ function senders_report_info($ip = null) {
 
 		$data = $reader->get($ip);
 
-		$whois = new phpWhois\Whois();
-		$result = $whois->lookup($ip,false);
+//		$whois = new phpWhois\Whois();
+//		$result = $whois->lookup($ip,false);
 
-		echo "Organization: ".$result['regrinfo']['owner']['organization']."<br>\n";
+//		echo "Organization: ".$result['regrinfo']['owner']['organization']."<br>\n";
 		echo "City: ".$data['city']['names']['en']."<br>\n";
 		echo "Region: ".$data['subdivisions']['0']['names']['en']."<br>\n";
 		echo "Country: ".$data['country']['names']['en']."<br>\n";

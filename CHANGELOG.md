@@ -1,5 +1,9 @@
 # Changelog
 
+## 0-α7
+- No longer counts forwarded messages that aren't quarantined or rejected against compliance.
+- Minor PDO query optimisation.
+
 ## 0-α6
 - Sort index by DMARC policy added.
 - Link to domain page from senders page.

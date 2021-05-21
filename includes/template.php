@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 ncludes/template.php
-2020 - John Bradley (userjack6880)
+2021 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -23,7 +23,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Versioning
 function oda_version() {
-	echo "0-&alpha;6";
+	echo "0-&alpha;7";
 }
 
 // General Page Templates
