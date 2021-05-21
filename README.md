@@ -25,10 +25,8 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 
 ## 0-α7
 
-- Sort index by DMARC policy added.
-- Link to domain page from senders page.
-- Fixed policy listed on index.
-- Added Organization Output.
+- No longer counts forwarded messages that aren't quarantined or rejected against compliance.
+- Minor PDO query optimisation.
 
 See `CHANGELOG.md` for full details of all changes.
 
