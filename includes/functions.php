@@ -43,7 +43,10 @@ function report_data($pdo, $dateRange = DATE_RANGE, $serial = NULL) {
 	$rows = [];
 
 	// push it into an array that we'll give back
-	while ($row = $query->fetch(PDO::FETCH_ASSOC)) { array_push($rows, $row); }
+	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $row = array_map('htmlspecialchars', $row);
+        array_push($rows, $row);
+    }
 	$query = null;
 	return $rows;
 }
@@ -60,6 +63,7 @@ function domain_data($pdo, $dateRange = DATE_RANGE, $domain, $disp = 'none') {
 	// now that we have the serial numbers, let's get the data for each serial number
 	$serials = '';
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $row = array_map('htmlspecialchars', $row);
 		debug("Adding ".$row['serial']);
 		if ($serials == '') { $serials .= $row['serial']; }
 		else { $serials .= ",".$row['serial']; }
@@ -99,6 +103,7 @@ function dmarc_data($pdo, $rdata, $domain = NULL, $disp = 'none') {
 
 	// run through each returned row and create some counts
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $row = array_map('htmlspecialchars', $row);
 		$id = strtolower($row['identifier_hfrom']);
 
 		if (empty($counts[$id])) { 
@@ -231,6 +236,7 @@ function domain_reports($domain, $pdo, $dateRange = DATE_RANGE, $disp = 'none') 
 	$query = $pdo->prepare("SELECT * FROM `rptrecord` WHERE `serial` IN ('".implode("', '",$serials)."') AND `identifier_hfrom` = :domain AND `disposition` = :disp");
 	$query->execute($params);
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $row = array_map('htmlspecialchars', $row);
 		debug ("printing row");
 		echo "\t<tr>\n";
 		echo "\t\t<td><a href='report.php?serial=".$row['serial']."'>".$reports[$row['serial']]."</a></td>\n";
@@ -261,6 +267,7 @@ function single_report($serial, $pdo) {
 	$query->execute($params);
 
 	$data = $query->fetch(PDO::FETCH_ASSOC); // this should only return one row
+    $data = array_map('htmlspecialchars', $data);
 
 	echo "<h2>Details for Report ".$data['reportid']."</h2>\n";
 	echo "<p>Date Range: ".$data['mindate']." - ".$data['maxdate']."<br />\n";
@@ -279,6 +286,7 @@ function single_report($serial, $pdo) {
 	$query->execute($params);
 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $row = array_map('htmlspecialchars', $row);
 		echo "\t<tr>\n";
 		echo "\t\t<td><a href='host.php?ip=".long2ip($row['ip'])."'>".long2ip($row['ip'])."</a></td>\n";
 		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
@@ -357,6 +365,7 @@ function senders_report_table($pdo, $dateRange = DATE_RANGE, $domain = null, $ip
 	$query->execute($params);
 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $row = array_map('htmlspecialchars', $row);
 		echo "\t<tr>\n";
 		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
 		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
@@ -386,6 +395,7 @@ function org_report($pdo, $dateRange = DATE_RANGE, $org = null, $domain = null) 
 	$query->execute($params);
 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $row = array_map('htmlspecialchars', $row);
 		echo "\t<tr>\n";
 		echo "\t\t<td><a href='report.php?serial=".$row['serial']."'>".$row['reportid']."</a></td>\n";
 		echo "\t\t<td>".$row['domain']."</td>\n";

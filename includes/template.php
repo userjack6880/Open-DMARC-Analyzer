@@ -30,7 +30,7 @@ function oda_version() {
 function page_title() {
 	debug (basename($_SERVER['PHP_SELF'],".php"));
 	if (basename($_SERVER['PHP_SELF'],".php") == 'index') { echo "Open DMARC Analyzer - Dashboard"; }
-	elseif (basename($_SERVER['PHP_SELF'],".php") == 'domain') { echo "Open DMARC Analyzer - Domain Details for ".$_GET['domain']; }
+	elseif (basename($_SERVER['PHP_SELF'],".php") == 'domain') { echo "Open DMARC Analyzer - Domain Details for ".htmlspecialchars($_GET['domain']); }
 	else { echo "Open DMARC Analyzer"; }
 }
 
@@ -44,7 +44,7 @@ function control_bar() {
 
 	// Range Control
 	if (isset($_GET['range'])) { 
-		$dateRange = $_GET['range']; 
+		$dateRange = htmlspecialchars($_GET['range']);
 
 	  preg_match('/(\d+)(\w+)/', $dateRange, $match);
 
@@ -56,7 +56,7 @@ function control_bar() {
 		$date = ($match[1]+1)."w";
 		$earlierStartURL = $_SERVER['PHP_SELF']."?range=$date";
 
-		$rangeOption = "&range=".$_GET['range'];
+		$rangeOption = "&range=".htmlspecialchars($_GET['range']);
 	} else {
 		preg_match('/\-(\d+)\s(\w+)/', DATE_RANGE, $defRange);
 
@@ -69,15 +69,15 @@ function control_bar() {
 	}
 
 	// Disposition Options
-	if (isset($_GET['disp'])) { $dispOption = "&disp=".$_GET['disp']; }
+	if (isset($_GET['disp'])) { $dispOption = "&disp=".htmlspecialchars($_GET['disp']); }
 	else { $dispOption = ''; }
 
 	// Domain Options
-	if (isset($_GET['domain'])) { $domainOption = "&domain=".$_GET['domain']; }
+	if (isset($_GET['domain'])) { $domainOption = "&domain=".htmlspecialchars($_GET['domain']); }
 	else { $domainOption = ''; }
 
 	// Org Options
-	if (isset($_GET['org'])) { $orgOption = "&org=".$_GET['org']; }
+	if (isset($_GET['org'])) { $orgOption = "&org=".htmlspecialchars($_GET['org']); }
 	else { $orgOption = ''; }
 
 	// URL Generate
