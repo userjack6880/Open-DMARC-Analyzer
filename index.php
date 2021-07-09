@@ -27,14 +27,14 @@ include_once 'includes.php';
 // Get Date Stuff
 $pdo = dbConn();
 if (!empty($_GET['range'])) { 
-	debug("Using GET date value: ".$_GET['range']);
-	$dateRange = $_GET['range']; 
+	debug("Using GET date value: ".htmlspecialchars($_GET['range']));
+	$dateRange = htmlspecialchars($_GET['range']);
 } else { 
 	debug("Using default date value: ".DATE_RANGE);
 	$dateRange = DATE_RANGE; 
 }
 
-if (isset($_GET['disp'])) { $disp = $_GET['disp']; }
+if (isset($_GET['disp'])) { $disp = htmlspecialchars($_GET['disp']); }
 else { $disp = 'none'; }
 
 page_header();
