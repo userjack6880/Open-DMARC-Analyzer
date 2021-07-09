@@ -1,5 +1,10 @@
 # Changelog
 
+## 0-α7.1
+
+- PDO Input Sanitization (thanks Matthäus Wander)
+- Added IPv6 Support (thanks Matthäus Wander)
+
 ## 0-α7
 - No longer counts forwarded messages that aren't quarantined or rejected against compliance.
 - Minor PDO query optimisation.
