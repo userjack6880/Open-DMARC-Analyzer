@@ -27,8 +27,8 @@ include_once 'includes.php';
 // Get Date Stuff
 $pdo = dbConn();
 if (!empty($_GET['range'])) { 
-	debug("Using GET date value: ".htmlspecialchars($_GET['range']));
-	$dateRange = htmlspecialchars($_GET['range']);
+	debug("Using GET date value: ".$_GET['range']);
+	$dateRange = $_GET['range']; 
 } else { 
 	debug("Using default date value: ".DATE_RANGE);
 	$dateRange = DATE_RANGE; 
@@ -48,7 +48,7 @@ page_header();
 <?php
 
 // Org Reports Table
-org_report($pdo, $dateRange, htmlspecialchars($_GET['org']), htmlspecialchars($_GET['domain']));
+org_report($pdo, $dateRange, $_GET['org'], $_GET['domain']);
 
 // Footer
 

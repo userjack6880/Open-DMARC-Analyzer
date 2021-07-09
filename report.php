@@ -40,7 +40,7 @@ page_header();
 <?php
 
 // Single Report
-if (!empty($_GET['serial'])) { single_report(htmlspecialchars($_GET['serial']), $pdo); }
+if (!empty($_GET['serial'])) { single_report($_GET['serial'], $pdo); }
 else { echo "<h2>Sorry, Need a Report Serial</h2>\n"; }
 
 // Footer
