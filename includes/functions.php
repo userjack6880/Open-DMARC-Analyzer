@@ -238,12 +238,13 @@ function domain_reports($domain, $pdo, $dateRange = DATE_RANGE, $disp = 'none') 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
         $row = array_map('htmlspecialchars', $row);
 		debug ("printing row");
+		$ip = get_ip($row['ip'], $row['ip6']);
 		echo "\t<tr>\n";
 		echo "\t\t<td><a href='report.php?serial=".$row['serial']."'>".$reports[$row['serial']]."</a></td>\n";
-		echo "\t\t<td><a href='host.php?ip=".long2ip($row['ip']);
+		echo "\t\t<td><a href='host.php?ip=".$ip;
 		if (date_range($dateRange) != DATE_RANGE) { echo "&range=$dateRange"; }
-		echo "'>".long2ip($row['ip'])."</a></td>\n";
-		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
+		echo "'>".$ip."</a></td>\n";
+		echo "\t\t<td>".gethostbyaddr($ip)."</td>\n";
 		echo "\t\t<td>".$row['rcount']."</td>\n";
 		echo "\t\t<td>".$row['disposition']."</td>\n";
 		echo "\t\t<td>".$row['reason']."</td>\n";
@@ -286,10 +287,11 @@ function single_report($serial, $pdo) {
 	$query->execute($params);
 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-        $row = array_map('htmlspecialchars', $row);
+		$ip = get_ip($row['ip'], $row['ip6']);
+		$row = array_map('htmlspecialchars', $row);
 		echo "\t<tr>\n";
-		echo "\t\t<td><a href='host.php?ip=".long2ip($row['ip'])."'>".long2ip($row['ip'])."</a></td>\n";
-		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
+		echo "\t\t<td><a href='host.php?ip=".$ip."'>".$ip."</a></td>\n";
+		echo "\t\t<td>".gethostbyaddr($ip)."</td>\n";
 		echo "\t\t<td>".$row['rcount']."</td>\n";
 		echo "\t\t<td>".$row['disposition']."</td>\n";
 		echo "\t\t<td>".$row['reason']."</td>\n";
@@ -348,7 +350,12 @@ function senders_report_info($ip = null) {
 // Senders (Host) Report Table //
 
 function senders_report_table($pdo, $dateRange = DATE_RANGE, $domain = null, $ip = null) {
-	$ip = ip2long($ip);
+	$ip4 = ip2long($ip);
+	$is_ip4 = true;
+	if (!$ip4) {
+		$ip6 = inet_pton($ip);
+		$is_ip4 = false;
+	}
 	$rdata = report_data($pdo, $dateRange);
 
 	senders_report_table_start();
@@ -358,17 +365,27 @@ function senders_report_table($pdo, $dateRange = DATE_RANGE, $domain = null, $ip
 		array_push($serials, $data['serial']);
 	}
 
-	$params = array(':ip' => '%%', ':domain' => '%%');
-	if (isset($ip)) { $params[':ip'] = "%$ip%"; }
+	$params = array(':domain' => '%%');
 	if (isset($domain)) { $params[':domain'] = "%$domain%"; }
-	$query = $pdo->prepare("SELECT DISTINCT `ip`,`identifier_hfrom` FROM `rptrecord` WHERE `ip` IS NOT NULL AND `ip` LIKE :ip AND `identifier_hfrom` LIKE :domain AND `serial` IN ('".implode("', '",$serials)."') ORDER BY `ip`");
+	if (isset($ip)) {
+		if ($is_ip4) {
+			$params[':ip4'] = $ip4;
+			$query = $pdo->prepare("SELECT DISTINCT `ip`,`ip6`,`identifier_hfrom` FROM `rptrecord` WHERE `ip` IS NOT NULL AND `ip`=:ip4 AND `identifier_hfrom` LIKE :domain AND `serial` IN ('".implode("', '",$serials)."') ORDER BY `ip`");
+		} else {
+			$params[':ip6'] = $ip6;
+			$query = $pdo->prepare("SELECT DISTINCT `ip`,`ip6`,`identifier_hfrom` FROM `rptrecord` WHERE `ip6` IS NOT NULL AND `ip6`=:ip6 AND `identifier_hfrom` LIKE :domain AND `serial` IN ('".implode("', '",$serials)."') ORDER BY `ip`");
+		}
+	} else {
+		$query = $pdo->prepare("SELECT DISTINCT `ip`,`ip6`,`identifier_hfrom` FROM `rptrecord` WHERE `identifier_hfrom` LIKE :domain AND `serial` IN ('".implode("', '",$serials)."') ORDER BY `ip`");
+	}
 	$query->execute($params);
 
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-        $row = array_map('htmlspecialchars', $row);
+		$ip = get_ip($row['ip'], $row['ip6']);
+		$row = array_map('htmlspecialchars', $row);
 		echo "\t<tr>\n";
-		echo "\t\t<td>".long2ip($row['ip'])."</td>\n";
-		echo "\t\t<td>".gethostbyaddr(long2ip($row['ip']))."</td>\n";
+		echo "\t\t<td>".$ip."</td>\n";
+		echo "\t\t<td>".gethostbyaddr($ip)."</td>\n";
 		echo "\t\t<td><a href='domain.php?domain=".$row['identifier_hfrom']."'>".$row['identifier_hfrom']."</a></td>\n";
 		echo "\t</tr>\n";
 	}
@@ -496,5 +513,15 @@ function start_date($dateRange = DATE_RANGE) {
 	return format_date(strtotime(date_range($dateRange)));
 }
 
+function get_ip($ip4, $ip6) {
+	if ($ip4) {
+		return long2ip($ip4);
+	}
+	if ($ip6) {
+		return inet_ntop($ip6);
+	}
+	// should never occur
+	return 'ERROR';
+}
 
 ?>

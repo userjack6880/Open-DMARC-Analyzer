@@ -23,7 +23,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Versioning
 function oda_version() {
-	echo "0-&alpha;7";
+	echo "0-&alpha;7.1";
 }
 
 // General Page Templates

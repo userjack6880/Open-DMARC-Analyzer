@@ -23,10 +23,10 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 
 # Latest Changes
 
-## 0-α7
+## 0-α7.1
 
-- No longer counts forwarded messages that aren't quarantined or rejected against compliance.
-- Minor PDO query optimisation.
+- PDO Input Sanitization (thanks Matthäus Wander)
+- Added IPv6 Support (thanks Matthäus Wander)
 
 See `CHANGELOG.md` for full details of all changes.
 
