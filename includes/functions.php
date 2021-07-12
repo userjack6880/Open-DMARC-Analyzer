@@ -236,9 +236,9 @@ function domain_reports($domain, $pdo, $dateRange = DATE_RANGE, $disp = 'none') 
 	$query = $pdo->prepare("SELECT * FROM `rptrecord` WHERE `serial` IN ('".implode("', '",$serials)."') AND `identifier_hfrom` = :domain AND `disposition` = :disp");
 	$query->execute($params);
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-        $row = array_map('htmlspecialchars', $row);
 		debug ("printing row");
-		$ip = get_ip($row['ip'], $row['ip6']);
+		$ip = get_ip($row['ip'], $row['ip6']);		
+		$row = array_map('htmlspecialchars', $row);
 		echo "\t<tr>\n";
 		echo "\t\t<td><a href='report.php?serial=".$row['serial']."'>".$reports[$row['serial']]."</a></td>\n";
 		echo "\t\t<td><a href='host.php?ip=".$ip;
