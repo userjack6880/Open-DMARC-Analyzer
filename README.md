@@ -23,10 +23,9 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 
 # Latest Changes
 
-## 0-α7.1
+## 0-α7.2
 
-- PDO Input Sanitization (thanks Matthäus Wander)
-- Added IPv6 Support (thanks Matthäus Wander)
+- Added function to change date range increment based on default date range setting.
 
 See `CHANGELOG.md` for full details of all changes.
 
