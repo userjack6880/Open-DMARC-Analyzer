@@ -4,11 +4,6 @@ This is Open DMARC Analyzer version 0 alpha-7 (0-α7) by John Bradley (john@syst
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 5.4+ and MySQL 15.1+.
 
-# System Requirements
-- http webserver
-- php 7.4+
-- mysql 15.1+ or equivalent
-
 # Dependencies
 
 ## Required - [jsmitty12/phpWhois](https://github.com/jsmitty12/phpWhois/)
@@ -28,10 +23,9 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 
 # Latest Changes
 
-## 0-α8
+## 0-α7.2
 
-- Begin documentation process.
-- Updated visual look of ODA.
+- Added function to change date range increment based on default date range setting.
 
 See `CHANGELOG.md` for full details of all changes.
 
