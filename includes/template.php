@@ -23,7 +23,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Versioning
 function oda_version() {
-	echo "0-&alpha;7.1";
+	echo "0-&alpha;7.2-devPre";
 }
 
 // General Page Templates
@@ -46,24 +46,29 @@ function control_bar() {
 	if (isset($_GET['range'])) { 
 		$dateRange = htmlspecialchars($_GET['range']);
 
-	  preg_match('/(\d+)(\w+)/', $dateRange, $match);
+	  preg_match('/(\d+)(\w)/', $dateRange, $match);
 
 		if ($match[1] > '1') {	
-			$date = ($match[1]-1)."w";
+			$date = ($match[1]-1).$match[2];
 			$laterStartURL = $_SERVER['PHP_SELF']."?range=$date";
 		} else { $laterStartURL = $_SERVER['PHP_SELF']."?range=$dateRange"; }
 
-		$date = ($match[1]+1)."w";
+		$date = ($match[1]+1).$match[2];
 		$earlierStartURL = $_SERVER['PHP_SELF']."?range=$date";
+
+		preg_match('/\-\d+\s(\w+)/', DATE_RANGE, $match);
+		$dateWord = ucfirst($match[1]);
 
 		$rangeOption = "&range=".htmlspecialchars($_GET['range']);
 	} else {
-		preg_match('/\-(\d+)\s(\w+)/', DATE_RANGE, $defRange);
+		preg_match('/\-(\d+)\s(\w)(\w+)/', DATE_RANGE, $match);
 
-		$date = ($defRange[1]+1)."w";
+		$date = ($match[1]+1).$match[2];
 
 		$earlierStartURL = $_SERVER['PHP_SELF']."?range=$date";
 		$laterStartURL = $_SERVER['PHP_SELF'];
+
+		$dateWord = ucfirst($match[2].$match[3]);
 
 		$rangeOption = '';
 	}
@@ -89,7 +94,7 @@ function control_bar() {
 	$dispRejectURL = $basename.".php?disp=reject".$rangeOption.$domainOption;
 
 	if ($basename == 'index' || $basename == 'domain' || $basename == 'org') {
-		echo "\t&#91; Range Start: <a href='$earlierStartURL'>&larr; 1 Week</a> | <a href='$laterStartURL'>1 Week &rarr;</a> &#93;</br>\n"; 
+		echo "\t&#91; Range Start: <a href='$earlierStartURL'>&larr; 1 $dateWord</a> | <a href='$laterStartURL'>1 $dateWord &rarr;</a> &#93;</br>\n"; 
 	}
 	if ($basename == 'index' || $basename == 'domain') {
 		echo "\t&#91; Disposition: <a href='$dispNoneURL'>none</a> | <a href='$dispQuarURL'>quarantine</a> | <a href='$dispRejectURL'>reject</a> &#93;</br>\n";
