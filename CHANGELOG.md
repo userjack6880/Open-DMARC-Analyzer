@@ -1,5 +1,9 @@
 # Changelog
 
+## 0-α7.3
+
+- README.md updates
+
 ## 0-α7.2
 
 - Added function to change date range increment based on default date range setting.
