@@ -1,8 +1,8 @@
 <?php
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
-includes/db.php
-2021 - John Bradley (userjack6880)
+config.php
+2022 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -21,39 +21,31 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// Connect to DB //
-function dbConn() {
-	try {
-		$pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME.";port=".DB_PORT, DB_USER, DB_PASS);
-	} catch (PDOException $e) {
-		echo 'Connection failed: '.$e->getMessage();
-	}
-	return $pdo;
-}
+// MySQL Settings
 
-// Perform a Query
-function dbQuery($pdo, $statement, $params) {
-	if(!isset($statement)) {
-		echo "No query statement given!";
-		die;
-	}
-	else {
-		$query = $pdo->prepare($statement);
-		if (isset($params)) {
-			$query->execute($params);
-		}
-		else {
-			$query->execute();
-		}
-		$rows = [];
+define('DB_HOST', 'localhost');
+define('DB_USER', 'dmarc');
+define('DB_PASS', '55jlmmULRuiqDeT2');
+define('DB_NAME', 'dmarc');
+define('DB_PORT', '3306'); // default port 3306
 
-		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-			$row = array_map('htmlspecialchars', $row);
-			array_push($rows, $row);
-		}
-		$query = null;
-		return $rows;
-	}
-}
+// Debug Settings
+
+define('DEBUG', 1);
+
+// Template Settings
+
+define('TEMPLATE', 'opendav2');
+
+// Package Loader
+define('AUTO_LOADER', 'vendor/autoload.php');   // autoloader for composer installed libraries
+
+// GeoIP2 Settings
+define('GEO_ENABLE', 1);                        // 0 - disable GeoIP2, 1 - enable GeoIP2
+define('GEO_DB', 'includes/geolite2.mmdb');     // location of GeoIP2 database
+
+// Defaults
+
+define('DATE_RANGE', '-1m');                    // d - day, w - week, m - month
 
 ?>

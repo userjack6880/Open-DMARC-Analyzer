@@ -1,8 +1,8 @@
 <?php
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
-includes/db.php
-2021 - John Bradley (userjack6880)
+includes/functions.php
+2022 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -21,39 +21,17 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// Connect to DB //
-function dbConn() {
-	try {
-		$pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME.";port=".DB_PORT, DB_USER, DB_PASS);
-	} catch (PDOException $e) {
-		echo 'Connection failed: '.$e->getMessage();
-	}
-	return $pdo;
+// Page Functions
+function dashboard() {
+	// 
 }
 
-// Perform a Query
-function dbQuery($pdo, $statement, $params) {
-	if(!isset($statement)) {
-		echo "No query statement given!";
-		die;
-	}
-	else {
-		$query = $pdo->prepare($statement);
-		if (isset($params)) {
-			$query->execute($params);
-		}
-		else {
-			$query->execute();
-		}
-		$rows = [];
-
-		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-			$row = array_map('htmlspecialchars', $row);
-			array_push($rows, $row);
-		}
-		$query = null;
-		return $rows;
-	}
+// Smaller Fetches
+function getDomains() {
+	$pdo = dbConn();
+	$statement = "SELECT UNIQUE domain FROM report";
+	$params = array();
+	$domains = dbQuery($pdo, $statement, $params);
+	return $domains;
 }
-
 ?>
