@@ -28,10 +28,9 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 
 # Latest Changes
 
-## 0-α8
+## 0-α7.3
 
-- Begin documentation process.
-- Updated visual look of ODA.
+- README.md updates
 
 See `CHANGELOG.md` for full details of all changes.
 
