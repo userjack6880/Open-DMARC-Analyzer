@@ -42,7 +42,11 @@ function page_title($page) {
 
 // Control Bar ----------------------------------
 function control_bar($page, $domain, $dateRange, $ip = '') {
-	$startdate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
+	// get some variables out of current daterange
+	$dateWord = dateWord($dateRange);
+	$dateLtr = dateLtr($dateRange);
+	$dateNum = dateNum($dateRange);
+	$startdate = date("Y-m-d H:i:s",strtotime(strtolower("-$dateNum $dateWord")));
 
 	// pages that need domain controls
 	if ($page == "index" || $page == "sender") {
@@ -69,39 +73,35 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 		if ($page == "sender") {
 			if ($domain == "all") {
 				echo "<h1>Sender $ip</h1><br />\n
-				      Since $startdate\n";
+				      <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=all'>&larr; Back</a> | Since $startdate\n";
 			}
 			else {
 				echo "<h1>Sender $ip for $domain</h1><br />\n
-				      Since $startdate\n";
+				      <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=$domain'>&larr; Back</a> | Since $startdate\n";
 			}
 		}
 		echo "</div>\n";
 
 		// Domain Selection and Date Selection
-		echo "<div id=controlbarright>\n";
-		?><form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-			<select name="domain">
-				<option value="all">All Domains</option>
-		<?php
+		echo "<div id=controlbarright>\n
+		        <form action='".$_SERVER['PHP_SELF']."' method='post'>\n
+		          <select name='domain'>\n
+		          <option value='all'>All Domains</option>\n";
 		foreach ($domains as $listDomain) {
-			?><option value="<?php echo $listDomain['domain']; ?>" <?php if($listDomain['domain'] == $domain) { echo "selected"; } ?>>
-			<?php echo $listDomain['domain']; ?></option><?php
+			echo "<option value='".$listDomain['domain']."' ";
+			if($listDomain['domain'] == $domain) { echo "selected"; }
+			echo ">".$listDomain['domain']."</option>\n";
 		}
-		?></select>
-		<input type="hidden" name="page" value="<?php echo $page; ?>">
-		<input type="hidden" name="range" value="<?php echo $dateRange; ?>">
-		<input type="submit" value="Go"></form><br />
-		<?php
+		echo "    </select>\n
+		          <input type='hidden' name='page' value='$page'>\n
+		          <input type='hidden' name='ip' value='$ip'>\n
+		          <input type='hidden' name='range' value='$dateRange'>\n
+		          <input type='submit' value='Go'>\n
+		        </form><br />\n";
 
-		// get some variables out of current daterange
-		$dateWord = dateWord($dateRange);
-		$dateLtr = dateLtr($dateRange);
- 	 $dateNum = dateNum($dateRange);
-	
 		// date selection -1 unit in config
 		$datePrev = $dateNum+1;
-		echo "Range Start: &#91; <a href=\"".$_SERVER['PHP_SELF']."?range=-$datePrev$dateLtr&page=$page&domain=$domain\">&larr; 1 $dateWord</a>";
+		echo "Range Start: &#91; <a href='".$_SERVER['PHP_SELF']."?range=-$datePrev$dateLtr&page=$page&domain=$domain'>&larr; 1 $dateWord</a>";
 	
 		// date selectoin +1 unit in config
 		if ($dateNum == 1) {
@@ -109,16 +109,13 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 		}
 		else {
 			$dateNext = $dateNum-1;
-			echo " | <a href=\"".$_SERVER['PHP_SELF']."?range=-$dateNext$dateLtr&page=$page&domain=$domain\">1 $dateWord &rarr;</a> &#93;\n";
+			echo " | <a href='".$_SERVER['PHP_SELF']."?range=-$dateNext$dateLtr&page=$page&domain=$domain'>1 $dateWord &rarr;</a> &#93;\n";
 		}
 
-		echo "</div>\n";
-
-		// close up the control bar
-		echo "</div>\n";
+		echo "  </div>\n
+		      </div>\n";
 
 	}
-	
 
 	else {
 		return; // if it's not the specified pages, this controlbar is irrelvant
@@ -128,7 +125,7 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 // Overview Bar ---------------------------------
 function overview_bar($stats, $domain) {
 	// extract stats
-	$total = 0;
+	$total  = 0;
 	$policy = '';
 	$policy_pct = 0;
 	$dmarc_none = 0;
@@ -137,8 +134,8 @@ function overview_bar($stats, $domain) {
 	$dmarc_comp = 0;
 	$dkim_pass_aligned = 0;
 	$dkim_pass_noalign = 0;
-	$spf_pass_aligned = 0;
-	$spf_pass_noalign = 0;
+	$spf_pass_aligned  = 0;
+	$spf_pass_noalign  = 0;
 
 	if ($domain == "all") {
 		$domain_count = 0;
@@ -150,8 +147,8 @@ function overview_bar($stats, $domain) {
 			$dmarc_comp = $dmarc_comp+$stat['compliant'];
 			$dkim_pass_aligned = $dkim_pass_aligned+$stat['dkim_pass_aligned'];
 			$dkim_pass_noalign = $dkim_pass_noalign+$stat['dkim_pass_unaligned'];
-			$spf_pass_aligned = $spf_pass_aligned+$stat['spf_pass_aligned'];
-			$spf_pass_noalign = $spf_pass_noalign+$stat['spf_pass_unaligned'];
+			$spf_pass_aligned  = $spf_pass_aligned+$stat['spf_pass_aligned'];
+			$spf_pass_noalign  = $spf_pass_noalign+$stat['spf_pass_unaligned'];
 			$domain_count++;
 		}
 
@@ -161,17 +158,17 @@ function overview_bar($stats, $domain) {
 		}
 	}
 	else {
-		$total = $stats[0]['total_messages'];
-		$policy = ucfirst($stats[0]['policy_p']);
+		$total      = $stats[0]['total_messages'];
+		$policy     = ucfirst($stats[0]['policy_p']);
 		$policy_pct = $stats[0]['policy_pct'];
-		if ($stats[0]['none'] > 0) {       $dmarc_none = $stats[0]['none']; }
-		if ($stats[0]['quarantine'] > 0) { $dmarc_quar = $stats[0]['quarantine']; }
-		if ($stats[0]['reject'] > 0) {     $dmarc_rjct = $stats[0]['reject']; }
-		if ($stats[0]['compliant'] > 0) {  $dmarc_comp = $stats[0]['compliant']; }
-		if ($stats[0]['dkim_pass_aligned'] > 0) {   $dkim_pass_aligned = $stats[0]['dkim_pass_aligned']; }
+		if ($stats[0]['none'] > 0)                { $dmarc_none = $stats[0]['none']; }
+		if ($stats[0]['quarantine'] > 0)          { $dmarc_quar = $stats[0]['quarantine']; }
+		if ($stats[0]['reject'] > 0)              { $dmarc_rjct = $stats[0]['reject']; }
+		if ($stats[0]['compliant'] > 0)           { $dmarc_comp = $stats[0]['compliant']; }
+		if ($stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stats[0]['dkim_pass_aligned']; }
 		if ($stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stats[0]['dkim_pass_unaligned']; }
-		if ($stats[0]['spf_pass_aligned'] > 0) {   $spf_pass_aligned = $stats[0]['spf_pass_aligned']; }
-		if ($stats[0]['spf_pass_unaligned'] > 0) { $spf_pass_noalign = $stats[0]['spf_pass_unaligned']; }
+		if ($stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stats[0]['spf_pass_aligned']; }
+		if ($stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stats[0]['spf_pass_unaligned']; }
 	}
 
 	// stat calculations
@@ -238,21 +235,21 @@ function domain_overview($stats, $dateRange) {
 		$dmarc_comp = 0;
 		$dkim_pass_aligned = 0;
 		$dkim_pass_noalign = 0;
-		$spf_pass_aligned = 0;
-		$spf_pass_noalign = 0;
+		$spf_pass_aligned  = 0;
+		$spf_pass_noalign  = 0;
 
-		$domain = $stat['domain'];
-		$total = $stat['total_messages'];
-		$policy = ucfirst($stat['policy_p']);
+		$domain     = $stat['domain'];
+		$total      = $stat['total_messages'];
+		$policy     = ucfirst($stat['policy_p']);
 		$policy_pct = $stat['policy_pct'];
-		if ($stats[0]['none'] > 0) {       $dmarc_none = $stat['none']; }
-		if ($stats[0]['quarantine'] > 0) { $dmarc_quar = $stat['quarantine']; }
-		if ($stats[0]['reject'] > 0) {     $dmarc_rjct = $stat['reject']; }
-		if ($stats[0]['compliant'] > 0) {  $dmarc_comp = $stat['compliant']; }
-		if ($stats[0]['dkim_pass_aligned'] > 0) {   $dkim_pass_aligned = $stat['dkim_pass_aligned']; }
+		if ($stats[0]['none'] > 0)                { $dmarc_none = $stat['none']; }
+		if ($stats[0]['quarantine'] > 0)          { $dmarc_quar = $stat['quarantine']; }
+		if ($stats[0]['reject'] > 0)              { $dmarc_rjct = $stat['reject']; }
+		if ($stats[0]['compliant'] > 0)           { $dmarc_comp = $stat['compliant']; }
+		if ($stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stat['dkim_pass_aligned']; }
 		if ($stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stat['dkim_pass_unaligned']; }
-		if ($stats[0]['spf_pass_aligned'] > 0) {   $spf_pass_aligned = $stat['spf_pass_aligned']; }
-		if ($stats[0]['spf_pass_unaligned'] > 0) { $spf_pass_noalign = $stat['spf_pass_unaligned']; }
+		if ($stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stat['spf_pass_aligned']; }
+		if ($stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stat['spf_pass_unaligned']; }
 
 		$sender_count = getSenderCount($dateRange, $domain);
 
@@ -301,7 +298,7 @@ function domain_overview($stats, $dateRange) {
 }
 
 // Domain Details -------------------------------
-function domain_details($stats, $dateRange) {
+function domain_details($stats, $domain, $dateRange) {
 	$entries = count($stats);
 	$height = $entries * 100;
 	echo "<h2 class=section>Domain Summary</h2>\n
@@ -309,14 +306,14 @@ function domain_details($stats, $dateRange) {
 	        <div class=dov-bar-in style='height:".$height."px'>\n";
 
 	foreach ($stats as $stat) {
-		$compliant = 0;
-		$none = 0;
+		$compliant  = 0;
+		$none       = 0;
 		$quarantine = 0;
-		$reject = 0;
-		$dkim_pass = 0;
+		$reject     = 0;
+		$dkim_pass  = 0;
 		$dkim_align = 0;
-		$spf_pass = 0;
-		$spf_align = 0;
+		$spf_pass   = 0;
+		$spf_align  = 0;
 
 		// extract stats - this'll be sorted by senderIP
 		$ip         = get_ip($stat['ip'], $stat['ip6']);
@@ -340,7 +337,7 @@ function domain_details($stats, $dateRange) {
 		// now present
 		echo "<div class=dov-bar-in-ip>\n
 		        <div style='width:400px'>\n
-		          <h3 class=dov-bar-in-ip-h3><a href=''>".$ip['ip']."</a></h3>\n
+		          <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SHELF']."?range=$dateRange&page=sender&domain=$domain&ip=".$ip['ip']."'>".$ip['ip']."</a></h3>\n
 		          <span class=dov-bar-small>".gethostbyaddr($ip['ip'])."</span>\n
 		        </div>\n
 		        <div style='left:420px;'>\n
@@ -373,6 +370,43 @@ function domain_details($stats, $dateRange) {
 		        </div>\n
  		      </div>\n";
 	}
+
+	echo "  </div>\n
+	      </div>\n";
+}
+
+// Sender Details -------------------------------
+function sender_details($geo_data, $domain, $dateRange, $ip) {
+	$hostname = gethostbyaddr($ip) ?: '';
+	$org      = '';
+	$city     = '';
+	$region   = '';
+	$country  = '';
+	$lon      = '';
+	$lat      = '';
+
+	if (GEO_ENABLE) {
+		$city     = $geo_data['city']['names']['en']              ?: '';
+		$region   = $geo_data['subdivisions']['0']['names']['en'] ?: '';
+		$country  = $geo_data['country']['names']['en']           ?: '';
+		$lat      = $geo_data['location']['latitude']             ?: '';
+		$lon      = $geo_data['location']['longitude']            ?: '';
+	}
+	else {
+		$org = $geo_data['regrinfo']['owner']['organization'] ?: '';
+	}
+
+	// present the data, obi-wan
+	echo "<div class=dov-bar style='margin-top: 0;height:400px;'>\n
+	        <div class=dov-bar-in style='height:400px;'>\n
+	          <div class=geo-left>\n
+	            <div class=geo-left-inner>\n
+	yeet
+	            </div>\n
+	          </div>\n
+	          <div class=geo-right>\n
+	            <iframe width='100%' height='100%' src='https://maps.google.com/maps?q=$lat,$lon&output=embed'></iframe>\n
+	          </div>\n";
 
 	echo "  </div>\n
 	      </div>\n";

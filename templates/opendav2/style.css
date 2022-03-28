@@ -127,6 +127,35 @@ a:hover {
 	transform: translateY(-50%);
 }
 
+.geo-left {
+	width: calc(100% - 640px);
+	height: 400px;
+	margin: 0;
+	padding: 0;
+	border: none;
+	text-align: left;
+	float: left;
+	position: relative;
+}
+
+.geo-left-inner {
+	width: 100%;
+	padding: 15px;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.geo-right {
+	width: 640px;
+	height: 400px;
+	margin: 0;
+	padding: 15px;
+	border: none;
+	float: right;
+	position: relative;
+}
+
 span.dov-bar-small {
 	font-size: 12px;
 }

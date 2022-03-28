@@ -21,7 +21,9 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// Small Functions
+// Small Functions ------------------------------------------------------------
+
+// Date Functions -------------------------------
 function dateWord($date) {
 	preg_match('/\-\d+(\w)/', $date, $match);
 	if ($match[1] == 'd') {
@@ -46,7 +48,23 @@ function dateLtr($date) {
 	return $match[1];
 }
 
-// Page Functions
+// Convert IP to something Usable ---------------
+function get_ip($ip4, $ip6) {
+	if ($ip4) {
+		$array['ip'] = long2ip($ip4);
+		$array['ipv4'] = true;
+		return $array;
+	}
+	if ($ip6) {
+		$array['ip'] = $ip6;
+		$array['ipv4'] = false;
+		return $array;
+	}
+}
+
+// Page Functions -------------------------------------------------------------
+
+// Dashboard ------------------------------------
 function dashboard($dateRange,$domain) {
 	$pdo = dbConn();
 	$startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
@@ -150,8 +168,38 @@ function dashboard($dateRange,$domain) {
 	$pdo = NULL;
 }
 
-// ----- Smaller Fetches ------------------------
-// Get Domains
+// Get Sender Details ---------------------------
+function senderDashboard($dateRange, $domain, $ip) {
+	if (!isset($ip)) {
+		echo "<h1>No IP Given</h1>\n";
+		return;
+	}
+	elseif(!GEO_ENABLE) {
+		require_once(AUTO_LOADER);
+
+		$geo = new phpWhois\Whois();
+		$geo_data = $whois->lookup($ip,false);
+	}
+	else {
+		require_once(AUTO_LOADER);
+
+		$geo = new MaxMind\Db\Reader(GEO_DB);
+		$geo_data = $geo->get($ip);
+
+		$geo->close();
+	}
+
+	$pdo = dbConn();
+	$startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
+
+	sender_details($geo_data, $domain, $dateRange, $ip);
+
+	$pdo = NULL;
+}
+
+// ----- Smaller Fetches ------------------------------------------------------
+
+// Get Domains ----------------------------------
 function getDomains($dateRange) {
 	$pdo = dbConn();
 	$startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
@@ -162,7 +210,7 @@ function getDomains($dateRange) {
 	return $domains;
 }
 
-// Get Number of Reports
+// Get Number of Senders ------------------------
 function getSenderCount($dateRange, $domain) {
 	$pdo = dbConn();
 	$startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
@@ -176,19 +224,5 @@ function getSenderCount($dateRange, $domain) {
 	$count = dbQuery($pdo, $statement, $params);
 	$pdo = NULL;
 	return $count[0]['count'];
-}
-
-// Convert the raw DB IP format into something usable
-function get_ip($ip4, $ip6) {
-	if ($ip4) {
-		$array['ip'] = long2ip($ip4);
-		$array['ipv4'] = true;
-		return $array;
-	}
-	if ($ip6) {
-		$array['ip'] = $ip6;
-		$array['ipv4'] = false;
-		return $array;
-	}
 }
 ?>

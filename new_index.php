@@ -28,35 +28,35 @@ include_once 'new_includes.php';
 
 // Range ----------------------------------------------------------------------
 if (!empty($_GET['range'])) {
-    $dateRange = htmlspecialchars($_GET['range']);
+	$dateRange = htmlspecialchars($_GET['range']);
 }
 elseif (isset($_POST['range'])) {
-    $dateRange = htmlspecialchars($_POST['range']);
+	$dateRange = htmlspecialchars($_POST['range']);
 }
 else {
-    $dateRange = DATE_RANGE;
+	$dateRange = DATE_RANGE;
 }
 
 // Page -----------------------------------------------------------------------
 if (isset($_GET['page'])) {
-    $page = htmlspecialchars($_GET['page']);
+	$page = htmlspecialchars($_GET['page']);
 }
 elseif (isset($_POST['page'])) {
-    $page = htmlspecialchars($_POST['page']);
+	$page = htmlspecialchars($_POST['page']);
 }
 else {
-    $page = "index";
+	$page = "index";
 }
 
 // Domain ---------------------------------------------------------------------
 if (isset($_GET['domain'])) {
-    $domain = htmlspecialchars($_GET['domain']);
+	$domain = htmlspecialchars($_GET['domain']);
 }
 elseif (isset($_POST['domain'])) {
-    $domain = htmlspecialchars($_POST['domain']);
+	$domain = htmlspecialchars($_POST['domain']);
 }
 else {
-    $domain = "all";
+	$domain = "all";
 }
 
 // IPs ------------------------------------------------------------------------
@@ -64,10 +64,10 @@ if (isset($_GET['ip'])) {
 		$ip = htmlspecialchars($_GET['ip']);
 }
 elseif (isset($_POST['ip'])) {
-		$ip = htmlspecialchars($_POST['ip']);
+	$ip = htmlspecialchars($_POST['ip']);
 }
 else {
-		$ip = '';
+	$ip = '';
 }
 
 // End URI gets
@@ -76,7 +76,13 @@ else {
 page_header($page, $domain, $dateRange);
 
 if ($page == "index") {
-    dashboard($dateRange,$domain);
+	dashboard($dateRange, $domain);
+}
+elseif ($page == "sender") {
+	senderDashboard($dateRange, $domain, $ip);
+}
+else {
+	echo "<h1>Invalid Page</h1>\n";
 }
 
 // Page Footer
