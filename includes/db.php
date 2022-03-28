@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 includes/db.php
-2021 - John Bradley (userjack6880)
+2022 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -25,7 +25,8 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 function dbConn() {
 	try {
 		$pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME.";port=".DB_PORT, DB_USER, DB_PASS);
-	} catch (PDOException $e) {
+	} 
+	catch (PDOException $e) {
 		echo 'Connection failed: '.$e->getMessage();
 	}
 	return $pdo;
@@ -38,13 +39,19 @@ function dbQuery($pdo, $statement, $params) {
 		die;
 	}
 	else {
-		$query = $pdo->prepare($statement);
-		if (isset($params)) {
-			$query->execute($params);
+		try {
+			$query = $pdo->prepare($statement);
+			if (isset($params)) {
+				$query->execute($params);
+			}
+			else {
+				$query->execute();
+			}
 		}
-		else {
-			$query->execute();
+		catch (PDOException $e) {
+			echo 'Could not perform query: '.$e->getMessage();
 		}
+
 		$rows = [];
 
 		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -55,5 +62,4 @@ function dbQuery($pdo, $statement, $params) {
 		return $rows;
 	}
 }
-
 ?>

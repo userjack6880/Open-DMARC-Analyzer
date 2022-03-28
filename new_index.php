@@ -25,6 +25,8 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 include_once 'new_includes.php';
 
 // Pull in URI Gets
+
+// Range ----------------------------------------------------------------------
 if (!empty($_GET['range'])) {
     $dateRange = htmlspecialchars($_GET['range']);
 }
@@ -35,6 +37,7 @@ else {
     $dateRange = DATE_RANGE;
 }
 
+// Page -----------------------------------------------------------------------
 if (isset($_GET['page'])) {
     $page = htmlspecialchars($_GET['page']);
 }
@@ -45,6 +48,7 @@ else {
     $page = "index";
 }
 
+// Domain ---------------------------------------------------------------------
 if (isset($_GET['domain'])) {
     $domain = htmlspecialchars($_GET['domain']);
 }
@@ -55,18 +59,24 @@ else {
     $domain = "all";
 }
 
-if (isset($_GET['range'])) {
-    $dateRange = htmlspecialchars($_GET['range']);
+// IPs ------------------------------------------------------------------------
+if (isset($_GET['ip'])) {
+		$ip = htmlspecialchars($_GET['ip']);
+}
+elseif (isset($_POST['ip'])) {
+		$ip = htmlspecialchars($_POST['ip']);
 }
 else {
-    $dateRange = DATE_RANGE;
+		$ip = '';
 }
+
+// End URI gets
 
 // Page Header
 page_header($page, $domain, $dateRange);
 
 if ($page == "index") {
-    dashboard();
+    dashboard($dateRange,$domain);
 }
 
 // Page Footer
