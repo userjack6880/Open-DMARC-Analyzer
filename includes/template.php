@@ -157,7 +157,9 @@ function overview_bar($stats, $domain) {
 
 		// clunky, but detects if we have more than one domain, and changes all to a single domain if it's just one
 		if ($domain_count == 1) {
-			$domain = $stats[0]['domain'];
+			$domain     = $stats[0]['domain'];
+			$policy     = ucfirst($stats[0]['policy_p']);
+			$policy_pct = $stats[0]['policy_pct']);
 		}
 	}
 	else {
