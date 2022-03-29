@@ -1,8 +1,8 @@
 <?php
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
-ncludes/template.php
-2021 - John Bradley (userjack6880)
+includes/template.php
+2022 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -21,202 +21,536 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// Versioning
+// Versioning -----------------------------------------------------------------
 function oda_version() {
-	echo "0-&alpha;7.3";
+
+	echo "0-&alpha;8";
+
 }
 
-// General Page Templates
-function page_title() {
-	debug (basename($_SERVER['PHP_SELF'],".php"));
-	if (basename($_SERVER['PHP_SELF'],".php") == 'index') { echo "Open DMARC Analyzer - Dashboard"; }
-	elseif (basename($_SERVER['PHP_SELF'],".php") == 'domain') { echo "Open DMARC Analyzer - Domain Details for ".htmlspecialchars($_GET['domain']); }
-	else { echo "Open DMARC Analyzer"; }
+// Javascripts ----------------------------------------------------------------
+function javascript() { ?>
+<?php }
+
+// General Page Templates -----------------------------------------------------
+
+// Page Title -----------------------------------
+function page_title($page) {
+	echo "Open DMARC Analyzer";
+	if ($page == "index") {
+		echo " - Dashboard";
+	}
 }
 
-// Control Bar
-function control_bar() {
+// Control Bar ----------------------------------
+function control_bar($page, $domain, $dateRange, $ip = '') {
+	// get some variables out of current daterange
+	$dateWord = dateWord($dateRange);
+	$dateLtr = dateLtr($dateRange);
+	$dateNum = dateNum($dateRange);
+	$startdate = date("Y-m-d H:i:s",strtotime(strtolower("-$dateNum $dateWord")));
+
+	// pages that need domain controls
+	if ($page == "index" || $page == "sender") {
+		echo "<div id=controlbar>\n";
+
+		$domains = getDomains($dateRange);
+		if (count($domains) == 1 && $page != "sender") {
+			$domain = $domains[0]['domain'];
+		}
+
+		// Show if all domains are being shown or a single domain
+		echo "<div id=controlbarleft>\n";
+		if ($page == "index" ) {
+			if ($domain == "all") {
+				echo "<h1>All Domains</h1><br />\n
+				      Since $startdate\n";
+			}
+			else {
+				echo "<h1>$domain</h1><br />\n
+				      Since $startdate\n";
+			}
+		}
+		// Special Cases
+		if ($page == "sender") {
+			if ($domain == "all") {
+				echo "<h1>Sender $ip</h1><br />\n
+				      <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=all'>&larr; Back</a> | Since $startdate\n";
+			}
+			else {
+				echo "<h1>Sender $ip for $domain</h1><br />\n
+				      <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=$domain'>&larr; Back</a> | Since $startdate\n";
+			}
+		}
+		echo "</div>\n";
+
+		// Domain Selection and Date Selection
+		echo "<div id=controlbarright>\n
+		        <form action='".$_SERVER['PHP_SELF']."' method='post'>\n
+		          <select name='domain'>\n
+		          <option value='all'>All Domains</option>\n";
+		foreach ($domains as $listDomain) {
+			echo "<option value='".$listDomain['domain']."' ";
+			if($listDomain['domain'] == $domain) { echo "selected"; }
+			echo ">".$listDomain['domain']."</option>\n";
+		}
+		echo "    </select>\n
+		          <input type='hidden' name='page' value='$page'>\n
+		          <input type='hidden' name='ip' value='$ip'>\n
+		          <input type='hidden' name='range' value='$dateRange'>\n
+		          <input type='submit' value='Go'>\n
+		        </form><br />\n";
+
+		// date selection -1 unit in config
+		$datePrev = $dateNum+1;
+		echo "Range Start: &#91; <a href='".$_SERVER['PHP_SELF']."?range=-$datePrev$dateLtr&page=$page&domain=$domain&ip=$ip'>&larr; 1 $dateWord</a>";
 	
-	$basename = basename($_SERVER['PHP_SELF'],".php");
+		// date selectoin +1 unit in config
+		if ($dateNum == 1) {
+			echo " &#93;\n";
+		}
+		else {
+			$dateNext = $dateNum-1;
+			echo " | <a href='".$_SERVER['PHP_SELF']."?range=-$dateNext$dateLtr&page=$page&domain=$domain&ip=$ip'>1 $dateWord &rarr;</a> &#93;\n";
+		}
 
-	if ($basename == 'index' || $basename == 'domain' || $basename == 'org') { echo "<div id=controlbar>\n"; }
-	else { return; } // we don't need to actually perform any of this logic if we don't need to
+		echo "  </div>\n
+		      </div>\n";
 
-	// Range Control
-	if (isset($_GET['range'])) { 
-		$dateRange = htmlspecialchars($_GET['range']);
-
-	  preg_match('/(\d+)(\w)/', $dateRange, $match);
-
-		if ($match[1] > '1') {	
-			$date = ($match[1]-1).$match[2];
-			$laterStartURL = $_SERVER['PHP_SELF']."?range=$date";
-		} else { $laterStartURL = $_SERVER['PHP_SELF']."?range=$dateRange"; }
-
-		$date = ($match[1]+1).$match[2];
-		$earlierStartURL = $_SERVER['PHP_SELF']."?range=$date";
-
-		preg_match('/\-\d+\s(\w+)/', DATE_RANGE, $match);
-		$dateWord = ucfirst($match[1]);
-
-		$rangeOption = "&range=".htmlspecialchars($_GET['range']);
-	} else {
-		preg_match('/\-(\d+)\s(\w)(\w+)/', DATE_RANGE, $match);
-
-		$date = ($match[1]+1).$match[2];
-
-		$earlierStartURL = $_SERVER['PHP_SELF']."?range=$date";
-		$laterStartURL = $_SERVER['PHP_SELF'];
-
-		$dateWord = ucfirst($match[2].$match[3]);
-
-		$rangeOption = '';
 	}
 
-	// Disposition Options
-	if (isset($_GET['disp'])) { $dispOption = "&disp=".htmlspecialchars($_GET['disp']); }
-	else { $dispOption = ''; }
-
-	// Domain Options
-	if (isset($_GET['domain'])) { $domainOption = "&domain=".htmlspecialchars($_GET['domain']); }
-	else { $domainOption = ''; }
-
-	// Org Options
-	if (isset($_GET['org'])) { $orgOption = "&org=".htmlspecialchars($_GET['org']); }
-	else { $orgOption = ''; }
-
-	// URL Generate
-	$earlierStartURL = $earlierStartURL.$dispOption.$domainOption.$orgOption;
-	$laterStartURL = $laterStartURL.$dispOption.$domainOption.$orgOption;
-
-	$dispNoneURL   = $basename.".php?disp=none".$rangeOption.$domainOption;
-	$dispQuarURL   = $basename.".php?disp=quarantine".$rangeOption.$domainOption;
-	$dispRejectURL = $basename.".php?disp=reject".$rangeOption.$domainOption;
-
-	if ($basename == 'index' || $basename == 'domain' || $basename == 'org') {
-		echo "\t&#91; Range Start: <a href='$earlierStartURL'>&larr; 1 $dateWord</a> | <a href='$laterStartURL'>1 $dateWord &rarr;</a> &#93;</br>\n"; 
+	else {
+		return; // if it's not the specified pages, this controlbar is irrelvant
 	}
-	if ($basename == 'index' || $basename == 'domain') {
-		echo "\t&#91; Disposition: <a href='$dispNoneURL'>none</a> | <a href='$dispQuarURL'>quarantine</a> | <a href='$dispRejectURL'>reject</a> &#93;</br>\n";
+}
+
+// Overview Bar ---------------------------------
+function overview_bar($stats, $domain) {
+	// extract stats
+	$total  = 0;
+	$policy = '';
+	$policy_pct = 0;
+	$dmarc_none = 0;
+	$dmarc_quar = 0;
+	$dmarc_rjct = 0;
+	$dmarc_comp = 0;
+	$dkim_pass_aligned = 0;
+	$dkim_pass_noalign = 0;
+	$spf_pass_aligned  = 0;
+	$spf_pass_noalign  = 0;
+
+	if ($domain == "all") {
+		$domain_count = 0;
+		foreach ($stats as $stat) {
+			$total = $total+$stat['total_messages'];
+			if ($stat['none'] > 0)                { $dmarc_none = $dmarc_none+$stat['none']; }
+			if ($stat['quarantine'] > 0)          { $dmarc_quar = $dmarc_quar+$stat['quarantine']; }
+			if ($stat['reject'] > 0)              { $dmarc_rjct = $dmarc_rjct+$stat['reject']; }
+			if ($stat['compliant'] > 0)           { $dmarc_comp = $dmarc_comp+$stat['compliant']; }
+			if ($stat['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $dkim_pass_aligned+$stat['dkim_pass_aligned']; }
+			if ($stat['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $dkim_pass_noalign+$stat['dkim_pass_unaligned']; }
+			if ($stat['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $spf_pass_aligned+$stat['spf_pass_aligned']; }
+			if ($stat['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $spf_pass_noalign+$stat['spf_pass_unaligned']; }
+			$domain_count++;
+		}
+
+		// clunky, but detects if we have more than one domain, and changes all to a single domain if it's just one
+		if ($domain_count == 1) {
+			$domain = $stats[0]['domain'];
+		}
+	}
+	else {
+		$total      = $stats[0]['total_messages'];
+		$policy     = ucfirst($stats[0]['policy_p']);
+		$policy_pct = $stats[0]['policy_pct'];
+		if ($stats[0]['none'] > 0)                { $dmarc_none = $stats[0]['none']; }
+		if ($stats[0]['quarantine'] > 0)          { $dmarc_quar = $stats[0]['quarantine']; }
+		if ($stats[0]['reject'] > 0)              { $dmarc_rjct = $stats[0]['reject']; }
+		if ($stats[0]['compliant'] > 0)           { $dmarc_comp = $stats[0]['compliant']; }
+		if ($stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stats[0]['dkim_pass_aligned']; }
+		if ($stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stats[0]['dkim_pass_unaligned']; }
+		if ($stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stats[0]['spf_pass_aligned']; }
+		if ($stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stats[0]['spf_pass_unaligned']; }
 	}
 
-	if ($basename == 'index' || $basename == 'domain' || $basename == 'org') {	echo "</div>\n"; }
+	// stat calculations
+	$dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
+	$dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
+	$dkim_pass_pct  = number_format(100 * (($dkim_pass_aligned + $dkim_pass_noalign) / $dmarc_none));
+	$spf_comp_pct   = number_format(100 * ($spf_pass_aligned  / $dmarc_none));
+	$spf_pass_pct   = number_format(100 * (($spf_pass_aligned  + $spf_pass_noalign)  / $dmarc_none));
+
+	// overview details
+	echo "<div id=overviewbar>\n
+	        <div id=overviewbarleft>\n
+	          <div id=overviewinnerleft>\n
+	            Total Messages<br />\n
+	            <span class=overviewtotal>$total</span>\n";
+	if ($domain != "all") {
+		echo     "<br />\n$policy_pct% $policy\n";
+	}
+	echo     "</div>\n
+	          <div id=overviewinnerright>\n
+	            <div class=ovir-left>\n
+	              Accepted<br />\n
+	              Quarantined<br />\n
+	              Rejected</br />\n
+	            </div>\n
+	            <div class=ovir-right>\n
+	              <span class=pass>$dmarc_none</span><br />\n
+	              <span class=warn>$dmarc_quar</span><br />\n
+	              <span class=fail>$dmarc_rjct</span><br />\n
+	            </div>\n
+	          </div>\n
+	        </div>\n
+	        <div id=overviewbarright>\n
+	          <div id=ovbr-in>\n
+	            Percent Compliant<br />\n
+	            <span class=overviewtotal>$dmarc_comp_pct%</span><br />\n
+	            <span class=perc-title>DKIM</span><br />\n
+	            <div class=perc-bar>\n
+	              <div class=gray-per style='width:$dkim_pass_pct%'></div>\n
+	              <div class=green-per style='width:$dkim_comp_pct%'></div>\n
+	            </div>\n
+	            <span class=perc-text>$dkim_comp_pct% Aligned | $dkim_pass_pct% Passed</span><br />\n
+	            <span class=perc-title>SPF</span><br />\n
+	            <div class=perc-bar>\n
+	              <div class=gray-per style='width:$spf_pass_pct%'></div>\n
+	              <div class=green-per style='width:$spf_comp_pct%'></div>\n
+	            </div>\n
+	            <span class=perc-text>$spf_comp_pct% Aligned | $spf_pass_pct% Passed</span><br />\n
+	          </div>\n
+	        </div>\n
+	      </div>\n";
+
+	// returns a modified domain if only one is detected
+	return $domain;
 }
 
-// Dashboard Templates
-function dashboard_dmarc_table_start($dateRange) {
-	echo "<h3><a id='compliance'></a>DMARC Compliance - Since $dateRange</h3>\n";
+// Overview Bar ---------------------------------
+function domain_overview($stats, $dateRange) {
+	foreach ($stats as $stat) {
+		// extract stats
+		$dmarc_none = 0;
+		$dmarc_quar = 0;
+		$dmarc_rjct = 0;
+		$dmarc_comp = 0;
+		$dkim_pass_aligned = 0;
+		$dkim_pass_noalign = 0;
+		$spf_pass_aligned  = 0;
+		$spf_pass_noalign  = 0;
 
-	echo "<table id='compliance_table' class='centered'>\n";
-	echo "\t<thead>\n";
-	echo "\t<tr>\n";
-	echo "\t\t<th>Domain</th>\n";
-	echo "\t\t<th>Volume</th>\n";
-	echo "\t\t<th width='150px'>DMARC Policy</th>\n";
-	echo "\t\t<th width='15%'>DMARC Compliance</th>\n";
-	echo "\t\t<th width='15%'>DKIM Alignment</th>\n";
-	echo "\t\t<th width='15%'>SPF Alignment</th>\n";
-	echo "\t</tr>\n";
-	echo "\t</thead>\n";
+		$domain     = $stat['domain'];
+		$total      = $stat['total_messages'];
+		$policy     = ucfirst($stat['policy_p']);
+		$policy_pct = $stat['policy_pct'];
+		if ($stats[0]['none'] > 0)                { $dmarc_none = $stat['none']; }
+		if ($stats[0]['quarantine'] > 0)          { $dmarc_quar = $stat['quarantine']; }
+		if ($stats[0]['reject'] > 0)              { $dmarc_rjct = $stat['reject']; }
+		if ($stats[0]['compliant'] > 0)           { $dmarc_comp = $stat['compliant']; }
+		if ($stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stat['dkim_pass_aligned']; }
+		if ($stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stat['dkim_pass_unaligned']; }
+		if ($stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stat['spf_pass_aligned']; }
+		if ($stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stat['spf_pass_unaligned']; }
+
+		$sender_count = getSenderCount($dateRange, $domain);
+
+		// stat calculations
+		$dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
+		$dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
+		$dkim_pass_pct  = number_format(100 * (((int)$dkim_pass_aligned + (int)$dkim_pass_noalign) / $dmarc_none));
+		$spf_comp_pct   = number_format(100 * ($spf_pass_aligned  / $dmarc_none));
+		$spf_pass_pct   = number_format(100 * (((int)$spf_pass_aligned  + (int)$spf_pass_noalign)  / $dmarc_none));
+
+		// overview details
+		echo "<div class=dov-bar>\n
+		        <div class=dov-bar-in>\n
+		          <div class=dov-bar-in-domain>\n
+		            <h1 class=dov-bar-head>$domain - <a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=index&domain=$domain'>$sender_count Senders</a></h1>\n
+		          </div>\n
+		          <div class=dov-bar-in-dstats-alignment>\n
+		            <span class=perc-text style='text-align:left'>DMARC Compliance</span>\n
+		            <div class=perc-bar>\n
+		              <div class=green-per style='width:$dmarc_comp_pct%'></div>\n
+		            </div>\n
+		            <span class=perc-text style='text-align:left'>DKIM</span>\n
+		            <div class=perc-bar>\n
+		              <div class=gray-per style='width:$dkim_pass_pct%'></div>\n
+		              <div class=green-per style='width:$dkim_comp_pct%'></div>\n
+		            </div>\n
+		            <span class=perc-text style='text-align:left'>SPF</span>\n
+		            <div class=perc-bar>\n
+		              <div class=gray-per style='width:$spf_pass_pct%'></div>\n
+		              <div class=green-per style='width:$spf_comp_pct%'></div>\n
+		            </div>\n
+		          </div>\n
+		          <div class=dov-bar-in-dstats-totals>\n
+		            <table class=dov>\n
+		              <tr class=dov>\n
+		                <td class=dov>$total Messages</td>\n
+		                <td class=dov>$policy_pct% $policy</td>\n
+		                <td class=dov>$dmarc_quar Quarantined</td>\n
+		                <td class=dov>$dmarc_rjct Rejected</td>\n
+		              </tr>\n
+		            </table>\n
+		          </div>\n
+		        </div>\n
+		      </div>\n";
+	}
 }
 
-// Domain Reports DKIM Table
-function domain_reports_dkim_table_start() {
-	echo "<h3><a id='compliance'></a>DMARC Compliance</h3>\n";
+// Domain Details -------------------------------
+function domain_details($stats, $domain, $dateRange) {
+	$entries = count($stats);
+	$height = $entries * 100;
+	echo "<h2 class=section>Domain Summary</h2>\n
+	      <div class=dov-bar style='height:".$height."px'>\n
+	        <div class=dov-bar-in style='height:".$height."px'>\n";
 
-	echo "<table id='compliance_table' class='centered'>\n";
-	echo "\t<thead>\n";
-	echo "\t<tr>\n";
-	echo "\t\t<th>Domain</th>\n";
-	echo "\t\t<th>Volume</th>\n";
-	echo "\t\t<th width='150px'>DMARC Policy</th>\n";
-	echo "\t\t<th width='15%'>DMARC Compliance</th>\n";
-	echo "\t\t<th width='15%'>DKIM Alignment</th>\n";
-	echo "\t\t<th width='15%'>SPF Alignment</th>\n";
-	echo "\t</tr>\n";
-	echo "\t</thead>\n";
+	foreach ($stats as $stat) {
+		$compliant  = 0;
+		$none       = 0;
+		$quarantine = 0;
+		$reject     = 0;
+		$dkim_pass  = 0;
+		$dkim_align = 0;
+		$spf_pass   = 0;
+		$spf_align  = 0;
+
+		// extract stats - this'll be sorted by senderIP
+		$ip         = get_ip($stat['ip'], $stat['ip6']);
+		$messages   = $stat['messages'];
+		if ($stat['compliant'] > 0)  { $compliant  = $stat['compliant']; }
+		if ($stat['none'] > 0)       { $none       = $stat['none']; }
+		if ($stat['quarantine'] > 0) { $quarantine = $stat['quarantine']; }
+		if ($stat['reject'] > 0)     { $reject     = $stat['reject']; }
+		if ($stat['dkim_pass'] > 0)  { $dkim_pass  = $stat['dkim_pass']; }
+		if ($stat['dkim_align'] > 0) { $dkim_align = $stat['dkim_align']; }
+		if ($stat['spf_pass'] > 0)   { $spf_pass   = $stat['spf_pass']; }
+		if ($stat['spf_align'] > 0)  { $spf_align  = $stat['spf_align']; }
+
+		// calculate stats
+		$dmarc_comp_pct = number_format(100 * ($compliant  / $messages));
+		$dkim_comp_pct  = number_format(100 * ($dkim_align / $none));
+		$dkim_pass_pct  = number_format(100 * ($dkim_pass  / $none));
+		$spf_comp_pct   = number_format(100 * ($spf_align  / $none));
+		$spf_pass_pct   = number_format(100 * ($spf_pass   / $none));
+
+		// now present
+		echo "<div class=dov-bar-in-ip>\n
+		        <div style='width:400px'>\n
+		          <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=sender&domain=$domain&ip=".$ip['ip']."'>".$ip['ip']."</a></h3>\n
+		          <span class=dov-bar-small>".gethostbyaddr($ip['ip'])."</span>\n
+		        </div>\n
+		        <div style='left:420px;'>\n
+		          <table class=dov>\n
+		            <tr class=dov>\n
+		              <td class=dov style='min-width:100px'><strong>Messages</strong></td>\n
+		              <td class=dov style='min-width:100px'><strong>Compliant</strong></td>\n
+		              <td class=dov style='min-width:100px'><strong>Quarantined</strong></td>\n
+		              <td class=dov style='min-width:100px'><strong>Rejected</strong></td>\n
+		            </tr>\n
+		            <tr class=dov>\n
+		              <td class=dov>$messages</td>\n
+		              <td class=dov>$dmarc_comp_pct%</td>\n
+		              <td class=dov>$quarantine</td>\n
+		              <td class=dov>$reject</td>\n
+		            </tr>\n
+			        </table>\n
+		        </div>\n
+		        <div style='right:20px;width:350px'>\n
+		          <span class=perc-text style='text-align:left'>DKIM</span>\n
+		          <div class=perc-bar>\n
+		            <div class=gray-per style='width:$dkim_pass_pct%'></div>\n
+		            <div class=green-per style='width:$dkim_comp_pct%'></div>\n
+		          </div>\n
+		          <span class=perc-text style='text-align:left'>SPF</span>\n
+		          <div class=perc-bar>\n
+		            <div class=gray-per style='width:$spf_pass_pct%'></div>\n
+		            <div class=green-per style='width:$spf_comp_pct%'></div>\n
+		          </div>\n
+		        </div>\n
+ 		      </div>\n";
+	}
+
+	echo "  </div>\n
+	      </div>\n";
 }
 
-// Domain Reports Table
-function domain_reports_table_start() {
-	echo "<h3><a id='reports'></a>Reports</h3>\n";
+// Sender Details -------------------------------
+function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
+	$hostname = gethostbyaddr($ip) ?: '';
+	$org      = '';
+	$city     = '';
+	$region   = '';
+	$country  = '';
+	$lon      = '';
+	$lat      = '';
 
-	echo "<table id='domain_reports' class='centered'>\n";
-	echo "\t<thead>\n";
-	echo "\t<tr>\n";
-	echo "\t\t<th>Date Range</th>\n";
-	echo "\t\t<th>Reporting Org</th>\n";
-	echo "\t\t<th>Report ID</th>\n";
-	echo "\t<tr>\n";
-	echo "\t</thead>\n";
+	if (GEO_ENABLE) {
+		if (array_key_exists('city',$geo_data))         { $city     = $geo_data['city']['names']['en']; }
+		if (array_key_exists('subdivisions',$geo_data)) { $region   = $geo_data['subdivisions']['0']['names']['en']; }
+		if (array_key_exists('country',$geo_data))      { $country  = $geo_data['country']['names']['en']; }
+		if (array_key_exists('location',$geo_data)) { 
+			$lat      = $geo_data['location']['latitude'];
+			$lon      = $geo_data['location']['longitude'];
+		}
+	}
+	else {
+		$org = $geo_data['regrinfo']['owner']['organization'] ?: '';
+	}
+
+	// present the data, obi-wan
+	echo "<div class=dov-bar style='margin-top: 0;height:400px;'>\n
+	        <div class=dov-bar-in style='height:400px;'>\n
+	          <div class=geo-left>\n
+	            <div class=geo-left-inner>\n";
+
+	if ($ip != '')       { echo "$ip<br />\n"; }
+	if ($hostname != '') { echo "$hostname<br />\n"; }
+	if ($org != '')      { echo "$org<br />\n"; }
+	if ($city != '')     { echo "$city<br />"; }
+	if ($region != '')   { echo "$region<br />"; }
+	if ($country != '')  { echo "$country<br />"; }
+
+	echo "<br />\n";
+
+	echo "      </div>\n
+	          </div>\n
+	          <div class=geo-right>\n
+	            <iframe width='100%' height='100%' src='https://maps.google.com/maps?q=$lat,$lon&z=3&output=embed'></iframe>\n
+	          </div>\n
+	        </div>\n
+	      </div>\n";
+
+	if (count($stats) > 0) {
+		echo "<table style='margin: 30px auto 0 auto' id='dmarc_reports' class='centered'>\n
+		        <thead>\n
+		          <tr>\n
+		            <th>Report ID</th>\n
+		            <th>Message Count</th>\n
+		            <th>Disposition</th>\n
+		            <th>Reason</th>\n
+		            <th>DKIM</th>\n
+		            <th>SPF</th>\n
+		          </tr>\n
+		        </thead>\n";
+	}
+	
+	foreach ($stats as $stat) {
+		$dkimresult = $stat['dkimresult'] ?: 'unknown';
+		$dkim_align = $stat['dkim_align'] ?: 'unknown';
+		$spfresult  = $stat['spfresult']  ?: 'unknown';
+		$spf_align  = $stat['spf_align']  ?: 'unknown';
+		echo "<tr>\n
+		        <td><a href='".$_SERVER['PHP_SELF']."?page=report&report=".$stat['reportid']."'>".$stat['reportid']."</a></td>\n
+		        <td>".$stat['rcount']."</td>\n
+		        <td>".$stat['disposition']."</td>\n
+		        <td>".$stat['reason']."</td>\n
+		        <td>";
+		if ($stat['dkimdomain'] != '') {
+			echo "Signed by <span style='color:#fff'>".$stat['dkimdomain']."</span><br />\n
+			        Result: <span class=$dkimresult>$dkimresult</span> | 
+			        Alignment: <span class=$dkim_align>$dkim_align</span></td>\n";
+		}
+		else {
+			echo "Not Signed</td>\n";
+		}
+		echo "  <td>Envelope from <span style='color:#fff'>".$stat['spfdomain']."</span><br />\n
+		            Result: <span class=$spfresult>$spfresult</span> | 
+		            Alignment: <span class=$spf_align>$spf_align</span></td>\n
+		      </tr>\n";
+	}
+
+	if (count($stats) > 0) { echo "</table>\n"; }
+
 }
 
-// Individual Reports Table
-function reports_table_start() {
-	echo "<h3><a id='report_detail'></a>Report Details</h3>\n";
+function report_details($data, $report) {
+	if ($data[0]['policy_adkim'] == 'r')      { $dkim_policy = 'Relaxed'; }
+	else if ($data[0]['policy_adkim'] == 's') { $dkim_policy = 'Strict'; }
+	else                                      { $dkim_policy = 'unknown'; }
+	if ($data[0]['policy_aspf'] == 'r')       { $spf_policy = 'Relaxed'; }
+	else if ($data[0]['policy_aspf'] == 's')  { $spf_policy = 'Strict'; }
+	else                                      { $spf_policy = 'unknown'; }
 
-	echo "<table id='dmarc_reports' class='centered'>\n";
-	echo "\t<thead>\n";
-	echo "\t<tr>\n";
-	echo "\t\t<th>Report ID</th>\n";
-	echo "\t\t<th>Sender IP</th>\n";
-	echo "\t\t<th>Sender Domain</th>\n";
-	echo "\t\t<th>Message Count</th>\n";
-	echo "\t\t<th>Disposition</th>\n";
-	echo "\t\t<th>Reason</th>\n";
-	echo "\t\t<th>DKIM Domain</th>\n";
-	echo "\t\t<th>DKIM Result</th>\n";
-	echo "\t\t<th>SPF Domain</th>\n";
-	echo "\t\t<th>SPF Result</th>\n";
-	echo "\t</tr>\n";
-	echo "\t</thead>\n";
-}
+	// report details
+	echo "<h1 style='margin-bottom: 20px'>Details for Report $report</h1>\n
+	      <div class=dov-bar style='margin-top: 0;height:200px;'>\n
+	        <div class=dov-bar-in style='height:200px;'>\n
+	          <div class=report-left>\n
+	            <div class=report-inner>\n";
 
-// Single Individual Reports Table
-function single_report_table_start() {
-	echo "<h3><a id='report_detail'></a>Report Details</h3>\n";
+	if ($data[0]['mindate'] != '' 
+	 && $data[0]['maxdate'] != '')            { echo "Date Range<br />\n"; }
+	if ($data[0]['org'] != '')                { echo "Reporting Organization<br />\n"; }
+	if ($data[0]['email'] != '')              { echo "Report Origin Email<br />\n"; }
+	if ($data[0]['extra_contact_info'] != '') { echo "Contact Info<br />\n"; }
+	if ($data[0]['policy_p'] != ''
+	 && $data[0]['policy_pct'] != '')         { echo "DMARC Policy<br />\n"; }
+	if ($data[0]['policy_adkim'] != '')       { echo "DKIM Policy<br />\n"; }
+	if ($data[0]['policy_aspf'] != '')        { echo "SPF Policy<br />\n"; }
 
-	echo "<table id='dmarc_reports' class='centered'>\n";
-	echo "\t<thead>\n";
-	echo "\t<tr>\n";
-	echo "\t\t<th>Sender IP</th>\n";
-	echo "\t\t<th>Sender Domain</th>\n";
-	echo "\t\t<th>Message Count</th>\n";
-	echo "\t\t<th>Disposition</th>\n";
-	echo "\t\t<th>Reason</th>\n";
-	echo "\t\t<th>DKIM Domain</th>\n";
-	echo "\t\t<th>DKIM Result</th>\n";
-	echo "\t\t<th>SPF Domain</th>\n";
-	echo "\t\t<th>SPF Result</th>\n";
-	echo "\t</tr>\n";
-	echo "\t</thead>\n";
-}
+	echo "      </div>\n
+	          </div>\n
+	          <div class=report-right>\n
+	            <div class=report-inner>\n";
 
-// Senders Report Table
-function senders_report_table_start() {
-	echo "<h3><a id='senders'></a>Sender's Report</h3>\n";
+	if ($data[0]['mindate'] != '' 
+	 && $data[0]['maxdate'] != '')            { echo $data[0]['mindate']." - ".$data[0]['maxdate']."<br />\n"; }
+	if ($data[0]['org'] != '')                { echo $data[0]['org']."<br />\n"; }
+	if ($data[0]['email'] != '')              { echo $data[0]['email']."<br />\n"; }
+	if ($data[0]['extra_contact_info'] != '') { echo $data[0]['extra_contact_info']."<br />\n"; }
+	if ($data[0]['policy_p'] != ''
+	 && $data[0]['policy_pct'] != '')         { echo ucfirst($data[0]['policy_p'])." ".$data[0]['policy_pct']."%<br />\n"; }
+	if ($data[0]['policy_adkim'] != '')       { echo "$dkim_policy<br />\n"; }
+	if ($data[0]['policy_aspf'] != '')        { echo "$spf_policy<br />\n"; }
 
-	echo "<table id='senders_report' class='centered'>\n";
-	echo "\t<thead>\n";
-	echo "\t<tr>\n";
-	echo "\t\t<th>Sender IP</th>\n";
-	echo "\t\t<th>Sender Domain</th>\n";
-	echo "\t\t<th>Sent As</th>\n";
-	echo "\t</tr>\n";
-	echo "\t</thead>\n";
-}
+	echo "      </div>\n
+	          </div>\n
+	        </div>\n
+	      </div>\n";
 
-function org_report_table_start($org, $domain, $dateRange) {
-	echo "<h3><a id='orgs'></a>Org Reports from $org for $domain - Since $dateRange</h3>\n";
-
-	echo "<table id='orgs_report' class='centered'>\n";
-	echo "\t<thead>\n";
-	echo "\t<tr>\n";
-	echo "\t\t<th>Report ID</th>\n";
-	echo "\t\t<th>Domain</th>\n";
-	echo "\t\t<th>Reporter Email</th>\n";
-	echo "\t\t<th>Extra Contact</th>\n";
-	echo "\t</tr>\n";
-	echo "\t</thead>\n";
+	echo "<table style='margin: 30px auto 0 auto' id='dmarc_reports' class='centered'>\n
+	        <thead>\n
+	          <tr>\n
+	            <th>Sender IP</th>\n
+	            <th>RFC5322 Domain</th>\n
+	            <th>Message Count</th>\n
+	            <th>Disposition</th>\n
+	            <th>Reason</th>\n
+	            <th>DKIM</th>\n
+	            <th>SPF</th>\n
+	          </tr>\n
+	        </thead>\n";
+	
+	foreach ($data as $row) {
+		$ip         = get_ip($row['ip'],$row['ip6']);
+		$dkimresult = $row['dkimresult'] ?: 'unknown';
+		$dkim_align = $row['dkim_align'] ?: 'unknown';
+		$spfresult  = $row['spfresult']  ?: 'unknown';
+		$spf_align  = $row['spf_align']  ?: 'unknown';
+		echo "<tr>\n
+		        <td><a href='".$_SERVER['PHP_SELF']."?page=sender&ip=".$ip['ip']."'>".$ip['ip']."</a></td>\n
+		        <td>".$row['domain']."</td>\n
+		        <td>".$row['rcount']."</td>\n
+		        <td>".$row['disposition']."</td>\n
+		        <td>".$row['reason']."</td>\n
+		        <td>";
+		if ($row['dkimdomain'] != '') {
+			echo "Signed by <span style='color:#fff'>".$row['dkimdomain']."</span><br />\n
+			        Result: <span class=$dkimresult>$dkimresult</span> | 
+			        Alignment: <span class=$dkim_align>$dkim_align</span></td>\n";
+		}
+		else {
+			echo "Not Signed</td>\n";
+		}
+		echo "  <td>Envelope from <span style='color:#fff'>".$row['spfdomain']."</span><br />\n
+		            Result: <span class=$spfresult>$spfresult</span> | 
+		            Alignment: <span class=$spf_align>$spf_align</span></td>\n
+		      </tr>\n";
+	}
+	
+	echo "</table>\n";
 }
 ?>

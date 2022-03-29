@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 templates/openda/index.php
-2021 - John Bradley (userjack6880)
+2022 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -22,7 +22,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 // Header
-function page_header () { include_once("header.php"); }
+function page_header ($page, $domain, $dateRange, $ip) { include_once("header.php"); }
 
 // Footer
 function page_footer () { include_once("footer.php"); }

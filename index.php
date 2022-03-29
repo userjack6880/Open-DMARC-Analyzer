@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 index.php
-2021 - John Bradley (userjack6880)
+2022 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open DMARC Analyzer
 
@@ -24,41 +24,82 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Includes
 include_once 'includes.php';
 
-// Get Date Stuff
-$pdo = dbConn();
-if (!empty($_GET['range'])) { 
-	debug("Using GET date value: ".htmlspecialchars($_GET['range']));
+// Pull in URI Gets
+
+// Range ----------------------------------------------------------------------
+if (!empty($_GET['range'])) {
 	$dateRange = htmlspecialchars($_GET['range']);
-} else { 
-	debug("Using default date value: ".DATE_RANGE);
-	$dateRange = DATE_RANGE; 
+}
+elseif (isset($_POST['range'])) {
+	$dateRange = htmlspecialchars($_POST['range']);
+}
+else {
+	$dateRange = DATE_RANGE;
 }
 
-if (isset($_GET['disp'])) { $disp = htmlspecialchars($_GET['disp']); }
-else { $disp = 'none'; }
+// Page -----------------------------------------------------------------------
+if (isset($_GET['page'])) {
+	$page = htmlspecialchars($_GET['page']);
+}
+elseif (isset($_POST['page'])) {
+	$page = htmlspecialchars($_POST['page']);
+}
+else {
+	$page = "index";
+}
 
-page_header();
+// Domain ---------------------------------------------------------------------
+if (isset($_GET['domain'])) {
+	$domain = htmlspecialchars($_GET['domain']);
+}
+elseif (isset($_POST['domain'])) {
+	$domain = htmlspecialchars($_POST['domain']);
+}
+else {
+	$domain = "all";
+}
 
-?>
+// IPs ------------------------------------------------------------------------
+if (isset($_GET['ip'])) {
+	$ip = htmlspecialchars($_GET['ip']);
+}
+elseif (isset($_POST['ip'])) {
+	$ip = htmlspecialchars($_POST['ip']);
+}
+else {
+	$ip = '';
+}
 
-<script>
-	var TSort_Data = new Array('compliance_table','s','i','s','i','i','i');
-	var TSort_Cookie = 'compliance_table';
-	var TSort_NColumns = 1;
-	tsRegister();
-</script>
+// ReportID -------------------------------------------------------------------
+if (isset($_GET['report'])) {
+	$report = htmlspecialchars($_GET['report']);
+}
+elseif (isset($_POST['report'])) {
+	$report = htmlspecialchars($_POST['report']);
+}
+else {
+	$report = '';
+}
 
-<?php
+// End URI gets
 
-// Dashboard
-dashboard($pdo, $dateRange, $disp);
+// Page Header
+page_header($page, $domain, $dateRange, $ip);
 
-// Footer
+if ($page == "index") {
+	dashboard($dateRange, $domain);
+}
+elseif ($page == "sender") {
+	senderDashboard($dateRange, $domain, $ip);
+}
+elseif ($page == "report") {
+	reportDashboard($report);
+}
+else {
+	echo "<h1>Invalid Page</h1>\n";
+}
 
+// Page Footer
 page_footer();
-
-$pdo = null;
-
-debug("\o/");
 
 ?>

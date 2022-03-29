@@ -1,5 +1,10 @@
 # Changelog
 
+## 0-α8
+
+- Rewrite of ODA for performance and visual improvements and feature simplification.
+- Begin Documentation Process
+
 ## 0-α7.3
 
 - README.md updates

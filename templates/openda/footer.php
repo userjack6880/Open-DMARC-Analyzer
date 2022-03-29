@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 templates/openda/footer.php
-2021 - John Bradley (userjack6880)
+2022 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -24,7 +24,11 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 ?>
 
 	</div>
-	<div id="footer"><p><a href="https://github.com/userjack6880/Open-DMARC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?></p></div>
+	<div id="footer">
+		<p>
+			<a href="https://github.com/userjack6880/Open-DMARC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?>
+		</p>
+	</div>
 
 	</body>
 </html>
