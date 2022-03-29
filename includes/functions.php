@@ -271,7 +271,7 @@ function reportDashboard($report) {
 function getDomains($dateRange) {
 	$pdo = dbConn();
 	$startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
-	$statement = "SELECT UNIQUE domain FROM report WHERE mindate BETWEEN :startdate AND NOW()";
+	$statement = "SELECT DISTINCT domain FROM report WHERE mindate BETWEEN :startdate AND NOW()";
 	$params[':startdate'] = $startDate;
 	$domains = dbQuery($pdo, $statement, $params);
 	foreach ($domains as $key => $domain) {
