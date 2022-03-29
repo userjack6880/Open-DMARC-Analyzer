@@ -1,5 +1,9 @@
 # Changelog
 
+## 0-α8.1
+
+- Added `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, pull request template, issue templates, and organized documents into docs folder.
+
 ## 0-α8
 
 - Rewrite of ODA for performance and visual improvements and feature simplification.

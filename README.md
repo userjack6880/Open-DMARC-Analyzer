@@ -28,13 +28,27 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 
 # Latest Changes
 
-## 0-α8
+## 0-α8.1
 
-- Rewrite of ODA for performance and visual improvements and feature simplification.
-- Begin Documentation Process
+- Added `CODE_OF_CONDUCT`, `CONTRIBUTING`, pull request template, issue templates, and organized documents into docs folder.
 
-See `CHANGELOG.md` for full details of all changes.
+See `CHANGELOG` under `docs` for full details of all changes.
 
-# License
+# Release Cycle and Versioning
 
-Open DMARC Analyzer is released under GNU GPLv3. See LICENSE.
+This project regular release cycle is not yet determined. Versioning is under the Anomaly Versioning Scheme (2022), as outlined in `VERSIONING` under `docs`.
+
+# Contributing
+
+Public contributions are encouraged. Please review `CONTRIBUTING` under `docs` for contributing procedures. Additionally, please take a look at our `CODE_OF_CONDUCT`. By participating in this project you agree to abide by the Code of Conduct.
+
+# Contributors
+
+Primary Contributors
+- John Bradley - Initial Work
+
+Thanks to [all who contributed](https://github.com/userjack6880/Open-DMARC-Analyzer/graphs/contributors) and [have given feedback](https://github.com/userjack6880/Open-DMARC-Analyzer/issues?q=is%3Aissue).
+
+# Licenses
+
+Open DMARC Analyzer is released under GNU GPLv3. See `LICENSE`.
