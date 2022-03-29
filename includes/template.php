@@ -159,7 +159,7 @@ function overview_bar($stats, $domain) {
 		if ($domain_count == 1) {
 			$domain     = $stats[0]['domain'];
 			$policy     = ucfirst($stats[0]['policy_p']);
-			$policy_pct = $stats[0]['policy_pct']);
+			$policy_pct = $stats[0]['policy_pct'];
 		}
 	}
 	else {
