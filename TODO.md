@@ -1,9 +1,0 @@
-- Sender Details Page
--- List Of Reports
--- Message Count Per Report (From Sender)
--- Disposition (From Sender)
--- Reason (For Disposition from Sender)
--- Signed Domain (DKIM)
---- Results
--- Envelope Domain (SPF)
---- Results

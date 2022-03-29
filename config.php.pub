@@ -2,7 +2,7 @@
 /*
 Open DMARC Analyzer - Open Source DMARC Analyzer
 config.php
-2021 - John Bradley (userjack6880)
+2022 - John Bradley (userjack6880)
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -38,14 +38,14 @@ define('DEBUG', 1);
 define('TEMPLATE', 'openda');
 
 // Package Loader
-define('AUTO_LOADER', 'vendor/autoload.php');	// autoloader for composer installed libraries
+define('AUTO_LOADER', 'vendor/autoload.php');   // autoloader for composer installed libraries
 
 // GeoIP2 Settings
-define('GEO_ENABLE', 1);											// 0 - disable GeoIP2, 1 - enable GeoIP2
-define('GEO_DB', 'includes/geolite2.mmdb');		// location of GeoIP2 database
+define('GEO_ENABLE', 1);                        // 0 - disable GeoIP2, 1 - enable GeoIP2
+define('GEO_DB', 'includes/geolite2.mmdb');     // location of GeoIP2 database
 
 // Defaults
 
-define('DATE_RANGE', '-1 week');
+define('DATE_RANGE', '-1w');
 
 ?>
