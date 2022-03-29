@@ -24,7 +24,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-	echo "0-&alpha;8";
+	echo "0-&alpha;8.1";
 
 }
 
@@ -55,7 +55,8 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 		echo "<div id=controlbar>\n";
 
 		$domains = getDomains($dateRange);
-		if (count($domains) == 1 && $page != "sender") {
+//		if (count($domains) == 1 && $page != "sender") {
+		if (count($domains) == 1) {
 			$domain = $domains[0]['domain'];
 		}
 
