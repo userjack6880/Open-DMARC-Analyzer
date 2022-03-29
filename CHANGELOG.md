@@ -5,6 +5,10 @@
 - Rewrite of ODA for performance and visual improvements and feature simplification.
 - Begin Documentation Process
 
+## 0-α7.3
+
+- README.md updates
+
 ## 0-α7.2
 
 - Added function to change date range increment based on default date range setting.
