@@ -62,7 +62,10 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 		// Show if all domains are being shown or a single domain
 		echo "<div id=controlbarleft>\n";
 		if ($page == "index" ) {
-			if ($domain == "all") {
+			if (count($domains) == 1) {
+				echo "Since $startdate\n";
+			}
+			else if ($domain == "all") {
 				echo "<h1>All Domains</h1><br />\n
 				      Since $startdate\n";
 			}
@@ -85,21 +88,24 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 		echo "</div>\n";
 
 		// Domain Selection and Date Selection
-		echo "<div id=controlbarright>\n
-		        <form action='".$_SERVER['PHP_SELF']."' method='post'>\n
+		echo "<div id=controlbarright>\n";
+
+		if (count($domains) > 1) {
+			echo "<form action='".$_SERVER['PHP_SELF']."' method='post'>\n
 		          <select name='domain'>\n
 		          <option value='all'>All Domains</option>\n";
-		foreach ($domains as $listDomain) {
-			echo "<option value='".$listDomain['domain']."' ";
-			if($listDomain['domain'] == $domain) { echo "selected"; }
-			echo ">".$listDomain['domain']."</option>\n";
-		}
-		echo "    </select>\n
+			foreach ($domains as $listDomain) {
+				echo "<option value='".$listDomain['domain']."' ";
+				if($listDomain['domain'] == $domain) { echo "selected"; }
+				echo ">".$listDomain['domain']."</option>\n";
+			}
+			echo "</select>\n
 		          <input type='hidden' name='page' value='$page'>\n
 		          <input type='hidden' name='ip' value='$ip'>\n
 		          <input type='hidden' name='range' value='$dateRange'>\n
 		          <input type='submit' value='Go'>\n
 		        </form><br />\n";
+		}
 
 		// date selection -1 unit in config
 		$datePrev = $dateNum+1;
