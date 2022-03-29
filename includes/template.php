@@ -55,9 +55,9 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 		echo "<div id=controlbar>\n";
 
 		$domains = getDomains($dateRange);
+		echo count($domains);
 //		if (count($domains) == 1 && $page != "sender") {
 		if (count($domains) == 1) {
-			echo "only one domain!";
 			$domain = $domains[0]['domain'];
 		}
 
