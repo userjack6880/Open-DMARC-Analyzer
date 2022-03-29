@@ -3,6 +3,7 @@
 ## 0-α8.1
 
 - Added `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, pull request template, issue templates, and organized documents into docs folder.
+- Improved compatibility with older SQL databases that do not support `INET6_ATON` or `INET6_NTOA`.
 
 ## 0-α8
 

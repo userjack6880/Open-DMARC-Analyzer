@@ -142,6 +142,7 @@ function overview_bar($stats, $domain) {
 	if ($domain == "all") {
 		$domain_count = 0;
 		foreach ($stats as $stat) {
+			$stat = array_map('htmlspecialchars',$stat);
 			$total = $total+$stat['total_messages'];
 			if ($stat['none'] > 0)                { $dmarc_none = $dmarc_none+$stat['none']; }
 			if ($stat['quarantine'] > 0)          { $dmarc_quar = $dmarc_quar+$stat['quarantine']; }
@@ -160,6 +161,7 @@ function overview_bar($stats, $domain) {
 		}
 	}
 	else {
+		$stats[0]   = array_map('htmlspecialchars',$stats[0]);
 		$total      = $stats[0]['total_messages'];
 		$policy     = ucfirst($stats[0]['policy_p']);
 		$policy_pct = $stats[0]['policy_pct'];
@@ -230,6 +232,7 @@ function overview_bar($stats, $domain) {
 // Overview Bar ---------------------------------
 function domain_overview($stats, $dateRange) {
 	foreach ($stats as $stat) {
+		$stat = array_map('htmlspecialchars',$stat);
 		// extract stats
 		$dmarc_none = 0;
 		$dmarc_quar = 0;
@@ -319,6 +322,7 @@ function domain_details($stats, $domain, $dateRange) {
 
 		// extract stats - this'll be sorted by senderIP
 		$ip         = get_ip($stat['ip'], $stat['ip6']);
+		$stat       = array_map('htmlspecialchars',$stat);
 		$messages   = $stat['messages'];
 		if ($stat['compliant'] > 0)  { $compliant  = $stat['compliant']; }
 		if ($stat['none'] > 0)       { $none       = $stat['none']; }
@@ -331,10 +335,19 @@ function domain_details($stats, $domain, $dateRange) {
 
 		// calculate stats
 		$dmarc_comp_pct = number_format(100 * ($compliant  / $messages));
-		$dkim_comp_pct  = number_format(100 * ($dkim_align / $none));
-		$dkim_pass_pct  = number_format(100 * ($dkim_pass  / $none));
-		$spf_comp_pct   = number_format(100 * ($spf_align  / $none));
-		$spf_pass_pct   = number_format(100 * ($spf_pass   / $none));
+		if ($none > 0) {
+			$dkim_comp_pct = number_format(100 * ($dkim_align / $none));
+			$dkim_pass_pct = number_format(100 * ($dkim_pass  / $none));
+			$spf_comp_pct  = number_format(100 * ($spf_align  / $none));
+			$spf_pass_pct  = number_format(100 * ($spf_pass   / $none));
+		}
+		else {
+			// sometimes we get entries that are full reject
+			$dkim_comp_pct = 0;
+			$dkim_pass_pct = 0;
+			$spf_comp_pct  = 0;
+			$spf_pass_pct  = 0;
+		}
 
 		// now present
 		echo "<div class=dov-bar-in-ip>\n
@@ -438,6 +451,7 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 	}
 	
 	foreach ($stats as $stat) {
+		$stat       = array_map('htmlspecialchars',$stat);
 		$dkimresult = $stat['dkimresult'] ?: 'unknown';
 		$dkim_align = $stat['dkim_align'] ?: 'unknown';
 		$spfresult  = $stat['spfresult']  ?: 'unknown';
@@ -467,6 +481,11 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 }
 
 function report_details($data, $report) {
+
+	if ($data[0]['ip6'] != '') { $ip = $data[0]['ip6']; }
+	$data[0] = array_map('htmlspecialchars',$data[0]);
+	if ($data[0]['ip6'] != '') { $data[0]['ip6'] = $ip; }
+
 	if ($data[0]['policy_adkim'] == 'r')      { $dkim_policy = 'Relaxed'; }
 	else if ($data[0]['policy_adkim'] == 's') { $dkim_policy = 'Strict'; }
 	else                                      { $dkim_policy = 'unknown'; }
@@ -526,6 +545,7 @@ function report_details($data, $report) {
 	
 	foreach ($data as $row) {
 		$ip         = get_ip($row['ip'],$row['ip6']);
+		$row        = array_map('htmlspecialchars',$row);
 		$dkimresult = $row['dkimresult'] ?: 'unknown';
 		$dkim_align = $row['dkim_align'] ?: 'unknown';
 		$spfresult  = $row['spfresult']  ?: 'unknown';

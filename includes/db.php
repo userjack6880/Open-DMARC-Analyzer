@@ -55,7 +55,6 @@ function dbQuery($pdo, $statement, $params) {
 		$rows = [];
 
 		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-			$row = array_map('htmlspecialchars', $row);
 			array_push($rows, $row);
 		}
 		$query = null;
