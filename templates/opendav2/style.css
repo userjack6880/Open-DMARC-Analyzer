@@ -128,7 +128,7 @@ a:hover {
 }
 
 .geo-left {
-	width: calc(100% - 640px);
+	width: 500px;
 	height: 400px;
 	margin: 0;
 	padding: 0;
@@ -144,10 +144,12 @@ a:hover {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
+	font-size: 18px;
+	font-weight: bold;
 }
 
 .geo-right {
-	width: 640px;
+	width: calc(100% - 500px);
 	height: 400px;
 	margin: 0;
 	padding: 15px;
@@ -344,9 +346,9 @@ h3 {
 }
 
 table {
-	border-collapse: collapse;;
-	min-width: 100%;
-	margin: 10px 10px 10px 10px;
+	border-collapse: collapse;
+    border-radius: 15px;
+	width: 95%;
 	text-align: center;
 }
 
@@ -378,6 +380,10 @@ span.fail {
 
 span.warn {
 	color: #F1B077;
+}
+
+span.unknown {
+    color: #2A3035;
 }
 
 #footer {

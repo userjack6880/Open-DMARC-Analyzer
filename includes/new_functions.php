@@ -192,7 +192,49 @@ function senderDashboard($dateRange, $domain, $ip) {
 	$pdo = dbConn();
 	$startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
 
-	sender_details($geo_data, $domain, $dateRange, $ip);
+	$statement = "SELECT reportid, rcount, mindate, disposition, reason,
+                         dkimdomain, dkimresult, dkim_align,
+                         spfdomain, spfresult, spf_align
+	              FROM report
+	              LEFT JOIN rptrecord ON report.serial=rptrecord.serial
+	              WHERE report.serial in (
+	                    SELECT serial
+	                    FROM rptrecord";
+
+	// determine if ipv4 or ipv6 before proceeding
+	$ip4 = ip2long($ip);
+	$is_ip4 = true;
+	if (!$ip4) {
+    	$ip6 = inet_pton($ip);
+    	$is_ip4 = false;
+	}
+
+	// proceed with the statment
+	if ($is_ip4) {
+		$statement .= " WHERE ip = :ip)
+		               AND ip = :ip";
+		$params = array(':ip' => $ip4);
+	}
+	else {
+		$statement .= " WHERE ip6 = :ip)
+		               AND ip6 = :ip";
+		$params = array(':ip' => $ip6);
+	}
+
+	$statement .= " AND mindate BETWEEN :startdate AND NOW()";
+	$params[':startdate'] = $startDate;
+
+	// domain dependent
+	if ($domain != "all") {
+		$statement .= " AND domain = :domain";
+		$params[':domain'] = $domain;
+	}
+
+	$statement .= " ORDER BY mindate ASC";
+
+	$stats = dbQuery($pdo, $statement, $params);
+
+	sender_details($geo_data, $stats, $domain, $dateRange, $ip);
 
 	$pdo = NULL;
 }

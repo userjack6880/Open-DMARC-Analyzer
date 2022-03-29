@@ -141,14 +141,14 @@ function overview_bar($stats, $domain) {
 		$domain_count = 0;
 		foreach ($stats as $stat) {
 			$total = $total+$stat['total_messages'];
-			$dmarc_none = $dmarc_none+$stat['none'];
-			$dmarc_quar = $dmarc_quar+$stat['quarantine'];
-			$dmarc_rjct = $dmarc_rjct+$stat['reject'];
-			$dmarc_comp = $dmarc_comp+$stat['compliant'];
-			$dkim_pass_aligned = $dkim_pass_aligned+$stat['dkim_pass_aligned'];
-			$dkim_pass_noalign = $dkim_pass_noalign+$stat['dkim_pass_unaligned'];
-			$spf_pass_aligned  = $spf_pass_aligned+$stat['spf_pass_aligned'];
-			$spf_pass_noalign  = $spf_pass_noalign+$stat['spf_pass_unaligned'];
+			if ($stat['none'] > 0)                { $dmarc_none = $dmarc_none+$stat['none']; }
+			if ($stat['quarantine'] > 0)          { $dmarc_quar = $dmarc_quar+$stat['quarantine']; }
+			if ($stat['reject'] > 0)              { $dmarc_rjct = $dmarc_rjct+$stat['reject']; }
+			if ($stat['compliant'] > 0)           { $dmarc_comp = $dmarc_comp+$stat['compliant']; }
+			if ($stat['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $dkim_pass_aligned+$stat['dkim_pass_aligned']; }
+			if ($stat['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $dkim_pass_noalign+$stat['dkim_pass_unaligned']; }
+			if ($stat['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $spf_pass_aligned+$stat['spf_pass_aligned']; }
+			if ($stat['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $spf_pass_noalign+$stat['spf_pass_unaligned']; }
 			$domain_count++;
 		}
 
@@ -256,9 +256,9 @@ function domain_overview($stats, $dateRange) {
 		// stat calculations
 		$dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
 		$dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
-		$dkim_pass_pct  = number_format(100 * (($dkim_pass_aligned + $dkim_pass_noalign) / $dmarc_none));
+		$dkim_pass_pct  = number_format(100 * (((int)$dkim_pass_aligned + (int)$dkim_pass_noalign) / $dmarc_none));
 		$spf_comp_pct   = number_format(100 * ($spf_pass_aligned  / $dmarc_none));
-		$spf_pass_pct   = number_format(100 * (($spf_pass_aligned  + $spf_pass_noalign)  / $dmarc_none));
+		$spf_pass_pct   = number_format(100 * (((int)$spf_pass_aligned  + (int)$spf_pass_noalign)  / $dmarc_none));
 
 		// overview details
 		echo "<div class=dov-bar>\n
@@ -332,12 +332,12 @@ function domain_details($stats, $domain, $dateRange) {
 		$dkim_comp_pct  = number_format(100 * ($dkim_align / $none));
 		$dkim_pass_pct  = number_format(100 * ($dkim_pass  / $none));
 		$spf_comp_pct   = number_format(100 * ($spf_align  / $none));
-		$spf_pass_pct   = number_format(100 * ($spf_pass   / $dmarc_none));
+		$spf_pass_pct   = number_format(100 * ($spf_pass   / $none));
 
 		// now present
 		echo "<div class=dov-bar-in-ip>\n
 		        <div style='width:400px'>\n
-		          <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SHELF']."?range=$dateRange&page=sender&domain=$domain&ip=".$ip['ip']."'>".$ip['ip']."</a></h3>\n
+		          <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=sender&domain=$domain&ip=".$ip['ip']."'>".$ip['ip']."</a></h3>\n
 		          <span class=dov-bar-small>".gethostbyaddr($ip['ip'])."</span>\n
 		        </div>\n
 		        <div style='left:420px;'>\n
@@ -376,7 +376,7 @@ function domain_details($stats, $domain, $dateRange) {
 }
 
 // Sender Details -------------------------------
-function sender_details($geo_data, $domain, $dateRange, $ip) {
+function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 	$hostname = gethostbyaddr($ip) ?: '';
 	$org      = '';
 	$city     = '';
@@ -386,11 +386,13 @@ function sender_details($geo_data, $domain, $dateRange, $ip) {
 	$lat      = '';
 
 	if (GEO_ENABLE) {
-		$city     = $geo_data['city']['names']['en']              ?: '';
-		$region   = $geo_data['subdivisions']['0']['names']['en'] ?: '';
-		$country  = $geo_data['country']['names']['en']           ?: '';
-		$lat      = $geo_data['location']['latitude']             ?: '';
-		$lon      = $geo_data['location']['longitude']            ?: '';
+		if (array_key_exists('city',$geo_data))         { $city     = $geo_data['city']['names']['en']; }
+		if (array_key_exists('subdivisions',$geo_data)) { $region   = $geo_data['subdivisions']['0']['names']['en']; }
+		if (array_key_exists('country',$geo_data))      { $country  = $geo_data['country']['names']['en']; }
+		if (array_key_exists('location',$geo_data)) { 
+			$lat      = $geo_data['location']['latitude'];
+			$lon      = $geo_data['location']['longitude'];
+		}
 	}
 	else {
 		$org = $geo_data['regrinfo']['owner']['organization'] ?: '';
@@ -400,15 +402,62 @@ function sender_details($geo_data, $domain, $dateRange, $ip) {
 	echo "<div class=dov-bar style='margin-top: 0;height:400px;'>\n
 	        <div class=dov-bar-in style='height:400px;'>\n
 	          <div class=geo-left>\n
-	            <div class=geo-left-inner>\n
-	yeet
-	            </div>\n
+	            <div class=geo-left-inner>\n";
+
+	if ($ip != '')       { echo "$ip<br />\n"; }
+	if ($hostname != '') { echo "$hostname<br />\n"; }
+	if ($org != '')      { echo "$org<br />\n"; }
+	if ($city != '')     { echo "$city"; }
+	if ($region != '')   { echo "$region"; }
+	if ($country != '')  { echo "$country"; }
+
+	echo "<br />\n";
+
+	echo "      </div>\n
 	          </div>\n
 	          <div class=geo-right>\n
-	            <iframe width='100%' height='100%' src='https://maps.google.com/maps?q=$lat,$lon&output=embed'></iframe>\n
-	          </div>\n";
-
-	echo "  </div>\n
+	            <iframe width='100%' height='100%' src='https://maps.google.com/maps?q=$lat,$lon&z=3&output=embed'></iframe>\n
+	          </div>\n
+	        </div>\n
 	      </div>\n";
+
+	echo "<table style='margin: 30px auto 0 auto' id='dmarc_reports' class='centered'>\n
+	        <thead>\n
+	          <tr>\n
+	            <th>Report ID</th>\n
+	            <th>Message Count</th>\n
+	            <th>Disposition</th>\n
+	            <th>Reason</th>\n
+	            <th>DKIM</th>\n
+	            <th>SPF</th>\n
+	          </tr>\n
+	        </thead>\n";
+	
+	foreach ($stats as $stat) {
+		$dkimresult = $stat['dkimresult'] ?: 'unknown';
+		$dkim_align = $stat['dkim_align'] ?: 'unknown';
+		$spfresult  = $stat['spfresult']  ?: 'unknown';
+		$spf_align  = $stat['spf_align']  ?: 'unknown';
+		echo "<tr>\n
+		        <td><a href=''>".$stat['reportid']."</a></td>\n
+		        <td>".$stat['rcount']."</td>\n
+		        <td>".$stat['disposition']."</td>\n
+		        <td>".$stat['reason']."</td>\n
+		        <td>";
+		if ($stat['dkimdomain'] != '') {
+			echo "Signed by <span style='color:#fff'>".$stat['dkimdomain']."</span><br />\n
+			        Result: <span class=$dkimresult>$dkimresult</span> | 
+			        Alignment: <span class=$dkim_align>$dkim_align</span></td>\n";
+		}
+		else {
+			echo "Not Signed</td>\n";
+		}
+		echo "  <td>Envelope from <span style='color:#fff'>".$stat['spfdomain']."</span><br />\n
+		            Result: <span class=$spfresult>$spfresult</span> | 
+		            Alignment: <span class=$spf_align>$spf_align</span></td>\n
+		      </tr>\n";
+	}
+	
+	echo "</table>\n";
 }
 ?>
