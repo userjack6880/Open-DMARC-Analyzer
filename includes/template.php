@@ -425,9 +425,15 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 	}
 
 	// present the data, obi-wan
-	echo "<div class=dov-bar style='margin-top: 0;height:400px;'>\n
-	        <div class=dov-bar-in style='height:400px;'>\n
-	          <div class=geo-left>\n
+	if (GEO_ENABLE) {
+		echo "<div class=dov-bar style='margin-top: 0;height:400px;'>\n
+		        <div class=dov-bar-in style='height:400px;'>\n";
+	}
+	else {
+		echo "<div class=dov-bar style='margin-top: 0;height:100px;'>\n
+		        <div class=dov-bar-in style='height:100px;'>\n";
+	}
+	echo "    <div class=geo-left>\n
 	            <div class=geo-left-inner>\n";
 
 	if ($ip != '')       { echo "$ip<br />\n"; }
@@ -441,9 +447,14 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 
 	echo "      </div>\n
 	          </div>\n
-	          <div class=geo-right>\n
-	            <iframe width='100%' height='100%' src='https://maps.google.com/maps?q=$lat,$lon&z=3&output=embed'></iframe>\n
-	          </div>\n
+	          <div class=geo-right>\n";
+
+	// if there's no maxmind data, then there's no map to find
+	if (GEO_ENABLE) {
+		echo "<iframe width='100%' height='100%' src='https://maps.google.com/maps?q=$lat,$lon&z=3&output=embed'></iframe>\n";
+	}
+
+	echo "    </div>\n
 	        </div>\n
 	      </div>\n";
 
