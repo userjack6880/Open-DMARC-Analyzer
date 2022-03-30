@@ -15,10 +15,10 @@ Open DMARC Analyzer was written because there didn't seem to be a full-featured 
 
 One of the following 2 packages are required to be installed.
 
-## [jsmitty12/phpWhois](https://github.com/jsmitty12/phpWhois/)
+** [jsmitty12/phpWhois](https://github.com/jsmitty12/phpWhois/) **
 It is highly recommended that you install this package using composer. Instructions are found on the package's git page. This is required, and will replace most GeoIP data if you disable the MaxMind DB reader package. This package *will* require PHP 7.
 
-## [MaxMind DB Reader PHP API](https://github.com/maxmind/MaxMind-DB-Reader-php)
+** [MaxMind DB Reader PHP API](https://github.com/maxmind/MaxMind-DB-Reader-php) **
 A note on this dependency - I've tried to write the one refrence to this external project as optional as possible, and it can almost completely be configured from config.php, due to the limitation of php namespace, I haven't come across a way that won't require you to dig deeper into the code if you happen to chose a compatible library to replace this MaxMind one. If you do wish to replace this library with another compatible one, the line in question is located in `includes\functions.php`:
 ```php
 $reader = new MaxMind\Db\Reader(GEO_DB);
@@ -46,7 +46,7 @@ Once downloaded and installed in a desired directory, install either jsmitty12's
 
 # Configuration Options
 
-## Database Options
+**Database Options**
 ```php
 define('DB_HOST', 'localhost');
 define('DB_USER', 'dmarc');
@@ -55,25 +55,25 @@ define('DB_NAME', 'dmarc');
 define('DB_PORT', '3306'); // default port 3306
 ```
 
-## Debug Settings
+**Debug Settings**
 ```php
 define('DEBUG', 1);
 ```
 *Not Currently Used*
 
-## Template Settings
+**Template Settings**
 ```php
 define('TEMPLATE','openda');
 ```
 This will load the visual templated located `templates/`. Simply name the directory the template is located in. Do not use a trailing slash.
 
-## Package Loader
+**Package Loader**
 ```php
 define('AUTO_LOADER','vendor/autoload.php');
 ```
 Should not need to change this setting unless using a non-standard composer installation.
 
-## GeoIP2 Settings
+**GeoIP2 Settings**
 ```php
 define('GEO_ENABLE', 1);
 define('GEO_DB', 'includes/geolite2.mmdb');
@@ -82,7 +82,7 @@ Allows you to select between jsmitty12's phpWhois package and the MaxMind DB Rea
 
 The second option, `GEO_DB` is used in conjunction with the MaxMind DB Reader package. The path to the MaxMind GeoIP database is relative to the root of the software package.
 
-## Date Range
+**Date Range**
 ```php
 define('DATE_RANGE', '-1w');
 ```
