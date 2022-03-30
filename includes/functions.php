@@ -55,8 +55,8 @@ function get_ip($ip4, $ip6) {
 		$array['ipv4'] = true;
 		return $array;
 	}
-	if ($ip6) {
-		$array['ip'] = $ip6;
+	else {
+		$array['ip'] = inet_ntop($ip6);
 		$array['ipv4'] = false;
 		return $array;
 	}
@@ -132,7 +132,7 @@ function dashboard($dateRange,$domain) {
 	// details if a specific domain is selected
 	if ($domain != "all") {
 		// new stat query
-		$statement = "SELECT ip, INET6_NTOA(ip6) as ip6,
+		$statement = "SELECT ip, ip6,
 		                     SUM(rcount) as messages,
 		                     SUM(compliant) as compliant,
 		                     SUM(none) as none,
@@ -271,9 +271,13 @@ function reportDashboard($report) {
 function getDomains($dateRange) {
 	$pdo = dbConn();
 	$startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
-	$statement = "SELECT UNIQUE domain FROM report WHERE mindate BETWEEN :startdate AND NOW()";
+	$statement = "SELECT DISTINCT domain FROM report WHERE mindate BETWEEN :startdate AND NOW()";
 	$params[':startdate'] = $startDate;
 	$domains = dbQuery($pdo, $statement, $params);
+	foreach ($domains as $key => $domain) {
+		$domain = array_map('htmlspecialchars', $domain);
+		$domains[$key] = $domain;
+	}
 	$pdo = NULL;
 	return $domains;
 }
