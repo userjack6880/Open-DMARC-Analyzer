@@ -100,6 +100,7 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 - Added basic installation script to add `report_stats` view from file and attempt to cleanup after itself.
 - Further fleshed out `README.md`
 - Improved compatibility with older SQL databases that do not support `INET6_ATON` or `INET6_NTOA`. 
+- Added SQL error output.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
