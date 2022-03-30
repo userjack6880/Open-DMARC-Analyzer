@@ -31,6 +31,7 @@ The MaxMind library is not distributed with this project, and is ultimately an o
 ## 0-α8.1
 
 - Added `CODE_OF_CONDUCT`, `CONTRIBUTING`, pull request template, issue templates, and organized documents into docs folder.
+- Added basic installation script to add `report_stats` view from file and attempt to cleanup after itself.
 - Improved compatibility with older SQL databases that do not support `INET6_ATON` or `INET6_NTOA`. 
 
 See `CHANGELOG` under `docs` for full details of all changes.
