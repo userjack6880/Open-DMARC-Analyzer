@@ -1,5 +1,13 @@
 # Changelog
 
+## 0-α8.1
+
+- Added `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, pull request template, issue templates, and organized documents into docs folder.
+- Added basic installation script to add `report_stats` view from file and attempt to cleanup after itself.
+- Further fleshed out `README.md`
+- Improved compatibility with older SQL databases that do not support `INET6_ATON` or `INET6_NTOA`.
+- Added SQL error output.
+
 ## 0-α8
 
 - Rewrite of ODA for performance and visual improvements and feature simplification.

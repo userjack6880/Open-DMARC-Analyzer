@@ -24,7 +24,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-	echo "0-&alpha;8";
+	echo "0-&alpha;8.1";
 
 }
 
@@ -52,17 +52,23 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 
 	// pages that need domain controls
 	if ($page == "index" || $page == "sender") {
-		echo "<div id=controlbar>\n";
 
 		$domains = getDomains($dateRange);
 		if (count($domains) == 1 && $page != "sender") {
 			$domain = $domains[0]['domain'];
+			echo "<div id=controlbar style='height:25px'>\n";
+		}
+		else {
+			echo "<div id=controlbar>\n";
 		}
 
 		// Show if all domains are being shown or a single domain
 		echo "<div id=controlbarleft>\n";
 		if ($page == "index" ) {
-			if ($domain == "all") {
+			if (count($domains) == 1) {
+				echo "Since $startdate\n";
+			}
+			else if ($domain == "all") {
 				echo "<h1>All Domains</h1><br />\n
 				      Since $startdate\n";
 			}
@@ -85,21 +91,24 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 		echo "</div>\n";
 
 		// Domain Selection and Date Selection
-		echo "<div id=controlbarright>\n
-		        <form action='".$_SERVER['PHP_SELF']."' method='post'>\n
+		echo "<div id=controlbarright>\n";
+
+		if (count($domains) > 1) {
+			echo "<form action='".$_SERVER['PHP_SELF']."' method='post'>\n
 		          <select name='domain'>\n
 		          <option value='all'>All Domains</option>\n";
-		foreach ($domains as $listDomain) {
-			echo "<option value='".$listDomain['domain']."' ";
-			if($listDomain['domain'] == $domain) { echo "selected"; }
-			echo ">".$listDomain['domain']."</option>\n";
-		}
-		echo "    </select>\n
+			foreach ($domains as $listDomain) {
+				echo "<option value='".$listDomain['domain']."' ";
+				if($listDomain['domain'] == $domain) { echo "selected"; }
+				echo ">".$listDomain['domain']."</option>\n";
+			}
+			echo "</select>\n
 		          <input type='hidden' name='page' value='$page'>\n
 		          <input type='hidden' name='ip' value='$ip'>\n
 		          <input type='hidden' name='range' value='$dateRange'>\n
 		          <input type='submit' value='Go'>\n
 		        </form><br />\n";
+		}
 
 		// date selection -1 unit in config
 		$datePrev = $dateNum+1;
@@ -142,6 +151,7 @@ function overview_bar($stats, $domain) {
 	if ($domain == "all") {
 		$domain_count = 0;
 		foreach ($stats as $stat) {
+			$stat = array_map('htmlspecialchars',$stat);
 			$total = $total+$stat['total_messages'];
 			if ($stat['none'] > 0)                { $dmarc_none = $dmarc_none+$stat['none']; }
 			if ($stat['quarantine'] > 0)          { $dmarc_quar = $dmarc_quar+$stat['quarantine']; }
@@ -156,10 +166,13 @@ function overview_bar($stats, $domain) {
 
 		// clunky, but detects if we have more than one domain, and changes all to a single domain if it's just one
 		if ($domain_count == 1) {
-			$domain = $stats[0]['domain'];
+			$domain     = $stats[0]['domain'];
+			$policy     = ucfirst($stats[0]['policy_p']);
+			$policy_pct = $stats[0]['policy_pct'];
 		}
 	}
 	else {
+		$stats[0]   = array_map('htmlspecialchars',$stats[0]);
 		$total      = $stats[0]['total_messages'];
 		$policy     = ucfirst($stats[0]['policy_p']);
 		$policy_pct = $stats[0]['policy_pct'];
@@ -230,6 +243,7 @@ function overview_bar($stats, $domain) {
 // Overview Bar ---------------------------------
 function domain_overview($stats, $dateRange) {
 	foreach ($stats as $stat) {
+		$stat = array_map('htmlspecialchars',$stat);
 		// extract stats
 		$dmarc_none = 0;
 		$dmarc_quar = 0;
@@ -319,6 +333,7 @@ function domain_details($stats, $domain, $dateRange) {
 
 		// extract stats - this'll be sorted by senderIP
 		$ip         = get_ip($stat['ip'], $stat['ip6']);
+		$stat       = array_map('htmlspecialchars',$stat);
 		$messages   = $stat['messages'];
 		if ($stat['compliant'] > 0)  { $compliant  = $stat['compliant']; }
 		if ($stat['none'] > 0)       { $none       = $stat['none']; }
@@ -331,10 +346,19 @@ function domain_details($stats, $domain, $dateRange) {
 
 		// calculate stats
 		$dmarc_comp_pct = number_format(100 * ($compliant  / $messages));
-		$dkim_comp_pct  = number_format(100 * ($dkim_align / $none));
-		$dkim_pass_pct  = number_format(100 * ($dkim_pass  / $none));
-		$spf_comp_pct   = number_format(100 * ($spf_align  / $none));
-		$spf_pass_pct   = number_format(100 * ($spf_pass   / $none));
+		if ($none > 0) {
+			$dkim_comp_pct = number_format(100 * ($dkim_align / $none));
+			$dkim_pass_pct = number_format(100 * ($dkim_pass  / $none));
+			$spf_comp_pct  = number_format(100 * ($spf_align  / $none));
+			$spf_pass_pct  = number_format(100 * ($spf_pass   / $none));
+		}
+		else {
+			// sometimes we get entries that are full reject
+			$dkim_comp_pct = 0;
+			$dkim_pass_pct = 0;
+			$spf_comp_pct  = 0;
+			$spf_pass_pct  = 0;
+		}
 
 		// now present
 		echo "<div class=dov-bar-in-ip>\n
@@ -401,9 +425,15 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 	}
 
 	// present the data, obi-wan
-	echo "<div class=dov-bar style='margin-top: 0;height:400px;'>\n
-	        <div class=dov-bar-in style='height:400px;'>\n
-	          <div class=geo-left>\n
+	if (GEO_ENABLE) {
+		echo "<div class=dov-bar style='margin-top: 0;height:400px;'>\n
+		        <div class=dov-bar-in style='height:400px;'>\n";
+	}
+	else {
+		echo "<div class=dov-bar style='margin-top: 0;height:100px;'>\n
+		        <div class=dov-bar-in style='height:100px;'>\n";
+	}
+	echo "    <div class=geo-left>\n
 	            <div class=geo-left-inner>\n";
 
 	if ($ip != '')       { echo "$ip<br />\n"; }
@@ -417,9 +447,14 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 
 	echo "      </div>\n
 	          </div>\n
-	          <div class=geo-right>\n
-	            <iframe width='100%' height='100%' src='https://maps.google.com/maps?q=$lat,$lon&z=3&output=embed'></iframe>\n
-	          </div>\n
+	          <div class=geo-right>\n";
+
+	// if there's no maxmind data, then there's no map to find
+	if (GEO_ENABLE) {
+		echo "<iframe width='100%' height='100%' src='https://maps.google.com/maps?q=$lat,$lon&z=3&output=embed'></iframe>\n";
+	}
+
+	echo "    </div>\n
 	        </div>\n
 	      </div>\n";
 
@@ -438,6 +473,7 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 	}
 	
 	foreach ($stats as $stat) {
+		$stat       = array_map('htmlspecialchars',$stat);
 		$dkimresult = $stat['dkimresult'] ?: 'unknown';
 		$dkim_align = $stat['dkim_align'] ?: 'unknown';
 		$spfresult  = $stat['spfresult']  ?: 'unknown';
@@ -467,6 +503,11 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 }
 
 function report_details($data, $report) {
+
+	if ($data[0]['ip6'] != '') { $ip = $data[0]['ip6']; }
+	$data[0] = array_map('htmlspecialchars',$data[0]);
+	if ($data[0]['ip6'] != '') { $data[0]['ip6'] = $ip; }
+
 	if ($data[0]['policy_adkim'] == 'r')      { $dkim_policy = 'Relaxed'; }
 	else if ($data[0]['policy_adkim'] == 's') { $dkim_policy = 'Strict'; }
 	else                                      { $dkim_policy = 'unknown'; }
@@ -526,6 +567,7 @@ function report_details($data, $report) {
 	
 	foreach ($data as $row) {
 		$ip         = get_ip($row['ip'],$row['ip6']);
+		$row        = array_map('htmlspecialchars',$row);
 		$dkimresult = $row['dkimresult'] ?: 'unknown';
 		$dkim_align = $row['dkim_align'] ?: 'unknown';
 		$spfresult  = $row['spfresult']  ?: 'unknown';

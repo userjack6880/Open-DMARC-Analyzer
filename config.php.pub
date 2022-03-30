@@ -21,7 +21,7 @@ You should have received a copy of the GNU General Public License along with
 this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-// MySQL Settings
+// Database Settings
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'dmarc');
@@ -44,7 +44,7 @@ define('AUTO_LOADER', 'vendor/autoload.php');   // autoloader for composer insta
 define('GEO_ENABLE', 1);                        // 0 - disable GeoIP2, 1 - enable GeoIP2
 define('GEO_DB', 'includes/geolite2.mmdb');     // location of GeoIP2 database
 
-// Defaults
+// Date Range
 
 define('DATE_RANGE', '-1w');
 

@@ -47,6 +47,11 @@ function dbQuery($pdo, $statement, $params) {
 			else {
 				$query->execute();
 			}
+      if($query->errorCode() != 0) {
+        $errors = $query->errorInfo();
+        echo " failed: ".$errors[2]."<br>";
+        exit();
+      }
 		}
 		catch (PDOException $e) {
 			echo 'Could not perform query: '.$e->getMessage();
@@ -55,7 +60,6 @@ function dbQuery($pdo, $statement, $params) {
 		$rows = [];
 
 		while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-			$row = array_map('htmlspecialchars', $row);
 			array_push($rows, $row);
 		}
 		$query = null;
