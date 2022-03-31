@@ -1,5 +1,9 @@
 # Changelog
 
+## 0-α8.2
+- Added `SECURITY` and `SUPPORT` and updated relevant documentation to reference these.
+- Determined date for next Alpha release.
+
 ## 0-α8.1
 
 - Added `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, pull request template, issue templates, and organized documents into docs folder.

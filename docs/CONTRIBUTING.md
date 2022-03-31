@@ -3,23 +3,25 @@
 
 ## **Bug Reporting**
 
-* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/userjack6880/Open-DMARC-Analyzer/issues).
+- **Please do not report security issues publically on GitHub!** For details, see `SECURITY`.
 
-* If an open issue addressing the problem does not exist, [open a new one](https://github.com/userjack6880/Open-DMARC-Analyzer/issues/new). Be sure to include a title and clear description, and as much relevant information as possible, including error messages, screenshots, or configuration files. **Please sanitize any passwords or sensitive information**.
+- **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/userjack6880/Open-DMARC-Analyzer/issues).
+
+- If an open issue addressing the problem does not exist, [open a new one](https://github.com/userjack6880/Open-DMARC-Analyzer/issues/new). Be sure to include a title and clear description, and as much relevant information as possible, including error messages, screenshots, or configuration files. **Please sanitize any passwords or sensitive information**.
 
 ## **Contributing Bugfixes and Patches**
 
-* Open a new GitHub pull request with the patch. Issue PRs to the main branch for bugfixes and patches. See **Contributing Feature Changes and Additions** for non-fixes.
+- Open a new GitHub pull request with the patch. Issue PRs to the main branch for bugfixes and patches. See **Contributing Feature Changes and Additions** for non-fixes.
 
-* Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
+- Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
 
-* Pull requests will be reviewed and encorporated once it has been tested.
+- Pull requests will be reviewed and encorporated once it has been tested.
 
 ## **Contributing Feature Changes and Additions**
 
-* First issue a feature request under [Issues](https://github.com/userjack6880/Open-DMARC-Analyzer/issues/new) using the appropriate template.
+- First issue a feature request under [Issues](https://github.com/userjack6880/Open-DMARC-Analyzer/issues/new) using the appropriate template.
 
-* Open a new GitHub pull request with the feature change or addition. Issue PRs to the testing branch and include in the PR description the relevant issue number. Changes will be pushed through to the dev branch once it has been tested, and could possibly become part of the main branch.
+- Open a new GitHub pull request with the feature change or addition. Issue PRs to the testing branch and include in the PR description the relevant issue number. Changes will be pushed through to the dev branch once it has been tested, and could possibly become part of the main branch.
 
 ## **Formatting PRs**
 
