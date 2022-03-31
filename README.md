@@ -118,6 +118,7 @@ This project regular release cycle is not yet determined. Versioning is under th
 Support will be provided as outlined in the following schedule. For more details, see `SUPPORT`.
 
 | Version                       | Support Level    | Released       | End of Support | End of Life   |
+| ----------------------------- | ---------------- | -------------- | -------------- | ------------- |
 | Version 0 Alpha 8.2 (current) | Full Support     | TBD            | TBD            | TBD           |
 | Version 0 Alpha 8.1           | Critical Support | 30 March 2022  | TBD            | TBD           |
 | Version 0 Alpha 8             | Critical Support | 29 March 2022  | 30 March 2022  | 30 March 2022 |
