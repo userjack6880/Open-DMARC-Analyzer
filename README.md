@@ -94,13 +94,9 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 0-α8.1
+## 0-α8.2
 
-- Added `CODE_OF_CONDUCT`, `CONTRIBUTING`, pull request template, issue templates, and organized documents into docs folder.
-- Added basic installation script to add `report_stats` view from file and attempt to cleanup after itself.
-- Further fleshed out `README.md`
-- Improved compatibility with older SQL databases that do not support `INET6_ATON` or `INET6_NTOA`. 
-- Added SQL error output.
+- Added `SECURITY` and `SUPPORT` and updated relevant documentation to reference these.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -116,6 +112,15 @@ If you have a system configuration not listed, and would like to contribue this 
 # Release Cycle and Versioning
 
 This project regular release cycle is not yet determined. Versioning is under the Anomaly Versioning Scheme (2022), as outlined in `VERSIONING` under `docs`.
+
+# Support
+
+Support will be provided as outlined in the following schedule. For more details, see `SUPPORT`.
+
+| Version                       | Support Level    | Released       | End of Support | End of Life   |
+| Version 0 Alpha 8.2 (current) | Full Support     | TBD            | TBD            | TBD           |
+| Version 0 Alpha 8.1           | Critical Support | 30 March 2022  | TBD            | TBD           |
+| Version 0 Alpha 8             | Critical Support | 29 March 2022  | 30 March 2022  | 30 March 2022 |
 
 # Contributing
 
