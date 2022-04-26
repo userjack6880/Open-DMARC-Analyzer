@@ -24,7 +24,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-	echo "0-&alpha;8.1";
+	echo "0-&alpha;8.2";
 
 }
 
@@ -258,14 +258,14 @@ function domain_overview($stats, $dateRange) {
 		$total      = $stat['total_messages'];
 		$policy     = ucfirst($stat['policy_p']);
 		$policy_pct = $stat['policy_pct'];
-		if ($stats[0]['none'] > 0)                { $dmarc_none = $stat['none']; }
-		if ($stats[0]['quarantine'] > 0)          { $dmarc_quar = $stat['quarantine']; }
-		if ($stats[0]['reject'] > 0)              { $dmarc_rjct = $stat['reject']; }
-		if ($stats[0]['compliant'] > 0)           { $dmarc_comp = $stat['compliant']; }
-		if ($stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stat['dkim_pass_aligned']; }
-		if ($stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stat['dkim_pass_unaligned']; }
-		if ($stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stat['spf_pass_aligned']; }
-		if ($stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stat['spf_pass_unaligned']; }
+		if ($stat['none'] > 0)                { $dmarc_none = $stat['none']; }
+		if ($stat['quarantine'] > 0)          { $dmarc_quar = $stat['quarantine']; }
+		if ($stat['reject'] > 0)              { $dmarc_rjct = $stat['reject']; }
+		if ($stat['compliant'] > 0)           { $dmarc_comp = $stat['compliant']; }
+		if ($stat['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stat['dkim_pass_aligned']; }
+		if ($stat['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stat['dkim_pass_unaligned']; }
+		if ($stat['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stat['spf_pass_aligned']; }
+		if ($stat['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stat['spf_pass_unaligned']; }
 
 		$sender_count = getSenderCount($dateRange, $domain);
 
