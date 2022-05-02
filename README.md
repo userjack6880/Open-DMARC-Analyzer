@@ -121,7 +121,7 @@ Support will be provided as outlined in the following schedule. For more details
 | ----------------------------------- | ---------------- | -------------- | -------------- | ------------- |
 | Version 0 Alpha 9.1 (future)        | Full Support     | TBD            | TBD            | TBD           |
 | Version 0 Alpha 9 (current)         | Full Support     | 2 May 2022     | TBD            | TBD           |
-| Version 0 Alpha 8.2                 | Full Support     | 31 March 2022  | 2 May 2022     | TBD           |
+| Version 0 Alpha 8.2                 | Critical Support | 31 March 2022  | 2 May 2022     | TBD           |
 | Version 0 Alpha 8.1 or Older        | End of Life      | 30 March 2022  | 31 March 2022  | 2 May 2022    |
 
 # Contributing

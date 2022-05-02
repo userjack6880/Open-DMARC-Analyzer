@@ -6,7 +6,7 @@ Due to the limited time available to developrs to maintain support, dates must b
 | ----------------------------------- | ---------------- | -------------- | -------------- | ------------- |
 | Version 0 Alpha 9.1 (future)        | Full Support     | TBD            | TBD            | TBD           |
 | Version 0 Alpha 9 (current)         | Full Support     | 2 May 2022     | TBD            | TBD           |
-| Version 0 Alpha 8.2                 | Full Support     | 31 March 2022  | 2 May 2022     | TBD           |
+| Version 0 Alpha 8.2                 | Critical Support | 31 March 2022  | 2 May 2022     | TBD           |
 | Version 0 Alpha 8.1                 | End of Life      | 30 March 2022  | 31 March 2022  | 2 May 2022    |
 | Version 0 Alpha 8 or Older          | End of Life      | 29 March 2022  | 30 March 2022  | 30 March 2022 |
 
