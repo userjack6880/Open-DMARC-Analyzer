@@ -1,8 +1,13 @@
 # Changelog
 
+## 0-α9
+- Bugfixes
+- Version Update to begin final feature implementation for Version 1 Feature Complete
+
 ## 0-α8.2
 - Added `SECURITY` and `SUPPORT` and updated relevant documentation to reference these.
 - Determined date for next Alpha release.
+- Added a basic installer
 
 ## 0-α8.1
 

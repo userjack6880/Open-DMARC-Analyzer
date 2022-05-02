@@ -94,10 +94,9 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 0-α8.2
-
-- Added `SECURITY` and `SUPPORT` and updated relevant documentation to reference these.
-- Determined date for next Alpha release.
+## 0-α9
+- Bugfixes
+- Version Update to begin final feature implementation for Version 1 Feature Complete
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -118,11 +117,12 @@ This project regular release cycle is not yet determined. Versioning is under th
 
 Support will be provided as outlined in the following schedule. For more details, see `SUPPORT`.
 
-| Version                       | Support Level    | Released       | End of Support | End of Life   |
-| ----------------------------- | ---------------- | -------------- | -------------- | ------------- |
-| Version 0 Alpha 8.2 (current) | Full Support     | 31 March 2022  | 1 May 2022     | TBD           |
-| Version 0 Alpha 8.1           | Critical Support | 30 March 2022  | 31 March 2022  | TBD           |
-| Version 0 Alpha 8             | Critical Support | 29 March 2022  | 30 March 2022  | 30 March 2022 |
+| Version                             | Support Level    | Released       | End of Support | End of Life   |
+| ----------------------------------- | ---------------- | -------------- | -------------- | ------------- |
+| Version 0 Alpha 9.1 (future)        | Full Support     | TBD            | TBD            | TBD           |
+| Version 0 Alpha 9 (current)         | Full Support     | 2 May 2022     | TBD            | TBD           |
+| Version 0 Alpha 8.2                 | Full Support     | 31 March 2022  | 2 May 2022     | TBD           |
+| Version 0 Alpha 8.1 or Older        | End of Life      | 30 March 2022  | 31 March 2022  | 2 May 2022    |
 
 # Contributing
 
