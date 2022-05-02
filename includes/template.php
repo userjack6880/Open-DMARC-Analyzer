@@ -24,7 +24,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-	echo "0-&alpha;8.2";
+	echo "0-&alpha;9";
 
 }
 
