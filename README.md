@@ -94,9 +94,7 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 0-α9
-- Bugfixes
-- Version Update to begin final feature implementation for Version 1 Feature Complete
+## 0-α9.1
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -119,10 +117,9 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Support Level    | Released       | End of Support | End of Life   |
 | ----------------------------------- | ---------------- | -------------- | -------------- | ------------- |
-| Version 0 Alpha 9.1 (future)        | Full Support     | TBD            | TBD            | TBD           |
-| Version 0 Alpha 9 (current)         | Full Support     | 2 May 2022     | TBD            | TBD           |
-| Version 0 Alpha 8.2                 | Critical Support | 31 March 2022  | 2 May 2022     | TBD           |
-| Version 0 Alpha 8.1 or Older        | End of Life      | 30 March 2022  | 31 March 2022  | 2 May 2022    |
+| Version 0 Alpha 9.1                 | Full Support     | NODATE         | TBD            | TBD           |
+| Version 0 Alpha 9                   | Critical Support | 2 May 2022     | NODATE         | TBD           |
+| Version 0 Alpha 8.2 or Older        | End of Life      | 31 March 2022  | 2 May 2022     | NODATE        |
 
 # Contributing
 
