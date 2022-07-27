@@ -1,10 +1,15 @@
 <?php
-/*
+/* ----------------------------------------------------------------------------
+
 Open DMARC Analyzer - Open Source DMARC Analyzer
+Copyright (C) 2022 - John Bradley (userjack6880)
+
 templates/openda/index.php
-2022 - John Bradley (userjack6880)
+  main body of the Open DMARC Analyzer default template
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+
+-------------------------------------------------------------------------------
 
 This file is part of Open DMARC Analyzer.
 
@@ -19,7 +24,8 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with 
 this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+
+---------------------------------------------------------------------------- */
 
 // Header
 function page_header ($page, $domain, $dateRange, $ip) { include_once("header.php"); }

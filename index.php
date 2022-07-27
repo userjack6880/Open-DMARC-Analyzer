@@ -1,12 +1,18 @@
 <?php
-/*
+/* ----------------------------------------------------------------------------
+
 Open DMARC Analyzer - Open Source DMARC Analyzer
+Copyright (C) 2022 - John Bradley (userjack6880)
+
 index.php
-2022 - John Bradley (userjack6880)
+  the all encompassing page that is always loaded
+  how it is displayed changes with context
 
 Available at: https://github.com/userjack6880/Open DMARC Analyzer
 
 This file is part of Open DMARC Analyzer.
+
+-------------------------------------------------------------------------------
 
 Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
@@ -19,7 +25,8 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with 
 this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+
+---------------------------------------------------------------------------- */
 
 // Includes
 include_once 'includes.php';
@@ -28,57 +35,57 @@ include_once 'includes.php';
 
 // Range ----------------------------------------------------------------------
 if (!empty($_GET['range'])) {
-	$dateRange = htmlspecialchars($_GET['range']);
+  $dateRange = htmlspecialchars($_GET['range']);
 }
 elseif (isset($_POST['range'])) {
-	$dateRange = htmlspecialchars($_POST['range']);
+  $dateRange = htmlspecialchars($_POST['range']);
 }
 else {
-	$dateRange = DATE_RANGE;
+  $dateRange = DATE_RANGE;
 }
 
 // Page -----------------------------------------------------------------------
 if (isset($_GET['page'])) {
-	$page = htmlspecialchars($_GET['page']);
+  $page = htmlspecialchars($_GET['page']);
 }
 elseif (isset($_POST['page'])) {
-	$page = htmlspecialchars($_POST['page']);
+  $page = htmlspecialchars($_POST['page']);
 }
 else {
-	$page = "index";
+  $page = "index";
 }
 
 // Domain ---------------------------------------------------------------------
 if (isset($_GET['domain'])) {
-	$domain = htmlspecialchars($_GET['domain']);
+  $domain = htmlspecialchars($_GET['domain']);
 }
 elseif (isset($_POST['domain'])) {
-	$domain = htmlspecialchars($_POST['domain']);
+  $domain = htmlspecialchars($_POST['domain']);
 }
 else {
-	$domain = "all";
+  $domain = "all";
 }
 
 // IPs ------------------------------------------------------------------------
 if (isset($_GET['ip'])) {
-	$ip = htmlspecialchars($_GET['ip']);
+  $ip = htmlspecialchars($_GET['ip']);
 }
 elseif (isset($_POST['ip'])) {
-	$ip = htmlspecialchars($_POST['ip']);
+  $ip = htmlspecialchars($_POST['ip']);
 }
 else {
-	$ip = '';
+  $ip = '';
 }
 
 // ReportID -------------------------------------------------------------------
 if (isset($_GET['report'])) {
-	$report = htmlspecialchars($_GET['report']);
+  $report = htmlspecialchars($_GET['report']);
 }
 elseif (isset($_POST['report'])) {
-	$report = htmlspecialchars($_POST['report']);
+  $report = htmlspecialchars($_POST['report']);
 }
 else {
-	$report = '';
+  $report = '';
 }
 
 // End URI gets
@@ -87,16 +94,16 @@ else {
 page_header($page, $domain, $dateRange, $ip);
 
 if ($page == "index") {
-	dashboard($dateRange, $domain);
+  dashboard($dateRange, $domain);
 }
 elseif ($page == "sender") {
-	senderDashboard($dateRange, $domain, $ip);
+  senderDashboard($dateRange, $domain, $ip);
 }
 elseif ($page == "report") {
-	reportDashboard($report);
+  reportDashboard($report);
 }
 else {
-	echo "<h1>Invalid Page</h1>\n";
+  echo "<h1>Invalid Page</h1>\n";
 }
 
 // Page Footer

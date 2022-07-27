@@ -1,6 +1,9 @@
 # Changelog
 
-## 0-α9.1
+## 1-fc
+- Documentation Updates
+- Formatting
+- Feature Complete Release
 
 ## 0-α9
 - Bugfixes

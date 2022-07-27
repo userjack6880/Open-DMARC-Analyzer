@@ -1,10 +1,15 @@
 <?php
-/*
+/* ----------------------------------------------------------------------------
+
 Open DMARC Analyzer - Open Source DMARC Analyzer
+Copyright (C) 2022 - John Bradley (userjack6880)
+
 templates/openda/footer.php
-2022 - John Bradley (userjack6880)
+  footer for the Open DMARC Analyzer default template
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+
+-------------------------------------------------------------------------------
 
 This file is part of Open DMARC Analyzer.
 
@@ -19,16 +24,17 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with 
 this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+
+---------------------------------------------------------------------------- */
 
 ?>
 
-	</div>
-	<div id="footer">
-		<p>
-			<a href="https://github.com/userjack6880/Open-DMARC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?>
-		</p>
-	</div>
+  </div>
+  <div id="footer">
+    <p>
+      <a href="https://github.com/userjack6880/Open-DMARC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?>
+    </p>
+  </div>
 
-	</body>
+  </body>
 </html>

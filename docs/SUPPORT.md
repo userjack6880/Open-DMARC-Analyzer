@@ -4,10 +4,9 @@ Due to the limited time available to developrs to maintain support, dates must b
 
 | Version                             | Support Level    | Released       | End of Support | End of Life   |
 | ----------------------------------- | ---------------- | -------------- | -------------- | ------------- |
-| Version 1 Feature Complete (future) | Full Support     | TBD            | TBD            | TBD           |
-| Version 0 Alpha 9.1 (current)       | Full Support     | NODATE         | TBD            | TBD           |
-| Version 0 Alpha 9                   | Critical Support | 2 May 2022     | NODATE         | TBD           |
-| Version 0 Alpha 8.2                 | End of Life      | 31 March 2022  | 2 May 2022     | NODATE        |
+| Version 1 Feature Complete (future) | Full Support     | 27 July 2022   | TBD            | TBD           |
+| Version 0 Alpha 9                   | Critical Support | 2 May 2022     | 27 July 2022   | TBD           |
+| Version 0 Alpha 8.2                 | End of Life      | 31 March 2022  | 2 May 2022     | 27 July 2022  |
 | Version 0 Alpha 8.1                 | End of Life      | 30 March 2022  | 31 March 2022  | 2 May 2022    |
 | Version 0 Alpha 8 or Older          | End of Life      | 29 March 2022  | 30 March 2022  | 30 March 2022 |
 
