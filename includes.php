@@ -1,10 +1,15 @@
 <?php
-/*
+/* ----------------------------------------------------------------------------
+
 Open DMARC Analyzer - Open Source DMARC Analyzer
+Copyright (C) 2022 - John Bradley (userjack6880)
+
 includes.php
-2022 - John Bradley (userjack6880)
+  file where other includes are listed and included
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+
+-------------------------------------------------------------------------------
 
 This file is part of Open DMARC Analyzer.
 
@@ -19,7 +24,8 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with 
 this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+
+---------------------------------------------------------------------------- */
 
 include_once 'config.php';
 include_once 'includes/template.php';

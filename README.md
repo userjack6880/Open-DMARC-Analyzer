@@ -1,6 +1,6 @@
 # Open DMARC Analyzer
 
-This is Open DMARC Analyzer version 0 alpha-9 (0-α9) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
+This is Open DMARC Analyzer Version 1 Feature Complete (1-fc) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
 
@@ -94,9 +94,10 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 0-α9
-- Bugfixes
-- Version Update to begin final feature implementation for Version 1 Feature Complete
+## 1-fc
+- Documentation Updates
+- Formatting
+- Feature Complete Release
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -119,10 +120,9 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Support Level    | Released       | End of Support | End of Life   |
 | ----------------------------------- | ---------------- | -------------- | -------------- | ------------- |
-| Version 0 Alpha 9.1 (future)        | Full Support     | TBD            | TBD            | TBD           |
-| Version 0 Alpha 9 (current)         | Full Support     | 2 May 2022     | TBD            | TBD           |
-| Version 0 Alpha 8.2                 | Critical Support | 31 March 2022  | 2 May 2022     | TBD           |
-| Version 0 Alpha 8.1 or Older        | End of Life      | 30 March 2022  | 31 March 2022  | 2 May 2022    |
+| Version 1 Feature Complete          | Full Support     | 27 July 2022   | TBD            | TBD           |
+| Version 0 Alpha 9                   | Critical Support | 2 May 2022     | 27 July 2022   | TBD           |
+| Version 0 Alpha 8.2 or Older        | End of Life      | 31 March 2022  | 2 May 2022     | 27 July 2022  |
 
 # Contributing
 
@@ -135,6 +135,6 @@ Primary Contributors
 
 Thanks to [all who contributed](https://github.com/userjack6880/Open-DMARC-Analyzer/graphs/contributors) and [have given feedback](https://github.com/userjack6880/Open-DMARC-Analyzer/issues?q=is%3Aissue).
 
-# Licenses
+# Licenses and Copyrights
 
-Open DMARC Analyzer is released under GNU GPLv3. See `LICENSE`.
+Copyright © 2022 John Bradley (userjack6880). Open DMARC Analyzer is released under GNU GPLv3. See `LICENSE`.
