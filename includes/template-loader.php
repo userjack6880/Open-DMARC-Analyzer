@@ -1,10 +1,15 @@
 <?php
-/*
+/* ----------------------------------------------------------------------------
+
 Open DMARC Analyzer - Open Source DMARC Analyzer
+Copyright (C) 2022 - John Bradley (userjack6880)
+
 includes/template-loader.php
-2022 - John Bradley (userjack6880)
+  glue bit to load templates - may be a bit superfulous
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+
+-------------------------------------------------------------------------------
 
 This file is part of Open DMARC Analyzer.
 
@@ -19,7 +24,8 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with 
 this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+
+---------------------------------------------------------------------------- */
 
 // real simple, get the name of the running script, and include the equivalent template file
 
