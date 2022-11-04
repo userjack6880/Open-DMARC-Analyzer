@@ -183,7 +183,7 @@ function senderDashboard($dateRange, $domain, $ip) {
   elseif(!GEO_ENABLE) {
     require_once(AUTO_LOADER);
 
-    $geo = new phpWhois\Whois();
+    $whois = new phpWhois\Whois();
     $geo_data = $whois->lookup($ip,false);
   }
   else {
