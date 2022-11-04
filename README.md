@@ -95,7 +95,8 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 # Latest Changes
 
 ## 1-β1
-- Corrected a geoip/whois bug (thank you [volkermauel](https://github.com/userjack6880/Open-DMARC-Analyzer/commits?author=volkermauel))
+- Corrected a geoip/whois bug (thank you [volkermauel](https://github.com/userjack6880/Open-DMARC-Analyzer/commits?author=volkermauel)).
+- Corrected template formatting bug with GEOIP disabled.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
