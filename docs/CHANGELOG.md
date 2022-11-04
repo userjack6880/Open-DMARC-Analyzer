@@ -1,7 +1,8 @@
 # Changelog
 
 ## 1-β1
-- Corrected a geoip/whois bug (thank you [volkermauel](https://github.com/userjack6880/Open-DMARC-Analyzer/commits?author=volkermauel))
+- Corrected a geoip/whois bug (thank you [volkermauel](https://github.com/userjack6880/Open-DMARC-Analyzer/commits?author=volkermauel)).
+- Corrected template formatting bug with GEOIP disabled.
 
 ## 1-fc
 - Documentation Updates
