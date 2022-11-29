@@ -39,28 +39,28 @@ body {
   font-smooth: antialiased;
   text-align: left;
   font-family: Sans-serif;
-  background-color: #101118;
-  color: #738290;
+  background-color: #d2d9e8;
+  color: #1f1f1f;
 }
 
 a:link {
   text-decoration: none;
-  color: #ABB4BC;
+  color: #3b3b3b;
 }
 
 a:visited {
   text-decoration: none;
-  color: #ABB4BC;
+  color: #3b3b3b;
 }
 
 a:active {
   text-decoration: none;
-  color: #FFF;
+  color: #6e6e6e;
 }
 
 a:hover {
   text-decoration: none;
-  color: #FFF;
+  color: #6e6e6e;
 }
 
 #header {
@@ -107,7 +107,7 @@ a:hover {
 }
 
 .dov-bar-in {
-  background-color: #1c1e28;
+  background-color: #e5e9f2;
   width: 100%;
   height: 100px;
   margin: 0 auto 0 auto;
@@ -251,7 +251,7 @@ td.dov {
 }
 
 #overviewbarleft {
-  background-color: #1c1e28;
+  background-color: #e5e9f2;
   width: calc(100% - 430px);
   min-width: 600px;
   height: 300px;
@@ -264,7 +264,7 @@ td.dov {
 }
 
 #overviewbarright {
-  background-color: #1c1e28;
+  background-color: #e5e9f2;
   width: 400px;
   height: 300px;
   margin: 0px auto 0px auto;
@@ -344,13 +344,13 @@ select {
 
 h1.dov-bar-head {
   font-size: 24px;
-  color: #738290;
+  color: #1f1f1f;
   margin: 0;
 }
 
 h1.header {
   font-size: 48px;
-  color: #738290;
+  color: #1f1f1f;
 }
 
 #wrapper {
@@ -361,20 +361,20 @@ h1.header {
 
 h2 {
   font-size: 24px;
-  color: #738290;
+  color: #1f1f1f;
   margin: 0 0 10px 0;
 }
 
 h2.section {
   font-size: 24px;
-  color: #738290;
+  color: #1f1f1f;
   margin: 30px 0px -25px 25px;
 }
 
 
 h3 {
   font-size: 20px;
-  color: #738290;
+  color: #1f1f1f;
   margin: 10px 0 10px 0;
 }
 
@@ -390,7 +390,7 @@ table {
 }
 
 table, th, td {
-  border: 1px solid #2A3035;
+  border: 1px solid #1f1f1f;
 }
 
 th, td {
@@ -403,12 +403,12 @@ td {
 
 /* tr:nth-child(1) { */
 thead {
-  background-color: #2A3035;
+  background-color: #1f1f1f;
   color: #FFF;
 }
 
 span.pass {
-  color: #708D81;
+  color: #23845b;
 }
 
 span.fail {
@@ -478,5 +478,5 @@ span.unknown {
 }
 
 span.signed {
-  color: #fff;
+  color: #000;
 }

@@ -1,8 +1,11 @@
 # Open DMARC Analyzer
+![Open DMARC Analyzer Screenshot](docs/images/oda-screenshot.jpg?raw=true)
 
-This is Open DMARC Analyzer Version 1 Beta 2 (1-β2) by John Bradley (john@systemanomaly.com). Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
+Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
+
+Open DMARC Analyzer Version 1 Beta 2 (1-β2) is an [Anomaly <Codebase>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
 # Requirements
 - Apache 2 or equivalent
@@ -96,6 +99,8 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 ## 1-β2
 - Corrected a divide-by-zero error in `template.php` [issue #68](https://github.com/userjack6880/Open-DMARC-Analyzer/issues/68).
+- Limited width of page to a minimum of 1230px to fix visual element issues.
+- Added `openda_light` theme.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 

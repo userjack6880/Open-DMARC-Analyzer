@@ -4,8 +4,8 @@
 Open DMARC Analyzer - Open Source DMARC Analyzer
 Copyright (C) 2022 - John Bradley (userjack6880)
 
-templates/openda/footer.php
-  footer for the Open DMARC Analyzer default template
+templates/openda/header.php
+  header for the Open DMARC Analyzer default template
 
 Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
 
@@ -29,13 +29,35 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ?>
 
-  </div>
-  <div id="footer">
-    <p>
-      <a href="https://github.com/userjack6880/Open-DMARC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?><br />
-      <a href="https://systemanomaly.com/codebase"><img src="templates/openda/codebase_logo.png" alt="Anomaly <Codebase>" height="50px"></a>
-    </p>
-  </div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="templates/openda_light/style.css" />
+    <style type="text/css">
+      @media (max-width:1230px) {
+        #header {
+          width: 1230px;
+        }
+        #controlbar {
+          width: 1230px;
+        }
+        #wrapper {
+          width: 1230px;
+        }
+      }
+    </style>
 
-  </body>
-</html>
+    <script type="text/javascript">
+      <?php javascript(); ?>
+    </script>
+    <title><?php page_title($page, $domain); ?></title>
+  </head>
+  <body>
+    <div id="header">
+      <a href="index.php"><h1 class="header">Open DMARC Analyzer</h1></a>
+    </div>
+    <?php control_bar($page, $domain, $dateRange, $ip); ?>
+    <div id="wrapper">
+

@@ -512,14 +512,14 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
             <td>".$stat['reason']."</td>\n
             <td>";
     if ($stat['dkimdomain'] != '') {
-      echo "Signed by <span style='color:#fff'>".$stat['dkimdomain']."</span><br />\n
+      echo "Signed by <span class=signed>".$stat['dkimdomain']."</span><br />\n
               Result: <span class=$dkimresult>$dkimresult</span> | 
               Alignment: <span class=$dkim_align>$dkim_align</span></td>\n";
     }
     else {
       echo "Not Signed</td>\n";
     }
-    echo "  <td>Envelope from <span style='color:#fff'>".$stat['spfdomain']."</span><br />\n
+    echo "  <td>Envelope from <span class=signe'>".$stat['spfdomain']."</span><br />\n
                 Result: <span class=$spfresult>$spfresult</span> | 
                 Alignment: <span class=$spf_align>$spf_align</span></td>\n
           </tr>\n";
@@ -607,14 +607,14 @@ function report_details($data, $report) {
             <td>".$row['reason']."</td>\n
             <td>";
     if ($row['dkimdomain'] != '') {
-      echo "Signed by <span style='color:#fff'>".$row['dkimdomain']."</span><br />\n
+      echo "Signed by <span class=signed>".$row['dkimdomain']."</span><br />\n
               Result: <span class=$dkimresult>$dkimresult</span> | 
               Alignment: <span class=$dkim_align>$dkim_align</span></td>\n";
     }
     else {
       echo "Not Signed</td>\n";
     }
-    echo "  <td>Envelope from <span style='color:#fff'>".$row['spfdomain']."</span><br />\n
+    echo "  <td>Envelope from <span class=signed>".$row['spfdomain']."</span><br />\n
                 Result: <span class=$spfresult>$spfresult</span> | 
                 Alignment: <span class=$spf_align>$spf_align</span></td>\n
           </tr>\n";
