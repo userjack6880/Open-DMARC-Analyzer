@@ -1,5 +1,10 @@
 # Changelog
 
+## 1-β2
+- Corrected a divide-by-zero error in `template.php` issue #68.
+- Limited width of page to a minimum of 1230px to fix visual element issues.
+- Added `openda_light` theme.
+
 ## 1-β1
 - Corrected a geoip/whois bug (thank you [volkermauel](https://github.com/userjack6880/Open-DMARC-Analyzer/commits?author=volkermauel)).
 - Corrected template formatting bug with GEOIP disabled.

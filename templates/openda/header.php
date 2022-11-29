@@ -35,6 +35,19 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="templates/openda/style.css" />
+    <style type="text/css">
+      @media (max-width:1230px) {
+        #header {
+          width: 1230px;
+        }
+        #controlbar {
+          width: 1230px;
+        }
+        #wrapper {
+          width: 1230px;
+        }
+      }
+    </style>
 
     <script type="text/javascript">
       <?php javascript(); ?>

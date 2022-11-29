@@ -33,7 +33,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
   <div id="footer">
     <p>
       <a href="https://github.com/userjack6880/Open-DMARC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?><br />
-      <a href="https://systemanomaly.com/codebase"><img src="templates/openda/codebase_logo.png" alt="Anomaly <Codebase>" height="50px"></a>
+      <a href="https://systemanomaly.com/codebase"><img src="templates/openda_light/codebase_logo.png" alt="Anomaly <Codebase>" height="50px"></a>
     </p>
   </div>
 

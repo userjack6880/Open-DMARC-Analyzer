@@ -31,7 +31,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-  echo "1-β1";
+  echo "1-β2";
 
 }
 
@@ -193,12 +193,21 @@ function overview_bar($stats, $domain) {
     if ($stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stats[0]['spf_pass_unaligned']; }
   }
 
-  // stat calculations
-  $dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
-  $dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
-  $dkim_pass_pct  = number_format(100 * (($dkim_pass_aligned + $dkim_pass_noalign) / $dmarc_none));
-  $spf_comp_pct   = number_format(100 * ($spf_pass_aligned  / $dmarc_none));
-  $spf_pass_pct   = number_format(100 * (($spf_pass_aligned  + $spf_pass_noalign)  / $dmarc_none));
+// stat calculations
+  if ($dmarc_none) {
+    $dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
+    $dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
+    $dkim_pass_pct  = number_format(100 * (((int)$dkim_pass_aligned + (int)$dkim_pass_noalign) / $dmarc_none));
+    $spf_comp_pct   = number_format(100 * ($spf_pass_aligned  / $dmarc_none));
+    $spf_pass_pct   = number_format(100 * (((int)$spf_pass_aligned  + (int)$spf_pass_noalign)  / $dmarc_none));
+  }
+  else {
+    $dmarc_comp_pct = 0;
+    $dkim_comp_pct  = 0;
+    $dkim_pass_pct  = 0;
+    $spf_comp_pct   = 0;
+    $spf_pass_pct   = 0;
+  }
 
   // overview details
   echo "<div id=overviewbar>\n
@@ -277,11 +286,20 @@ function domain_overview($stats, $dateRange) {
     $sender_count = getSenderCount($dateRange, $domain);
 
     // stat calculations
-    $dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
-    $dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
-    $dkim_pass_pct  = number_format(100 * (((int)$dkim_pass_aligned + (int)$dkim_pass_noalign) / $dmarc_none));
-    $spf_comp_pct   = number_format(100 * ($spf_pass_aligned  / $dmarc_none));
-    $spf_pass_pct   = number_format(100 * (((int)$spf_pass_aligned  + (int)$spf_pass_noalign)  / $dmarc_none));
+    if ($dmarc_none) {
+      $dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
+      $dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
+      $dkim_pass_pct  = number_format(100 * (((int)$dkim_pass_aligned + (int)$dkim_pass_noalign) / $dmarc_none));
+      $spf_comp_pct   = number_format(100 * ($spf_pass_aligned  / $dmarc_none));
+      $spf_pass_pct   = number_format(100 * (((int)$spf_pass_aligned  + (int)$spf_pass_noalign)  / $dmarc_none));
+    }
+    else {
+      $dmarc_comp_pct = 0;
+      $dkim_comp_pct  = 0;
+      $dkim_pass_pct  = 0;
+      $spf_comp_pct   = 0;
+      $spf_pass_pct   = 0;
+    }
 
     // overview details
     echo "<div class=dov-bar>\n
@@ -494,14 +512,14 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
             <td>".$stat['reason']."</td>\n
             <td>";
     if ($stat['dkimdomain'] != '') {
-      echo "Signed by <span style='color:#fff'>".$stat['dkimdomain']."</span><br />\n
+      echo "Signed by <span class=signed>".$stat['dkimdomain']."</span><br />\n
               Result: <span class=$dkimresult>$dkimresult</span> | 
               Alignment: <span class=$dkim_align>$dkim_align</span></td>\n";
     }
     else {
       echo "Not Signed</td>\n";
     }
-    echo "  <td>Envelope from <span style='color:#fff'>".$stat['spfdomain']."</span><br />\n
+    echo "  <td>Envelope from <span class=signe'>".$stat['spfdomain']."</span><br />\n
                 Result: <span class=$spfresult>$spfresult</span> | 
                 Alignment: <span class=$spf_align>$spf_align</span></td>\n
           </tr>\n";
@@ -589,14 +607,14 @@ function report_details($data, $report) {
             <td>".$row['reason']."</td>\n
             <td>";
     if ($row['dkimdomain'] != '') {
-      echo "Signed by <span style='color:#fff'>".$row['dkimdomain']."</span><br />\n
+      echo "Signed by <span class=signed>".$row['dkimdomain']."</span><br />\n
               Result: <span class=$dkimresult>$dkimresult</span> | 
               Alignment: <span class=$dkim_align>$dkim_align</span></td>\n";
     }
     else {
       echo "Not Signed</td>\n";
     }
-    echo "  <td>Envelope from <span style='color:#fff'>".$row['spfdomain']."</span><br />\n
+    echo "  <td>Envelope from <span class=signed>".$row['spfdomain']."</span><br />\n
                 Result: <span class=$spfresult>$spfresult</span> | 
                 Alignment: <span class=$spf_align>$spf_align</span></td>\n
           </tr>\n";

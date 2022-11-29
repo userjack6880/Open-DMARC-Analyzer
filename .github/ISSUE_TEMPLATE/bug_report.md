@@ -24,8 +24,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Software Version**
+[ ] Version 1 Beta 2
 [ ] Version 1 Beta 1
-[ ] Version 1 Feature Complete
 [ ] Other
 
 **Desktop (please complete the following information):**
