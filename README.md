@@ -98,7 +98,7 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 # Latest Changes
 
 ## 1-β2
-- Corrected a divide-by-zero error in `template.php` [issue #68](https://github.com/userjack6880/Open-DMARC-Analyzer/issues/68).
+- Corrected a divide-by-zero error in `template.php` issue #68.
 - Limited width of page to a minimum of 1230px to fix visual element issues.
 - Added `openda_light` theme.
 
@@ -121,11 +121,11 @@ This project regular release cycle is not yet determined. Versioning is under th
 
 Support will be provided as outlined in the following schedule. For more details, see `SUPPORT`.
 
-| Version                             | Support Level    | Released        | End of Support  | End of Life     |
-| ----------------------------------- | ---------------- | --------------- | --------------- | --------------- |
-| Version 1 Beta 2                    | Full Support     | TBD             | TBD             | TBD             |
-| Version 1 Beta 1                    | Critical Support | 4 November 2022 | TBD             | TBD             |
-| Version 1 Feature Complete          | End of Life      | 27 July 2022    | 4 November 2022 | TBD             |
+| Version                             | Support Level    | Released         | End of Support   | End of Life      |
+| ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
+| Version 1 Beta 2                    | Full Support     | 29 November 2022 | TBD              | TBD              |
+| Version 1 Beta 1                    | Critical Support | 4 November 2022  | 29 November 2022 | TBD              |
+| Version 1 Feature Complete          | End of Life      | 27 July 2022     | 4 November 2022  | 29 November 2022 |
 
 # Contributing
 
