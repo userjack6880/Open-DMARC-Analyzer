@@ -31,7 +31,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-  echo "1-β2 (Dev)";
+  echo "1-β2";
 
 }
 
