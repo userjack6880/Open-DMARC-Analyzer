@@ -2,7 +2,7 @@
 /* ----------------------------------------------------------------------------
 
 Open DMARC Analyzer - Open Source DMARC Analyzer
-Copyright (C) 2022 - John Bradley (userjack6880)
+Copyright (C) 2023 - John Bradley (userjack6880)
 
 includes/template.php
   template structures to be called by main page scripts
@@ -31,7 +31,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-  echo "1-β2";
+  echo "1-β3";
 
 }
 
@@ -328,8 +328,8 @@ function domain_overview($stats, $dateRange) {
                   <tr class=dov>\n
                     <td class=dov>$total Messages</td>\n
                     <td class=dov>$policy_pct% $policy</td>\n
-                    <td class=dov>$dmarc_quar Quarantined</td>\n
-                    <td class=dov>$dmarc_rjct Rejected</td>\n
+                    <td class=dov><span class='warn'>$dmarc_quar</span> Quarantined</td>\n
+                    <td class=dov><span class='fail'>$dmarc_rjct</span> Rejected</td>\n
                   </tr>\n
                 </table>\n
               </div>\n
@@ -402,8 +402,8 @@ function domain_details($stats, $domain, $dateRange) {
                 <tr class=dov>\n
                   <td class=dov>$messages</td>\n
                   <td class=dov>$dmarc_comp_pct%</td>\n
-                  <td class=dov>$quarantine</td>\n
-                  <td class=dov>$reject</td>\n
+                  <td class=dov><span class='warn'>$quarantine</span></td>\n
+                  <td class=dov><span class='fail'>$reject</span></td>\n
                 </tr>\n
               </table>\n
             </div>\n
