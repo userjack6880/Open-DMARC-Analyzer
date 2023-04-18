@@ -328,8 +328,22 @@ function domain_overview($stats, $dateRange) {
                   <tr class=dov>\n
                     <td class=dov>$total Messages</td>\n
                     <td class=dov>$policy_pct% $policy</td>\n
-                    <td class=dov><span class='warn'>$dmarc_quar</span> Quarantined</td>\n
-                    <td class=dov><span class='fail'>$dmarc_rjct</span> Rejected</td>\n
+                    <td class=dov>";
+    if ($dmarc_quar > 0) {
+      echo "<span class='warn'>$dmarc_quar</span>";
+    }
+    else {
+      echo "$dmarc_quar";
+    } 
+    echo "Quarantined</td>\n
+                    <td class=dov>";
+    if ($dmarc_rjct > 0) {
+      echo "<span class='fail'>$dmarc_rjct</span>";
+    }
+    else {
+      echo "$dmarc_rjct";
+    } 
+    echo "Rejected</td>\n
                   </tr>\n
                 </table>\n
               </div>\n
@@ -402,8 +416,22 @@ function domain_details($stats, $domain, $dateRange) {
                 <tr class=dov>\n
                   <td class=dov>$messages</td>\n
                   <td class=dov>$dmarc_comp_pct%</td>\n
-                  <td class=dov><span class='warn'>$quarantine</span></td>\n
-                  <td class=dov><span class='fail'>$reject</span></td>\n
+                  <td class=dov>";
+    if ($quarantine > 0) {
+      echo "<span class='warn'>$quarantine</span>";
+    }
+    else {
+      echo "$quarantine";
+    }
+    echo "</td>\n
+                  <td class=dov>";
+    if ($quarantine > 0) {
+      echo "<span class='fail'>$reject</span>";
+    }
+    else {
+      echo "$reject";
+    }
+    echo "</td>\n
                 </tr>\n
               </table>\n
             </div>\n
