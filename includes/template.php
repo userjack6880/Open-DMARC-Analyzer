@@ -536,7 +536,17 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
     echo "<tr>\n
             <td><a href='".$_SERVER['PHP_SELF']."?page=report&report=".$stat['reportid']."'>".$stat['reportid']."</a></td>\n
             <td>".$stat['rcount']."</td>\n
-            <td>".$stat['disposition']."</td>\n
+            <td>";
+    if ($stat['disposition'] == "quarantine") {
+      echo "<span class='warn'>".$stat['disposition']."</span>";
+    }
+    elseif ($stat['disposition'] == "reject") {
+      echo "<span class='fail'>".$stat['disposition']."</span>";
+    }
+    else {
+      echo $stat['disposition'];
+    }
+    echo "</td>\n
             <td>".$stat['reason']."</td>\n
             <td>";
     if ($stat['dkimdomain'] != '') {
