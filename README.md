@@ -12,7 +12,7 @@ Open DMARC Analyzer Version 1 Beta 3 (1-β3) is an [Anomaly \<Codebase\>](https:
 - PHP 5 (PHP 7 required for phpWhois)
 - PHP PDO
 - MySQL 15.1 or equivalent
-- A database that is pre-populated with data from rrdmarc or dmarcts-report-parser
+- **A database that is pre-populated with data from [rrdmarc](http://www.taugh.com/rddmarc/) or [dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser)**
 
 # Dependencies
 
@@ -98,7 +98,7 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 # Latest Changes
 
 ## 1-β3
-- Tweaks to the `openda` and `openda_light` themes.
+- Tweaks to the `openda` and `openda_light` themes, including table widths and data coloring.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 

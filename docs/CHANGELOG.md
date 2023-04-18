@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1-β3
-- Tweaks to the `openda` and `openda_light` themes.
+- Tweaks to the `openda` and `openda_light` themes, including table widths and data coloring.
 
 ## 1-β2
 - Corrected a divide-by-zero error in `template.php` issue #68.
