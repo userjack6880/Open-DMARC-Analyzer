@@ -422,6 +422,10 @@ span.warn {
   color: #F1B077;
 }
 
+span.temperror {
+  color: #F1B077;
+}
+
 span.unknown {
     color: #2A3035;
 }
