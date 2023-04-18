@@ -1,5 +1,8 @@
 # Changelog
 
+## 1-β3
+- Tweaks to the `openda` and `openda_light` themes.
+
 ## 1-β2
 - Corrected a divide-by-zero error in `template.php` issue #68.
 - Limited width of page to a minimum of 1230px to fix visual element issues.

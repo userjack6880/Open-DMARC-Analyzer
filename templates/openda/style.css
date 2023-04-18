@@ -65,6 +65,7 @@ a:hover {
 
 #header {
   width: 100%;
+  max-width: 1920px;
   margin: 0px auto 0px auto;
   padding: 15px;
   border: none;
@@ -73,6 +74,7 @@ a:hover {
 
 #controlbar {
   width: 100%;
+  max-width: 1920px;
   height: 100px;
   margin: 0px auto 0px auto;
   padding: 15px;
@@ -355,6 +357,7 @@ h1.header {
 
 #wrapper {
   width: 100%;
+  max-width: 1920px;
   margin: 0 auto 0 auto;
   padding: 15px;
 }
@@ -425,6 +428,7 @@ span.unknown {
 
 #footer {
   width: 100%;
+  max-width: 1920px;
   margin: 0px auto 0px auto;
   padding: 15px;
   font-size: 10px;

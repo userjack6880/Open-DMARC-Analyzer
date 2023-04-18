@@ -391,7 +391,7 @@ function domain_details($stats, $domain, $dateRange) {
               <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=sender&domain=$domain&ip=".$ip['ip']."'>".$ip['ip']."</a></h3>\n
               <span class=dov-bar-small>".gethostbyaddr($ip['ip'])."</span>\n
             </div>\n
-            <div style='left:420px;'>\n
+            <div style='left:420px; width:calc(100% - 770px); width:-moz-calc(100% - 770px); width:-webkit-calc(100% - 770px);'>\n
               <table class=dov>\n
                 <tr class=dov>\n
                   <td class=dov style='min-width:100px'><strong>Messages</strong></td>\n
