@@ -642,14 +642,14 @@ function report_details($data, $report) {
             <td>".$row['domain']."</td>\n
             <td>".$row['rcount']."</td>\n
             <td>";
-    if ($stat['disposition'] == "quarantine") {
-      echo "<span class='warn'>".$stat['disposition']."</span>";
+    if ($row['disposition'] == "quarantine") {
+      echo "<span class='warn'>".$row['disposition']."</span>";
     }
-    elseif ($stat['disposition'] == "reject") {
-      echo "<span class='fail'>".$stat['disposition']."</span>";
+    elseif ($row['disposition'] == "reject") {
+      echo "<span class='fail'>".$row['disposition']."</span>";
     }
     else {
-      echo $stat['disposition'];
+      echo $row['disposition'];
     }
     echo "</td>\n
             <td>".$row['reason']."</td>\n
