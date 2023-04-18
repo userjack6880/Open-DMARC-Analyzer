@@ -641,7 +641,17 @@ function report_details($data, $report) {
             <td><a href='".$_SERVER['PHP_SELF']."?page=sender&ip=".$ip['ip']."'>".$ip['ip']."</a></td>\n
             <td>".$row['domain']."</td>\n
             <td>".$row['rcount']."</td>\n
-            <td>".$row['disposition']."</td>\n
+            <td>";
+    if ($stat['disposition'] == "quarantine") {
+      echo "<span class='warn'>".$stat['disposition']."</span>";
+    }
+    elseif ($stat['disposition'] == "reject") {
+      echo "<span class='fail'>".$stat['disposition']."</span>";
+    }
+    else {
+      echo $stat['disposition'];
+    }
+    echo "</td>\n
             <td>".$row['reason']."</td>\n
             <td>";
     if ($row['dkimdomain'] != '') {
