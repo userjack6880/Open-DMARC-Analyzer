@@ -335,7 +335,7 @@ function domain_overview($stats, $dateRange) {
     else {
       echo "$dmarc_quar";
     } 
-    echo "Quarantined</td>\n
+    echo " Quarantined</td>\n
                     <td class=dov>";
     if ($dmarc_rjct > 0) {
       echo "<span class='fail'>$dmarc_rjct</span>";
@@ -343,7 +343,7 @@ function domain_overview($stats, $dateRange) {
     else {
       echo "$dmarc_rjct";
     } 
-    echo "Rejected</td>\n
+    echo " Rejected</td>\n
                   </tr>\n
                 </table>\n
               </div>\n
