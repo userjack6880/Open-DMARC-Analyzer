@@ -2,7 +2,7 @@
 /* ----------------------------------------------------------------------------
 
 Open DMARC Analyzer - Open Source DMARC Analyzer
-Copyright (C) 2022 - John Bradley (userjack6880)
+Copyright (C) 2023 - John Bradley (userjack6880)
 
 includes/template.php
   template structures to be called by main page scripts
@@ -31,7 +31,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-  echo "1-β2";
+  echo "1-β3";
 
 }
 
@@ -328,8 +328,22 @@ function domain_overview($stats, $dateRange) {
                   <tr class=dov>\n
                     <td class=dov>$total Messages</td>\n
                     <td class=dov>$policy_pct% $policy</td>\n
-                    <td class=dov>$dmarc_quar Quarantined</td>\n
-                    <td class=dov>$dmarc_rjct Rejected</td>\n
+                    <td class=dov>";
+    if ($dmarc_quar > 0) {
+      echo "<span class='warn'>$dmarc_quar</span>";
+    }
+    else {
+      echo "$dmarc_quar";
+    } 
+    echo " Quarantined</td>\n
+                    <td class=dov>";
+    if ($dmarc_rjct > 0) {
+      echo "<span class='fail'>$dmarc_rjct</span>";
+    }
+    else {
+      echo "$dmarc_rjct";
+    } 
+    echo " Rejected</td>\n
                   </tr>\n
                 </table>\n
               </div>\n
@@ -391,7 +405,7 @@ function domain_details($stats, $domain, $dateRange) {
               <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=sender&domain=$domain&ip=".$ip['ip']."'>".$ip['ip']."</a></h3>\n
               <span class=dov-bar-small>".gethostbyaddr($ip['ip'])."</span>\n
             </div>\n
-            <div style='left:420px;'>\n
+            <div style='left:420px; width:calc(100% - 770px); width:-moz-calc(100% - 770px); width:-webkit-calc(100% - 770px);'>\n
               <table class=dov>\n
                 <tr class=dov>\n
                   <td class=dov style='min-width:100px'><strong>Messages</strong></td>\n
@@ -402,8 +416,22 @@ function domain_details($stats, $domain, $dateRange) {
                 <tr class=dov>\n
                   <td class=dov>$messages</td>\n
                   <td class=dov>$dmarc_comp_pct%</td>\n
-                  <td class=dov>$quarantine</td>\n
-                  <td class=dov>$reject</td>\n
+                  <td class=dov>";
+    if ($quarantine > 0) {
+      echo "<span class='warn'>$quarantine</span>";
+    }
+    else {
+      echo "$quarantine";
+    }
+    echo "</td>\n
+                  <td class=dov>";
+    if ($quarantine > 0) {
+      echo "<span class='fail'>$reject</span>";
+    }
+    else {
+      echo "$reject";
+    }
+    echo "</td>\n
                 </tr>\n
               </table>\n
             </div>\n
@@ -508,7 +536,17 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
     echo "<tr>\n
             <td><a href='".$_SERVER['PHP_SELF']."?page=report&report=".$stat['reportid']."'>".$stat['reportid']."</a></td>\n
             <td>".$stat['rcount']."</td>\n
-            <td>".$stat['disposition']."</td>\n
+            <td>";
+    if ($stat['disposition'] == "quarantine") {
+      echo "<span class='warn'>".$stat['disposition']."</span>";
+    }
+    elseif ($stat['disposition'] == "reject") {
+      echo "<span class='fail'>".$stat['disposition']."</span>";
+    }
+    else {
+      echo $stat['disposition'];
+    }
+    echo "</td>\n
             <td>".$stat['reason']."</td>\n
             <td>";
     if ($stat['dkimdomain'] != '') {
@@ -603,7 +641,17 @@ function report_details($data, $report) {
             <td><a href='".$_SERVER['PHP_SELF']."?page=sender&ip=".$ip['ip']."'>".$ip['ip']."</a></td>\n
             <td>".$row['domain']."</td>\n
             <td>".$row['rcount']."</td>\n
-            <td>".$row['disposition']."</td>\n
+            <td>";
+    if ($row['disposition'] == "quarantine") {
+      echo "<span class='warn'>".$row['disposition']."</span>";
+    }
+    elseif ($row['disposition'] == "reject") {
+      echo "<span class='fail'>".$row['disposition']."</span>";
+    }
+    else {
+      echo $row['disposition'];
+    }
+    echo "</td>\n
             <td>".$row['reason']."</td>\n
             <td>";
     if ($row['dkimdomain'] != '') {

@@ -7,5 +7,5 @@ assignees: userjack6880
 
 ---
 
-**Describe the enhancement requeast**
+**Describe the enhancement request**
 A clear and concise description of what you want us to consider.

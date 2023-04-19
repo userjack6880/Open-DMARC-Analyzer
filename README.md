@@ -5,14 +5,14 @@ Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMAR
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
 
-Open DMARC Analyzer Version 1 Beta 2 (1-β2) is an [Anomaly <Codebase>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
+Open DMARC Analyzer Version 1 Beta 3 (1-β3) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
-# Requirements
+# Minimum Requirements
 - Apache 2 or equivalent
 - PHP 5 (PHP 7 required for phpWhois)
 - PHP PDO
 - MySQL 15.1 or equivalent
-- A database that is pre-populated with data from rrdmarc or dmarcts-report-parser
+- **A database that is pre-populated with data from [rrdmarc](http://www.taugh.com/rddmarc/) or [dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser)**
 
 # Dependencies
 
@@ -97,19 +97,18 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 1-β2
-- Corrected a divide-by-zero error in `template.php` issue #68.
-- Limited width of page to a minimum of 1230px to fix visual element issues.
-- Added `openda_light` theme.
+## 1-β3
+- Tweaks to the `openda` and `openda_light` themes, including table widths and data coloring.
+- Issue template fix per issue #78.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
 # Tested System Configurations
 
-| OS        | HTTP          | PHP    | SQL             |
-| --------- | ------------- | ------ | --------------- |
-| Debian 11 | Apache 2.4.52 | 7.4.25 | MariaDB 10.5.12 |
-| CentOS 7  | Apache 2.4.6  | 5.4.16 | MariaDB 5.5.65  |
+| OS              | HTTP          | PHP    | SQL             |
+| --------------- | ------------- | ------ | --------------- |
+| Debian 11.6     | Apache 2.4.52 | 8.2.3  | MariaDB 10.5.18 |
+| CentOS 7.6.1810 | Apache 2.4.6  | 5.4.16 | MariaDB 5.5.65  |
 
 If you have a system configuration not listed, and would like to contribue this data, please [provide feedback](https://github.com/userjack6880/Open-Dmarc-Analyzer/issues).
 
@@ -123,9 +122,9 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Support Level    | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
-| Version 1 Beta 2                    | Full Support     | 29 November 2022 | TBD              | TBD              |
-| Version 1 Beta 1                    | Critical Support | 4 November 2022  | 29 November 2022 | TBD              |
-| Version 1 Feature Complete          | End of Life      | 27 July 2022     | 4 November 2022  | 29 November 2022 |
+| Version 1 Beta 3                    | Full Support     | 19 April 2023    | 1-rc1 Release    | TBD              |
+| Version 1 Beta 2                    | Critical Support | 29 November 2022 | 19 April 2023    | 1-rc1 Release    |
+| Version 1 Beta 1                    | End of Life      | 4 November 2022  | 29 November 2022 | 19 April 2023    |
 
 # Contributing
 
@@ -140,4 +139,4 @@ Thanks to [all who contributed](https://github.com/userjack6880/Open-DMARC-Analy
 
 # Licenses and Copyrights
 
-Copyright © 2022 John Bradley (userjack6880). Open DMARC Analyzer is released under GNU GPLv3. See `LICENSE`.
+Copyright © 2023 John Bradley (userjack6880). Open DMARC Analyzer is released under GNU GPLv3. See `LICENSE`.

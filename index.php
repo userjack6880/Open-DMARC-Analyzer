@@ -2,7 +2,7 @@
 /* ----------------------------------------------------------------------------
 
 Open DMARC Analyzer - Open Source DMARC Analyzer
-Copyright (C) 2022 - John Bradley (userjack6880)
+Copyright (C) 2023 - John Bradley (userjack6880)
 
 index.php
   the all encompassing page that is always loaded
