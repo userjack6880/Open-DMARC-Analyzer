@@ -1,7 +1,7 @@
 # Open DMARC Analyzer
 ![Open DMARC Analyzer Screenshot](docs/images/oda-screenshot.jpg?raw=true)
 
-Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
+Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser).
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
 
@@ -12,7 +12,7 @@ Open DMARC Analyzer Version 1 Beta 3 (1-β3) is an [Anomaly \<Codebase\>](https:
 - PHP 5 (PHP 7 required for phpWhois)
 - PHP PDO
 - MySQL 15.1 or equivalent
-- **A database that is pre-populated with data from [rrdmarc](http://www.taugh.com/rddmarc/) or [dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser)**
+- **A database that is pre-populated with data from [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser)**
 
 # Dependencies
 
