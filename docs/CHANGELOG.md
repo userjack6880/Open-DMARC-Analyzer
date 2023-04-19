@@ -1,5 +1,8 @@
 # Changelog
 
+## 1-rc1
+- Documentation updates.
+
 ## 1-β3
 - Tweaks to the `openda` and `openda_light` themes, including table widths and data coloring.
 - Issue template fix per issue #78.

@@ -97,9 +97,8 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 1-β3
-- Tweaks to the `openda` and `openda_light` themes, including table widths and data coloring.
-- Issue template fix per issue #78.
+## 1-rc1
+- Documentation updates.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -107,7 +106,7 @@ See `CHANGELOG` under `docs` for full details of all changes.
 
 | OS              | HTTP          | PHP    | SQL             |
 | --------------- | ------------- | ------ | --------------- |
-| Debian 11.6     | Apache 2.4.52 | 8.2.3  | MariaDB 10.5.18 |
+| Debian 11.6     | Apache 2.4.56 | 8.2.3  | MariaDB 10.5.18 |
 | CentOS 7.6.1810 | Apache 2.4.6  | 5.4.16 | MariaDB 5.5.65  |
 
 If you have a system configuration not listed, and would like to contribue this data, please [provide feedback](https://github.com/userjack6880/Open-Dmarc-Analyzer/issues).
@@ -122,9 +121,9 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Support Level    | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
-| Version 1 Beta 3                    | Full Support     | 19 April 2023    | 1-rc1 Release    | TBD              |
-| Version 1 Beta 2                    | Critical Support | 29 November 2022 | 19 April 2023    | 1-rc1 Release    |
-| Version 1 Beta 1                    | End of Life      | 4 November 2022  | 29 November 2022 | 19 April 2023    |
+| Version 1 Release Candidate 1       | Full Support     | 15 May 2023      | ~15 June 2023    | 31 December 2023 |
+| Version 1 Beta 3                    | Critical Support | 19 April 2023    | 15 May 2023      | ~15 June 2023    |
+| Version 1 Beta 2                    | End of Life      | 29 November 2022 | 19 April 2023    | 15 May 2023      |
 
 # Contributing
 
