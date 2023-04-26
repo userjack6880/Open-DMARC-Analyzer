@@ -9,9 +9,9 @@ Open DMARC Analyzer Version 2 Alpha 1 (2-α1) is an [Anomaly \<Codebase\>](https
 
 # Minimum Requirements
 - Apache 2 or equivalent
-- PHP 5 (PHP 7 required for phpWhois)
+- PHP 5 (PHP 7+ required for phpWhois)
 - PHP PDO
-- MySQL 15.1 or equivalent
+- MySQL 15.1 (or equivalent) *or* PostgreSQL 13
 - **A database that is pre-populated with data from [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser)**
 
 # Dependencies
@@ -20,7 +20,7 @@ One of the following 2 packages are required to be installed.
 
 **[jsmitty12/phpWhois](https://github.com/jsmitty12/phpWhois/)**
 
-It is highly recommended that you install this package using composer. Instructions are found on the package's git page. This is required, and will replace most GeoIP data if you disable the MaxMind DB reader package. This package *will* require PHP 7.
+It is highly recommended that you install this package using composer. Instructions are found on the package's git page. This is required, and will replace most GeoIP data if you disable the MaxMind DB reader package. This package *will* require PHP 7 or newer.
 
 **[MaxMind DB Reader PHP API](https://github.com/maxmind/MaxMind-DB-Reader-php)**
 
@@ -57,7 +57,8 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'dmarc');
 define('DB_PASS', 'password');
 define('DB_NAME', 'dmarc');
-define('DB_PORT', '3306'); // default port 3306
+define('DB_PORT', '3306'); // default port 3306, 5432 for pgsql
+define('DB_TYPE', 'mysql'); // supported mysql and pgsql
 ```
 
 **Debug Settings**

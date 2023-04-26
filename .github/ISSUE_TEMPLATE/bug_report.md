@@ -24,8 +24,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Software Version**
-[] Version 2 Alpha 1
-[] Version 1
+[ ] Version 2 Alpha 1
+[ ] Version 1
 
 **Desktop (please complete the following information):**
  - OS [e.g. macOS]
