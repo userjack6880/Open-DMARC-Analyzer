@@ -5,7 +5,7 @@ Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMAR
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
 
-Open DMARC Analyzer Version 1 Release Candidate 1 (1-rc1) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
+Open DMARC Analyzer Version 2 Alpha 1 (2-α1) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
 # Minimum Requirements
 - Apache 2 or equivalent
@@ -97,8 +97,8 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 1-rc1
-- Documentation updates.
+## 2-α1
+- New Version
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -121,9 +121,9 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Support Level    | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
-| Version 1 Release Candidate 1       | Full Support     | 15 May 2023      | ~15 June 2023    | 31 December 2023 |
-| Version 1 Beta 3                    | Critical Support | 19 April 2023    | 15 May 2023      | ~15 June 2023    |
-| Version 1 Beta 2                    | End of Life      | 29 November 2022 | 19 April 2023    | 15 May 2023      |
+| Version 2 Alpha 1                   | Full Support     | TBD              | TBD              | TBD              |
+| Version 1                           | Full Support     | ~15 June 2023    | TBD              | TBD              |
+| Version 1 Release Candidate 1       | Critical Support | 15 May 2023      | ~15 June 2023    | 31 December 2023 |
 
 # Contributing
 
