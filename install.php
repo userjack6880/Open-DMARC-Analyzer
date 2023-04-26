@@ -40,7 +40,7 @@ echo " success<br>";
 $statement ='';
 
 echo "opening file...";
-$lines = file('mysql.sql');
+$lines = file(DB_TYPE.'.sql');
 echo " success<br>";
 
 foreach ($lines as $line)
@@ -87,6 +87,13 @@ if (unlink('mysql.sql') == true) {
 }
 else {
   echo "FAILED &rarr; mysql.sql<br>";
+}
+
+if (unlink('pgsql.sql') == true) {
+  echo "DELETED &rarr; pgsql.sql<br>";
+}
+else {
+  echo "FAILED &rarr; pgsql.sql<br>";
 }
 
 if (unlink(__FILE__) == true) {

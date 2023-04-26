@@ -1,18 +1,18 @@
 # Open DMARC Analyzer
 ![Open DMARC Analyzer Screenshot](docs/images/oda-screenshot.jpg?raw=true)
 
-Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [John Levine's rrdmarc script](http://www.taugh.com/rddmarc/) or [techsneeze's dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser).
+Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser).
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
 
-Open DMARC Analyzer Version 1 Beta 3 (1-β3) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
+Open DMARC Analyzer Version 1 Beta 4 (1-β4) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
 # Minimum Requirements
 - Apache 2 or equivalent
 - PHP 5 (PHP 7 required for phpWhois)
 - PHP PDO
 - MySQL 15.1 or equivalent
-- **A database that is pre-populated with data from [rrdmarc](http://www.taugh.com/rddmarc/) or [dmarcts-report-parser](https://github.com/techsneeze/dmarcts-report-parser)**
+- **A database that is pre-populated with data from [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser)**
 
 # Dependencies
 
@@ -97,9 +97,8 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 1-β3
-- Tweaks to the `openda` and `openda_light` themes, including table widths and data coloring.
-- Issue template fix per issue #78.
+## 1-β4
+- PostgresSQL validation and fixes backported from future Version 2 Alpha 1 branch.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -107,7 +106,10 @@ See `CHANGELOG` under `docs` for full details of all changes.
 
 | OS              | HTTP          | PHP    | SQL             |
 | --------------- | ------------- | ------ | --------------- |
-| Debian 11.6     | Apache 2.4.52 | 8.2.3  | MariaDB 10.5.18 |
+| Debian 11.6     | Apache 2.4.56 | 8.2.5  | MariaDB 10.5.18 |
+| Debian 11.6     | Apache 2.4.56 | 8.2.5  | PostgreSQL 13.9 |
+| Debian 11.6     | Apache 2.4.56 | 7.4.33 | MariaDB 10.5.18 |
+| Debian 11.6     | Apache 2.4.56 | 7.4.33 | PostgreSQL 13.9 |
 | CentOS 7.6.1810 | Apache 2.4.6  | 5.4.16 | MariaDB 5.5.65  |
 
 If you have a system configuration not listed, and would like to contribue this data, please [provide feedback](https://github.com/userjack6880/Open-Dmarc-Analyzer/issues).
@@ -122,9 +124,9 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Support Level    | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
-| Version 1 Beta 3                    | Full Support     | 19 April 2023    | 1-rc1 Release    | TBD              |
-| Version 1 Beta 2                    | Critical Support | 29 November 2022 | 19 April 2023    | 1-rc1 Release    |
-| Version 1 Beta 1                    | End of Life      | 4 November 2022  | 29 November 2022 | 19 April 2023    |
+| Version 1 Beta 4                    | Full Support     | 26 April 2023    | 1-rc1 Release    | TBD              |
+| Version 1 Beta 3                    | Critical Support | 19 April 2023    | 26 April 2023    | 1-rc1 Release    |
+| Version 1 Beta 2                    | End of Life      | 29 November 2022 | 19 April 2023    | 26 April 2023    |
 
 # Contributing
 
