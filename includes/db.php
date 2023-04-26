@@ -30,7 +30,15 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Connect to DB //
 function dbConn() {
   try {
-    $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME.";port=".DB_PORT, DB_USER, DB_PASS);
+    if (DB_TYPE == "pgsql") {
+      $pdo = new PDO("pgsql:host=".DB_HOST.";dbname=".DB_NAME.";port=".DB_PORT, DB_USER, DB_PASS);
+    }
+    elseif (DB_TYPE == "mysql") {
+      $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME.";port=".DB_PORT, DB_USER, DB_PASS);
+    }
+    else {
+      echo 'Incorrect DB Type: '.DB_TYPE;
+    }
   } 
   catch (PDOException $e) {
     echo 'Connection failed: '.$e->getMessage();
