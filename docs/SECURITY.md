@@ -21,8 +21,9 @@ Open DMARC Analyzer Version Security Support
 | Version                       | Supported | End of Life      |
 | ----------------------------- | --------- | ---------------- |
 | Version 1 Release Candidate 1 | YES       | 31 December 2023 |
-| Version 1 Beta 3              | YES       | ~15 June 2023    |
-| Version 1 Beta 2              | NO        | 15 May 2023      |
+| Version 1 Beta 4              | YES       | ~15 June 2023    |
+| Version 1 Beta 3              | NO        | 15 May 2023      |
+| Version 1 Beta 2              | NO        | 26 April 2023    |
 | Version 1 Beta 1              | NO        | 19 April 2023    |
 | Version 1 Feature Complete    | NO        | 29 November 2022 |
 | Version 0 Alpha 9             | NO        | 4 November 2022  |

@@ -84,7 +84,7 @@ function dashboard($dateRange,$domain) {
                   domain, sum(rcount) AS total_messages, policy_p, policy_pct
                  FROM report_stats
                  WHERE mindate BETWEEN :startdate AND NOW()
-                 GROUP BY domain
+                 GROUP BY domain, policy_p, policy_pct
                 ) t1
                 LEFT JOIN (SELECT domain, sum(rcount) AS none 
                              FROM report_stats 

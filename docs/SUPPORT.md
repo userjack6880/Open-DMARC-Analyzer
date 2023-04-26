@@ -5,8 +5,9 @@ Due to the limited time available to developrs to maintain support, dates must b
 | Version                             | Support Level    | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
 | Version 1 Release Candidate 1       | Full Support     | 15 May 2023      | ~15 June 2023    | 31 December 2023 |
-| Version 1 Beta 3                    | Critical Support | 19 April 2023    | 15 May 2023      | ~15 June 2023    |
-| Version 1 Beta 2                    | End of Life      | 29 November 2022 | 19 April 2023    | 15 May 2023      |
+| Version 1 Beta 4                    | Critical Support | 26 April 2023    | 15 May 2023      | ~15 June 2023    |
+| Version 1 Beta 3                    | End of Life      | 19 April 2023    | 26 April 2023    | 15 May 2023      |
+| Version 1 Beta 2                    | End of Life      | 29 November 2022 | 19 April 2023    | 26 April 2023    |
 | Version 1 Beta 1                    | End of Life      | 4 November 2022  | 29 November 2022 | 19 April 2023    |
 | Version 1 Feature Complete          | End of Life      | 27 July 2022     | 4 November 2022  | 29 November 2022 |
 | Version 0 Alpha 9                   | End of Life      | 2 May 2022       | 27 July 2022     | 4 November 2022  |

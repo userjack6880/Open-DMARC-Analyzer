@@ -33,7 +33,8 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'dmarc');
 define('DB_PASS', 'password');
 define('DB_NAME', 'dmarc');
-define('DB_PORT', '3306'); // default port 3306
+define('DB_PORT', '3306'); // default port 3306, 5432 for pgsql
+define('DB_TYPE', 'mysql'); // supported mysql and pgsql
 
 // Debug Settings
 

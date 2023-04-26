@@ -2,6 +2,10 @@
 
 ## 1-rc1
 - Documentation updates.
+- Carried forward backports from beta 4.
+
+## 1-β4
+- PostgresSQL validation and fixes backported from future Version 2 Alpha 1 branch.
 
 ## 1-β3
 - Tweaks to the `openda` and `openda_light` themes, including table widths and data coloring.
