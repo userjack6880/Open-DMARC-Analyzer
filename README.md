@@ -5,7 +5,7 @@ Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMAR
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
 
-Open DMARC Analyzer Version 1 Beta 3 (1-β3) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
+Open DMARC Analyzer Version 1 Release Candidate 1 (1-rc1) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
 # Minimum Requirements
 - Apache 2 or equivalent
