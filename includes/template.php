@@ -43,7 +43,7 @@ function javascript() { ?>
 
 // Page Title -----------------------------------
 function page_title($page) {
-  echo "Open DMARC Analyzer";
+  echo "Open Report Analyzer";
   if ($page == "index") {
     echo " - Dashboard";
   }
@@ -141,8 +141,8 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 }
 
 // Overview Bar ---------------------------------
-function overview_bar($stats, $domain) {
-  // extract stats
+function overview_bar($d_stats, $t_stats, $domain) {
+  // extract dmarc stats
   $total  = 0;
   $policy = '';
   $policy_pct = 0;
@@ -157,7 +157,7 @@ function overview_bar($stats, $domain) {
 
   if ($domain == "all") {
     $domain_count = 0;
-    foreach ($stats as $stat) {
+    foreach ($d_stats as $stat) {
       $stat = array_map('htmlspecialchars',$stat);
       $total = $total+$stat['total_messages'];
       if ($stat['none'] > 0)                { $dmarc_none = $dmarc_none+$stat['none']; }
@@ -171,29 +171,30 @@ function overview_bar($stats, $domain) {
       $domain_count++;
     }
 
-    // clunky, but detects if we have more than one domain, and changes all to a single domain if it's just one
+    // clunky, but detects if we have only one domain, and changes all to a single domain if it's just one
     if ($domain_count == 1) {
-      $domain     = $stats[0]['domain'];
-      $policy     = ucfirst($stats[0]['policy_p']);
-      $policy_pct = $stats[0]['policy_pct'];
+      $domain     = $d_stats[0]['domain'];
+      $policy     = ucfirst($d_stats[0]['policy_p']);
+      $policy_pct = $d_stats[0]['policy_pct'];
     }
   }
   else {
-    $stats[0]   = array_map('htmlspecialchars',$stats[0]);
-    $total      = $stats[0]['total_messages'];
-    $policy     = ucfirst($stats[0]['policy_p']);
-    $policy_pct = $stats[0]['policy_pct'];
-    if ($stats[0]['none'] > 0)                { $dmarc_none = $stats[0]['none']; }
-    if ($stats[0]['quarantine'] > 0)          { $dmarc_quar = $stats[0]['quarantine']; }
-    if ($stats[0]['reject'] > 0)              { $dmarc_rjct = $stats[0]['reject']; }
-    if ($stats[0]['compliant'] > 0)           { $dmarc_comp = $stats[0]['compliant']; }
-    if ($stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stats[0]['dkim_pass_aligned']; }
-    if ($stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stats[0]['dkim_pass_unaligned']; }
-    if ($stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stats[0]['spf_pass_aligned']; }
-    if ($stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stats[0]['spf_pass_unaligned']; }
+    $d_stats[0]   = array_map('htmlspecialchars',$d_stats[0]);
+//    $total      = $d_stats[0]['total_messages'];
+    $policy     = ucfirst($d_stats[0]['policy_p']);
+    $policy_pct = $d_stats[0]['policy_pct'];
+    if ($d_stats[0]['total_messages'] > 0)      { $total = $d_stats[0]['total_messages']; }
+    if ($d_stats[0]['none'] > 0)                { $dmarc_none = $d_stats[0]['none']; }
+    if ($d_stats[0]['quarantine'] > 0)          { $dmarc_quar = $d_stats[0]['quarantine']; }
+    if ($d_stats[0]['reject'] > 0)              { $dmarc_rjct = $d_stats[0]['reject']; }
+    if ($d_stats[0]['compliant'] > 0)           { $dmarc_comp = $d_stats[0]['compliant']; }
+    if ($d_stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $d_stats[0]['dkim_pass_aligned']; }
+    if ($d_stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $d_stats[0]['dkim_pass_unaligned']; }
+    if ($d_stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $d_stats[0]['spf_pass_aligned']; }
+    if ($d_stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $d_stats[0]['spf_pass_unaligned']; }
   }
 
-// stat calculations
+  // stat calculations
   if ($dmarc_none) {
     $dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
     $dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
@@ -209,31 +210,50 @@ function overview_bar($stats, $domain) {
     $spf_pass_pct   = 0;
   }
 
-  // overview details
-  echo "<div id=overviewbar>\n
-          <div id=overviewbarleft>\n
-            <div id=overviewinnerleft>\n
-              Total Messages<br />\n
-              <span class=overviewtotal>$total</span>\n";
-  if ($domain != "all") {
-    echo     "<br />\n$policy_pct% $policy\n";
+  // extract tls stats
+  $tls_mode = 'unknown';
+  $tls_success = 0;
+  $tls_failure = 0;
+  $tls_failure_pct = 0;
+  $tls_total = 0;
+
+  foreach ($t_stats as $stat) {
+    $stat = array_map('htmlspecialchars',$stat);
+    // this should pick up the latest policy mode
+    if ($stat['policy_mode'] != '') { $tls_mode = $stat['policy_mode']; }
+    if ($stat['summary_success'] > 0) { $tls_success = $tls_success+$stat['summary_success']; }
+    if ($stat['summary_failure'] > 0) { $tls_failure = $tls_failure+$stat['summary_failure']; }
   }
-  echo     "</div>\n
-            <div id=overviewinnerright>\n
-              <div class=ovir-left>\n
-                Accepted<br />\n
-                Quarantined<br />\n
-                Rejected</br />\n
-              </div>\n
-              <div class=ovir-right>\n
-                <span class=pass>$dmarc_none</span><br />\n
-                <span class=warn>$dmarc_quar</span><br />\n
-                <span class=fail>$dmarc_rjct</span><br />\n
-              </div>\n
+
+  // stat calculation
+  $tls_total = $tls_success + $tls_failure;
+  if ($tls_total > 0) {
+    $tls_failure_pct = number_format(100 * ($tls_failure / $tls_total));
+  }
+
+  // overview details
+  echo "
+        <div id=overviewbar>\n
+          <div id=overviewbarleft>\n
+            <div id=ovbr-in>\n
+              <span class=ov-title>MTA-STS Statistics</span><br \><br \>\n
+              Mode<br />\n
+                <span class=perc-text>$tls_mode</span><br \>\n
+              Failure Rate<br \>\n
+                <span class=perc-text>$tls_total %</span><br \>\n
+                <span class=perc-text>$tls_success Success | $tls_failure Failure</span><br \>\n
             </div>\n
           </div>\n
           <div id=overviewbarright>\n
-            <div id=ovbr-in>\n
+            <div id=ovbr-in>\n";
+  // if no messages are presented, we need to inform that there's no
+  // compliance data
+  if ($total == 0) {
+    echo "
+              <span class=perc-title>No Compliance Information</span>\n";
+  }
+  else {
+    echo "
               Percent Compliant<br />\n
               <span class=overviewtotal>$dmarc_comp_pct%</span><br />\n
               <span class=perc-title>DKIM</span><br />\n
@@ -247,7 +267,33 @@ function overview_bar($stats, $domain) {
                 <div class=gray-per style='width:$spf_pass_pct%'></div>\n
                 <div class=green-per style='width:$spf_comp_pct%'></div>\n
               </div>\n
-              <span class=perc-text>$spf_comp_pct% Aligned | $spf_pass_pct% Passed</span><br />\n
+              <span class=perc-text>$spf_comp_pct% Aligned | $spf_pass_pct% Passed</span><br />\n";
+  }
+  echo "
+            </div>\n
+          </div>\n
+          <div id=overviewbarcenter>\n
+            <span class=ov-title>DMARC Statistics</span>
+            <div id=overviewinnerleft>\n
+              Total Messages<br />\n
+              <span class=overviewtotal>$total</span>\n";
+  if ($domain != "all" && $total > 0) {
+    echo "
+              <br />\n$policy_pct% $policy\n";
+  }
+  echo "
+            </div>\n
+            <div id=overviewinnerright>\n
+              <div class=ovir-left>\n
+                Accepted<br />\n
+                Quarantined<br />\n
+                Rejected</br />\n
+              </div>\n
+              <div class=ovir-right>\n
+                <span class=pass>$dmarc_none</span><br />\n
+                <span class=warn>$dmarc_quar</span><br />\n
+                <span class=fail>$dmarc_rjct</span><br />\n
+              </div>\n
             </div>\n
           </div>\n
         </div>\n";
@@ -356,7 +402,7 @@ function domain_overview($stats, $dateRange) {
 function domain_details($stats, $domain, $dateRange) {
   $entries = count($stats);
   $height = $entries * 100;
-  echo "<h2 class=section>Domain Summary</h2>\n
+  echo "<h2 class=section>Domain Senders</h2>\n
         <div class=dov-bar style='height:".$height."px'>\n
           <div class=dov-bar-in style='height:".$height."px'>\n";
 

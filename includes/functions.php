@@ -75,7 +75,7 @@ function dashboard($dateRange,$domain) {
   $pdo = dbConn();
   $startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
 
-  // Get broad statistics
+  // Get broad DMARC statistics
   $statement = "SELECT t1.domain, total_messages, t1.policy_p, t1.policy_pct, t2.none, t3.quarantine, t4.reject, 
                  t5.dkim_pass as dkim_pass_aligned, t6.dkim_pass as dkim_pass_unaligned,
                  t7.spf_pass as spf_pass_aligned, t8.spf_pass as spf_pass_unaligned, t9.compliant
@@ -127,17 +127,34 @@ function dashboard($dateRange,$domain) {
     $params = array(':startdate' => $startDate, ':domain' => $domain);
   }
 
-  $stats = dbQuery($pdo, $statement, $params);
-  $domain = overview_bar($stats, $domain);
+  $d_stats = dbQuery($pdo, $statement, $params);
+
+  // get borad TLS statistics
+  $statement = "SELECT policy_mode, summary_success, summary_failure, mindate, maxdate
+                FROM tls
+                WHERE mindate BETWEEN :startdate AND NOW()";
+  if ($domain == "all") {
+    $params[':startdate'] = $startDate;
+  }
+  else {
+    $statement .= " AND domain = :domain";
+    $params = array(':startdate' => $startDate, ':domain' => $domain);
+  }
+  $statement .= " ORDER BY maxdate";
+
+  $t_stats = dbQuery($pdo, $statement, $params);
+
+  $domain = overview_bar($d_stats, $t_stats, $domain);
 
   // individual domain overviews for multi-domain environments
   if ($domain == "all") {
-    domain_overview($stats, $dateRange);
+    domain_overview($d_stats, $dateRange);
   }
 
   // details if a specific domain is selected
   if ($domain != "all") {
-    // new stat query
+
+    // dmarc query for domain senders
     $statement = "SELECT ip, ip6,
                          SUM(rcount) as messages,
                          SUM(compliant) as compliant,
@@ -166,9 +183,9 @@ function dashboard($dateRange,$domain) {
                 GROUP BY ip, ip6
                 ORDER BY messages DESC";
     $params = array(':startdate' => $startDate, ':domain' => $domain);
-    $stats = dbQuery($pdo, $statement, $params);
+    $d_stats = dbQuery($pdo, $statement, $params);
 
-    domain_details($stats, $domain, $dateRange);
+    domain_details($d_stats, $domain, $dateRange);
   }
 
   $pdo = NULL;
@@ -276,14 +293,22 @@ function reportDashboard($report) {
 // Get Domains ----------------------------------
 function getDomains($dateRange) {
   $pdo = dbConn();
-  $startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
-  $statement = "SELECT DISTINCT domain FROM report WHERE mindate BETWEEN :startdate AND NOW()";
-  $params[':startdate'] = $startDate;
+  // let's modify this so we get *all* domains rather than just ones within a date range - this'll be important
+  // if we want to support TLS reports too
+
+//  $startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
+//  $statement = "SELECT DISTINCT domain FROM report WHERE mindate BETWEEN :startdate AND NOW()";
+  $statement = "SELECT DISTINCT domain FROM report UNION SELECT DISTINCT domain FROM tls";
+//  $params[':startdate'] = $startDate;
+//  $domains = dbQuery($pdo, $statement, $params);
+  $params = [];
   $domains = dbQuery($pdo, $statement, $params);
+
   foreach ($domains as $key => $domain) {
     $domain = array_map('htmlspecialchars', $domain);
     $domains[$key] = $domain;
   }
+
   $pdo = NULL;
   return $domains;
 }

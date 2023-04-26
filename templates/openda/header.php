@@ -56,7 +56,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
   </head>
   <body>
     <div id="header">
-      <a href="index.php"><h1 class="header">Open DMARC Analyzer</h1></a>
+      <a href="index.php"><h1 class="header">Open Report Analyzer</h1></a>
     </div>
     <?php control_bar($page, $domain, $dateRange, $ip); ?>
     <div id="wrapper">

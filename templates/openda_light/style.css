@@ -252,7 +252,7 @@ td.dov {
   border: none;
 }
 
-#overviewbarleft {
+#overviewbarcenter {
   background-color: #e5e9f2;
   width: calc(100% - 430px);
   min-width: 600px;

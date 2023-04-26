@@ -254,15 +254,29 @@ td.dov {
 
 #overviewbarleft {
   background-color: #1c1e28;
-  width: calc(100% - 430px);
-  min-width: 600px;
+  width: 400px;
   height: 300px;
   margin: 0px auto 0px auto;
-  padding: 0;
+  padding: 40px;
   border: none;
   border-radius: 10px;
   float: left;
   position: relative;
+}
+
+#overviewbarcenter {
+  background-color: #1c1e28;
+  width: calc(100% - 860px);
+  min-width: 700px;
+  height: 300px;
+  margin: 0px auto 0px auto;
+  padding: 0;
+  padding-top: 40px;
+  border: none;
+  border-radius: 10px;
+  float: none;
+  position: relative;
+  text-align: center;
 }
 
 #overviewbarright {
@@ -289,7 +303,7 @@ td.dov {
 
 #overviewinnerleft {
   width: calc(100% - 500px);
-  min-width: 100px;
+  min-width: 200px;
   margin: 0px;
   padding: 0 10px 0 0;
   border: none;
@@ -358,6 +372,7 @@ h1.header {
 #wrapper {
   width: 100%;
   max-width: 1920px;
+  min-width: 1580px;
   margin: 0 auto 0 auto;
   padding: 15px;
 }
@@ -427,7 +442,12 @@ span.temperror {
 }
 
 span.unknown {
-    color: #2A3035;
+  color: #2A3035;
+}
+
+span.ov-title {
+  font-size: 28px;
+  font-weight: bold;
 }
 
 #footer {
