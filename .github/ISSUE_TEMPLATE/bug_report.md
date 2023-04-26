@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Software Version**
 [] Version 1 Release Candidate 1
-[] Version 1 Beta 3
+[] Version 1 Beta 4
 [] Other
 
 **Desktop (please complete the following information):**
