@@ -99,6 +99,7 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 ## 2-α1
 - New Version
+- PostgreSQL Validation and Fixes
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -106,7 +107,10 @@ See `CHANGELOG` under `docs` for full details of all changes.
 
 | OS              | HTTP          | PHP    | SQL             |
 | --------------- | ------------- | ------ | --------------- |
-| Debian 11.6     | Apache 2.4.56 | 8.2.3  | MariaDB 10.5.18 |
+| Debian 11.6     | Apache 2.4.56 | 8.2.5  | MariaDB 10.5.18 |
+| Debian 11.6     | Apache 2.4.56 | 8.2.5  | PostgreSQL 13.9 |
+| Debian 11.6     | Apache 2.4.56 | 7.4.33 | MariaDB 10.5.18 |
+| Debian 11.6     | Apache 2.4.56 | 7.4.33 | PostgreSQL 13.9 |
 | CentOS 7.6.1810 | Apache 2.4.6  | 5.4.16 | MariaDB 5.5.65  |
 
 If you have a system configuration not listed, and would like to contribue this data, please [provide feedback](https://github.com/userjack6880/Open-Dmarc-Analyzer/issues).
