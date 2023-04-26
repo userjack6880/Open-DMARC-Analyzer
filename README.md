@@ -11,7 +11,7 @@ Open DMARC Analyzer Version 2 Alpha 1 (2-α1) is an [Anomaly \<Codebase\>](https
 - Apache 2 or equivalent
 - PHP 5 (PHP 7+ required for phpWhois)
 - PHP PDO
-- MySQL 15.1 (or equivalent) *or* PostgreSQL 13
+- MySQL 15.1 (or equivalent) *or* PostgreSQL 13.9
 - **A database that is pre-populated with data from [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser)**
 
 # Dependencies
