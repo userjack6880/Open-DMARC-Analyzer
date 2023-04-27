@@ -1,7 +1,7 @@
 <?php
 /* ----------------------------------------------------------------------------
 
-Open Report Analyzer - Open Source DMARC and MTA-STS Report Analyzer
+Open Report Analyzer
 Copyright (C) 2023 - John Bradley (userjack6880)
 
 templates/openda/footer.php

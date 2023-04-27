@@ -1,6 +1,6 @@
 # Software Support Chart
 
-Due to the limited time available to developrs to maintain support, dates must be set where support must end. The following is a chart outlining the support shedule for Open DMARC Analyzer.
+Due to the limited time available to developrs to maintain support, dates must be set where support must end. The following is a chart outlining the support shedule for Open Report Analyzer.
 
 | Version                             | Support Level    | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |

@@ -1,18 +1,18 @@
 /* ----------------------------------------------------------------------------
 
-Open DMARC Analyzer - Open Source DMARC Analyzer
+Open Report Analyzer
 Copyright (C) 2023 - John Bradley (userjack6880)
 
 templates/openda/style.css
-  CSS file for the Open DMARC Analyzer default template
+  CSS file for the Open Report Analyzer default template
 
-Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+Available at: https://github.com/userjack6880/Open-Report-Analyzer
 
 -------------------------------------------------------------------------------
 
-This file is part of Open DMARC Analyzer.
+This file is part of Open Report Analyzer.
 
-Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
+Open Report Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
 version.
@@ -252,17 +252,46 @@ td.dov {
   border: none;
 }
 
-#overviewbarcenter {
+#overviewbarleft {
   background-color: #e5e9f2;
-  width: calc(100% - 430px);
-  min-width: 600px;
+  width: 400px;
   height: 300px;
   margin: 0px auto 0px auto;
-  padding: 0;
+  padding: 40px;
   border: none;
   border-radius: 10px;
   float: left;
   position: relative;
+}
+
+#overviewbarleft-wide {
+  background-color: #e5e9f2;
+  width: calc(100% - 430px);
+  min-width: 700px;
+  height: 300px;
+  margin: 0px auto 0px auto;
+  padding: 0;
+  padding-top: 40px;
+  border: none;
+  border-radius: 10px;
+  float: left;
+  position: relative;
+  text-align: center;
+}
+
+#overviewbarcenter {
+  background-color: #e5e9f2;
+  width: calc(100% - 860px);
+  min-width: 700px;
+  height: 300px;
+  margin: 0px auto 0px auto;
+  padding: 0;
+  padding-top: 40px;
+  border: none;
+  border-radius: 10px;
+  float: none;
+  position: relative;
+  text-align: center;
 }
 
 #overviewbarright {
@@ -358,6 +387,7 @@ h1.header {
 #wrapper {
   width: 100%;
   max-width: 1920px;
+  min-width: 1580px;
   margin: 0 auto 0 auto;
   padding: 15px;
 }
@@ -428,6 +458,11 @@ span.temperror {
 
 span.unknown {
     color: #2A3035;
+}
+
+span.ov-title {
+  font-size: 28px;
+  font-weight: bold;
 }
 
 #footer {

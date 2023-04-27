@@ -1,19 +1,19 @@
 <?php
 /* ----------------------------------------------------------------------------
 
-Open DMARC Analyzer - Open Source DMARC Analyzer
+Open Report Analyzer
 Copyright (C) 2023 - John Bradley (userjack6880)
 
 includes/functions.php
   site functions that also includes specific queries
 
-Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+Available at: https://github.com/userjack6880/Open-Report-Analyzer
 
 -------------------------------------------------------------------------------
 
-This file is part of Open DMARC Analyzer.
+This file is part of Open Report Analyzer.
 
-Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
+Open Report Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
 version.
@@ -76,116 +76,144 @@ function dashboard($dateRange,$domain) {
   $startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
 
   // Get broad DMARC statistics
-  $statement = "SELECT t1.domain, total_messages, t1.policy_p, t1.policy_pct, t2.none, t3.quarantine, t4.reject, 
-                 t5.dkim_pass as dkim_pass_aligned, t6.dkim_pass as dkim_pass_unaligned,
-                 t7.spf_pass as spf_pass_aligned, t8.spf_pass as spf_pass_unaligned, t9.compliant
-                FROM (
-                 SELECT
-                  domain, sum(rcount) AS total_messages, policy_p, policy_pct
-                 FROM report_stats
-                 WHERE mindate BETWEEN :startdate AND NOW()
-                 GROUP BY domain, policy_p, policy_pct
-                ) t1
-                LEFT JOIN (SELECT domain, sum(rcount) AS none 
-                             FROM report_stats 
-                            WHERE mindate BETWEEN :startdate AND NOW()
-                              AND disposition = 'none' GROUP BY disposition, domain) t2 ON t1.domain=t2.domain
-                LEFT JOIN (SELECT domain, sum(rcount) AS quarantine 
-                             FROM report_stats 
-                            WHERE mindate BETWEEN :startdate AND NOW()
-                              AND disposition = 'quarantine' GROUP BY disposition, domain) t3 on t1.domain=t3.domain
-                LEFT JOIN (SELECT domain, sum(rcount) AS reject 
-                             FROM report_stats 
-                            WHERE mindate BETWEEN :startdate AND NOW() 
-                              AND disposition = 'reject' GROUP BY disposition, domain) t4 on t1.domain=t4.domain
-                LEFT JOIN (SELECT domain, sum(rcount) as dkim_pass 
-                             FROM report_stats 
-                            WHERE mindate BETWEEN :startdate AND NOW()
-                              AND disposition = 'none' AND dkimresult = 'pass' AND dkim_align = 'pass' GROUP BY domain) t5 on t1.domain=t5.domain
-                LEFT JOIN (SELECT domain, sum(rcount) as dkim_pass 
-                             FROM report_stats 
-                            WHERE mindate BETWEEN :startdate AND NOW()
-                              AND disposition = 'none' AND dkimresult = 'pass' AND NOT dkim_align = 'pass' GROUP BY domain) t6 on t1.domain=t6.domain
-                LEFT JOIN (SELECT domain, sum(rcount) as spf_pass 
-                             FROM report_stats 
-                            WHERE mindate BETWEEN :startdate AND NOW()
-                              AND disposition = 'none' AND spfresult = 'pass' AND spf_align = 'pass' GROUP BY domain) t7 on t1.domain=t7.domain
-                LEFT JOIN (SELECT domain, sum(rcount) as spf_pass 
-                             FROM report_stats 
-                            WHERE mindate BETWEEN :startdate AND NOW()
-                              AND disposition = 'none' AND spfresult = 'pass' AND NOT spf_align = 'pass' GROUP BY domain) t8 on t1.domain=t8.domain
-                LEFT JOIN (SELECT domain, sum(rcount) as compliant
-                             FROM report_stats
-                            WHERE mindate BETWEEN :startdate AND NOW()
-                              AND disposition = 'none' AND ((spfresult = 'pass' AND spf_align = 'pass') OR (dkimresult = 'pass' AND dkim_align = 'pass'))
-                         GROUP BY domain) t9 on t1.domain=t9.domain";
-  if ($domain == "all") {
-    $params[':startdate'] = $startDate;
+  if (REPORT_TYPE == "all" || REPORT_TYPE == "dmarc") {
+    $statement = "SELECT t1.domain, total_messages, t1.policy_p, t1.policy_pct, t2.none, t3.quarantine, t4.reject, 
+                  t5.dkim_pass as dkim_pass_aligned, t6.dkim_pass as dkim_pass_unaligned,
+                  t7.spf_pass as spf_pass_aligned, t8.spf_pass as spf_pass_unaligned, t9.compliant
+                  FROM (
+                  SELECT
+                    domain, sum(rcount) AS total_messages, policy_p, policy_pct
+                  FROM report_stats
+                  WHERE mindate BETWEEN :startdate AND NOW()
+                  GROUP BY domain, policy_p, policy_pct
+                  ) t1
+                  LEFT JOIN (SELECT domain, sum(rcount) AS none 
+                              FROM report_stats 
+                              WHERE mindate BETWEEN :startdate AND NOW()
+                                AND disposition = 'none' GROUP BY disposition, domain) t2 ON t1.domain=t2.domain
+                  LEFT JOIN (SELECT domain, sum(rcount) AS quarantine 
+                              FROM report_stats 
+                              WHERE mindate BETWEEN :startdate AND NOW()
+                                AND disposition = 'quarantine' GROUP BY disposition, domain) t3 on t1.domain=t3.domain
+                  LEFT JOIN (SELECT domain, sum(rcount) AS reject 
+                              FROM report_stats 
+                              WHERE mindate BETWEEN :startdate AND NOW() 
+                                AND disposition = 'reject' GROUP BY disposition, domain) t4 on t1.domain=t4.domain
+                  LEFT JOIN (SELECT domain, sum(rcount) as dkim_pass 
+                              FROM report_stats 
+                              WHERE mindate BETWEEN :startdate AND NOW()
+                                AND disposition = 'none' AND dkimresult = 'pass' AND dkim_align = 'pass' GROUP BY domain) t5 on t1.domain=t5.domain
+                  LEFT JOIN (SELECT domain, sum(rcount) as dkim_pass 
+                              FROM report_stats 
+                              WHERE mindate BETWEEN :startdate AND NOW()
+                                AND disposition = 'none' AND dkimresult = 'pass' AND NOT dkim_align = 'pass' GROUP BY domain) t6 on t1.domain=t6.domain
+                  LEFT JOIN (SELECT domain, sum(rcount) as spf_pass 
+                              FROM report_stats 
+                              WHERE mindate BETWEEN :startdate AND NOW()
+                                AND disposition = 'none' AND spfresult = 'pass' AND spf_align = 'pass' GROUP BY domain) t7 on t1.domain=t7.domain
+                  LEFT JOIN (SELECT domain, sum(rcount) as spf_pass 
+                              FROM report_stats 
+                              WHERE mindate BETWEEN :startdate AND NOW()
+                                AND disposition = 'none' AND spfresult = 'pass' AND NOT spf_align = 'pass' GROUP BY domain) t8 on t1.domain=t8.domain
+                  LEFT JOIN (SELECT domain, sum(rcount) as compliant
+                              FROM report_stats
+                              WHERE mindate BETWEEN :startdate AND NOW()
+                                AND disposition = 'none' AND ((spfresult = 'pass' AND spf_align = 'pass') OR (dkimresult = 'pass' AND dkim_align = 'pass'))
+                          GROUP BY domain) t9 on t1.domain=t9.domain";
+    if ($domain == "all") {
+      $params[':startdate'] = $startDate;
+    }
+    else {
+      $statement .= " WHERE t1.domain = :domain";
+      $params = array(':startdate' => $startDate, ':domain' => $domain);
+    }
+
+    $d_stats = dbQuery($pdo, $statement, $params);
   }
   else {
-    $statement .= " WHERE t1.domain = :domain";
-    $params = array(':startdate' => $startDate, ':domain' => $domain);
+    $d_stats = [];
   }
 
-  $d_stats = dbQuery($pdo, $statement, $params);
+  // get broad TLS statistics
+  if (REPORT_TYPE == "all" || REPORT_TYPE == "tls") {
+    $statement = "SELECT policy_mode, summary_success, summary_failure, mindate, maxdate, domain
+                  FROM tls
+                  WHERE mindate BETWEEN :startdate AND NOW()";
+    if ($domain == "all") {
+      $params[':startdate'] = $startDate;
+    }
+    else {
+      $statement .= " AND domain = :domain";
+      $params = array(':startdate' => $startDate, ':domain' => $domain);
+    }
+    $statement .= " ORDER BY maxdate";
 
-  // get borad TLS statistics
-  $statement = "SELECT policy_mode, summary_success, summary_failure, mindate, maxdate
-                FROM tls
-                WHERE mindate BETWEEN :startdate AND NOW()";
-  if ($domain == "all") {
-    $params[':startdate'] = $startDate;
+    $t_stats = dbQuery($pdo, $statement, $params);
   }
   else {
-    $statement .= " AND domain = :domain";
-    $params = array(':startdate' => $startDate, ':domain' => $domain);
+    $t_stats = [];
   }
-  $statement .= " ORDER BY maxdate";
 
-  $t_stats = dbQuery($pdo, $statement, $params);
-
-  $domain = overview_bar($d_stats, $t_stats, $domain);
+  overview_bar($d_stats, $t_stats, $domain);
 
   // individual domain overviews for multi-domain environments
   if ($domain == "all") {
-    domain_overview($d_stats, $dateRange);
+    domain_overview($d_stats, $t_stats, $dateRange);
   }
 
   // details if a specific domain is selected
   if ($domain != "all") {
 
     // dmarc query for domain senders
-    $statement = "SELECT ip, ip6,
-                         SUM(rcount) as messages,
-                         SUM(compliant) as compliant,
-                         SUM(none) as none,
-                         SUM(quarantine) as quarantine,
-                         SUM(reject) as reject,
-                         SUM(dkim_pass) as dkim_pass,
-                         SUM(t5.dkim_align) as dkim_align,
-                         SUM(spf_pass) as spf_pass,
-                         SUM(t7.spf_align) as spf_align
-                    FROM rptrecord
-                         LEFT JOIN (SELECT id, rcount AS compliant FROM rptrecord
-                                     WHERE disposition = 'none' 
-                                       AND ((dkimresult = 'pass' AND dkim_align = 'pass')
-                                           OR (spfresult = 'pass' AND spf_align = 'pass'))) t0 on rptrecord.id=t0.id
-                         LEFT JOIN (SELECT id, rcount AS none FROM rptrecord WHERE disposition = 'none') t1 ON rptrecord.id=t1.id
-                         LEFT JOIN (SELECT id, rcount AS quarantine FROM rptrecord WHERE disposition = 'quarantine') t2 ON rptrecord.id=t2.id
-                         LEFT JOIN (SELECT id, rcount AS reject FROM rptrecord WHERE disposition = 'reject') t3 ON rptrecord.id=t3.id
-                         LEFT JOIN (SELECT id, rcount AS dkim_pass FROM rptrecord WHERE disposition = 'none' AND dkimresult ='pass' ) t4 ON rptrecord.id=t4.id
-                         LEFT JOIN (SELECT id, rcount AS dkim_align FROM rptrecord 
-                                     WHERE disposition = 'none' AND dkimresult = 'pass' AND dkim_align = 'pass' ) t5 ON rptrecord.id=t5.id
-                         LEFT JOIN (SELECT id, rcount AS spf_pass FROM rptrecord WHERE disposition = 'none' AND spfresult ='pass' ) t6 ON rptrecord.id=t6.id
-                         LEFT JOIN (SELECT id, rcount AS spf_align FROM rptrecord 
-                                     WHERE disposition = 'none' AND spfresult = 'pass' AND spf_align = 'pass' ) t7 ON rptrecord.id=t7.id
-                   WHERE serial IN (SELECT serial FROM report WHERE mindate BETWEEN :startdate AND NOW() AND domain = :domain)
-                GROUP BY ip, ip6
-                ORDER BY messages DESC";
-    $params = array(':startdate' => $startDate, ':domain' => $domain);
-    $d_stats = dbQuery($pdo, $statement, $params);
+    if (REPORT_TYPE == "all" || REPORT_TYPE == "dmarc") {
+      $statement = "SELECT ip, ip6,
+                          SUM(rcount) as messages,
+                          SUM(compliant) as compliant,
+                          SUM(none) as none,
+                          SUM(quarantine) as quarantine,
+                          SUM(reject) as reject,
+                          SUM(dkim_pass) as dkim_pass,
+                          SUM(t5.dkim_align) as dkim_align,
+                          SUM(spf_pass) as spf_pass,
+                          SUM(t7.spf_align) as spf_align
+                      FROM rptrecord
+                          LEFT JOIN (SELECT id, rcount AS compliant FROM rptrecord
+                                      WHERE disposition = 'none' 
+                                        AND ((dkimresult = 'pass' AND dkim_align = 'pass')
+                                            OR (spfresult = 'pass' AND spf_align = 'pass'))) t0 on rptrecord.id=t0.id
+                          LEFT JOIN (SELECT id, rcount AS none FROM rptrecord WHERE disposition = 'none') t1 ON rptrecord.id=t1.id
+                          LEFT JOIN (SELECT id, rcount AS quarantine FROM rptrecord WHERE disposition = 'quarantine') t2 ON rptrecord.id=t2.id
+                          LEFT JOIN (SELECT id, rcount AS reject FROM rptrecord WHERE disposition = 'reject') t3 ON rptrecord.id=t3.id
+                          LEFT JOIN (SELECT id, rcount AS dkim_pass FROM rptrecord WHERE disposition = 'none' AND dkimresult ='pass' ) t4 ON rptrecord.id=t4.id
+                          LEFT JOIN (SELECT id, rcount AS dkim_align FROM rptrecord 
+                                      WHERE disposition = 'none' AND dkimresult = 'pass' AND dkim_align = 'pass' ) t5 ON rptrecord.id=t5.id
+                          LEFT JOIN (SELECT id, rcount AS spf_pass FROM rptrecord WHERE disposition = 'none' AND spfresult ='pass' ) t6 ON rptrecord.id=t6.id
+                          LEFT JOIN (SELECT id, rcount AS spf_align FROM rptrecord 
+                                      WHERE disposition = 'none' AND spfresult = 'pass' AND spf_align = 'pass' ) t7 ON rptrecord.id=t7.id
+                    WHERE serial IN (SELECT serial FROM report WHERE mindate BETWEEN :startdate AND NOW() AND domain = :domain)
+                  GROUP BY ip, ip6
+                  ORDER BY messages DESC";
+      $params = array(':startdate' => $startDate, ':domain' => $domain);
+      $d_stats = dbQuery($pdo, $statement, $params);
+    }
+    else {
+      $d_stats = [];
+    }
 
-    domain_details($d_stats, $domain, $dateRange);
+    // tls query for domain recievers
+    if (REPORT_TYPE == "all" || REPORT_TYPE == "tls") {
+      $statement = "SELECT UNIQUE summary_success, summary_failure, recv_mx
+                    FROM tls
+                    LEFT JOIN tlsrecord on tls.serial=tlsrecord.serial
+                    WHERE domain = :domain AND mindate BETWEEN :startdate AND NOW()";
+      $params = array(':domain' => $domain, ':startdate' => $startDate);
+      $t_stats = dbQuery($pdo, $statement, $params);
+    }
+    else {
+      $t_stats = [];
+    }
+
+    domain_details($d_stats, $t_stats, $domain, $dateRange);
   }
 
   $pdo = NULL;

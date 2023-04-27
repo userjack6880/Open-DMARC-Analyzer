@@ -16,7 +16,7 @@ A response should be recieved within 72 hours. If no response is given, please f
 
 ## Supported Versions
 
-Open DMARC Analyzer Version Security Support
+Open Report Analyzer Version Security Support
 
 | Version                       | Supported | End of Life      |
 | ----------------------------- | --------- | ---------------- |
