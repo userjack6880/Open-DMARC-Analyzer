@@ -128,17 +128,16 @@ If you have a system configuration not listed, and would like to contribue this 
 
 # Release Cycle and Versioning
 
-This project regular release cycle is not yet determined. Versioning is under the Anomaly Versioning Scheme (2022), as outlined in `VERSIONING` under `docs`.
+At release, End of Support and End of Life will be determined based on what will be in the next version. Versioning is under the Anomaly Versioning Scheme (2022), as outlined in `VERSIONING` under `docs`.
 
 # Support
 
 Support will be provided as outlined in the following schedule. For more details, see `SUPPORT`.
 
-| Version                             | Support Level    | Released         | End of Support   | End of Life      |
-| ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
-| Version 2 Alpha 1                   | Full Support     | TBD              | TBD              | TBD              |
-| Version 1                           | Full Support     | ~15 June 2023    | TBD              | TBD              |
-| Version 1 Release Candidate 1       | Critical Support | 15 May 2023      | ~15 June 2023    | 31 December 2023 |
+| Version                             | Released         | End of Support   | End of Life      |
+| ----------------------------------- | ---------------- | ---------------- | ---------------- |
+| Version 2 Alpha 1                   | 15 May 2023      | TBD              | TBD              |
+| Version 1 (Stable)                  | 15 May 2023      | 15 May 2024      | 31 December 2024 |
 
 # Contributing
 

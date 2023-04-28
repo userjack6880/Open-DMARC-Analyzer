@@ -16,10 +16,10 @@ A response should be recieved within 72 hours. If no response is given, please f
 
 ## Supported Versions
 
-Open Report Analyzer Version Security Support
+Open DMARC Analyzer Version Security Support
 
-| Version                       | Supported | End of Life      |
-| ----------------------------- | --------- | ---------------- |
-| Version 2 Alpha 1             | YES       | TBD              |
-| Version 1                     | YES       | TBD              |
-| Version 1 Release Candidate 1 | YES       | 31 December 2023 |
+| Version                       | End of Life      |
+| ----------------------------- | ---------------- |
+| Version 2 Alpha 1             | TBD              |
+| Version 1                     | 31 December 2024 |
+| Version 1 Release Candidate 1 | 31 December 2023 |
