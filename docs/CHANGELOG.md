@@ -1,5 +1,9 @@
 # Changelog
 
+## 1-rc1
+- Documentation updates.
+- Carried forward backports from beta 4.
+
 ## 1-β4
 - PostgresSQL validation and fixes backported from future Version 2 Alpha 1 branch.
 

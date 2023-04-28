@@ -5,13 +5,13 @@ Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMAR
 
 Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
 
-Open DMARC Analyzer Version 1 Beta 4 (1-β4) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
+Open DMARC Analyzer Version 1 Release Candidate 1 (1-rc1) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
 # Minimum Requirements
 - Apache 2 or equivalent
-- PHP 5 (PHP 7 required for phpWhois)
+- PHP 5 (PHP 7+ required for phpWhois)
 - PHP PDO
-- MySQL 15.1 or equivalent
+- MySQL 15.1 (or equivalent) *or* PostgreSQL 13
 - **A database that is pre-populated with data from [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser)**
 
 # Dependencies
@@ -20,7 +20,7 @@ One of the following 2 packages are required to be installed.
 
 **[jsmitty12/phpWhois](https://github.com/jsmitty12/phpWhois/)**
 
-It is highly recommended that you install this package using composer. Instructions are found on the package's git page. This is required, and will replace most GeoIP data if you disable the MaxMind DB reader package. This package *will* require PHP 7.
+It is highly recommended that you install this package using composer. Instructions are found on the package's git page. This is required, and will replace most GeoIP data if you disable the MaxMind DB reader package. This package *will* require PHP 7 or newer.
 
 **[MaxMind DB Reader PHP API](https://github.com/maxmind/MaxMind-DB-Reader-php)**
 
@@ -57,7 +57,8 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'dmarc');
 define('DB_PASS', 'password');
 define('DB_NAME', 'dmarc');
-define('DB_PORT', '3306'); // default port 3306
+define('DB_PORT', '3306'); // default port 3306, 5432 for pgsql
+define('DB_TYPE', 'mysql'); // supported mysql and pgsql
 ```
 
 **Debug Settings**
@@ -97,8 +98,9 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Latest Changes
 
-## 1-β4
-- PostgresSQL validation and fixes backported from future Version 2 Alpha 1 branch.
+## 1-rc1
+- Documentation updates.
+- Carried forward backports from beta 4.
 
 See `CHANGELOG` under `docs` for full details of all changes.
 
@@ -124,9 +126,9 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Support Level    | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
-| Version 1 Beta 4                    | Full Support     | 26 April 2023    | 1-rc1 Release    | TBD              |
-| Version 1 Beta 3                    | Critical Support | 19 April 2023    | 26 April 2023    | 1-rc1 Release    |
-| Version 1 Beta 2                    | End of Life      | 29 November 2022 | 19 April 2023    | 26 April 2023    |
+| Version 1 Release Candidate 1       | Full Support     | 28 April 2023    | 15 May 2023      | 31 December 2023 |
+| Version 1 Beta 4                    | Critical Support | 26 April 2023    | 28 April 2023    | 15 May 2023      |
+| Version 1 Beta 3                    | End of Life      | 19 April 2023    | 26 April 2023    | 28 April 2023    |
 
 # Contributing
 
