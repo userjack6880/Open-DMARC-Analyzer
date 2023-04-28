@@ -68,6 +68,19 @@ function get_ip($ip4, $ip6) {
   }
 }
 
+// Get argument from GET, POST, or return the default value given
+function getArg($arg,$default) {
+  if (!empty($_GET[$arg])) {
+    return htmlspecialchars($_GET[$arg]);
+  }
+  elseif (isset($_POST[$arg])) {
+    return htmlspecialchars($_POST[$arg]);
+  }
+  else {
+    return $default;
+  }
+}
+
 // Page Functions -------------------------------------------------------------
 
 // Dashboard ------------------------------------
@@ -240,6 +253,7 @@ function senderDashboard($dateRange, $domain, $ip) {
     $geo->close();
   }
 
+  // db connect
   $pdo = dbConn();
   $startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
 
@@ -286,6 +300,64 @@ function senderDashboard($dateRange, $domain, $ip) {
   $stats = dbQuery($pdo, $statement, $params);
 
   sender_details($geo_data, $stats, $domain, $dateRange, $ip);
+
+  $pdo = NULL;
+}
+
+// Get Reciever Details -------------------------------------------------------
+function recieverDashboard($dateRange, $domain, $mx) {
+  if (!isset($mx)) {
+    echo "<h1>No MX Given</h1>\n";
+    return;
+  }
+
+  // db connect
+  $pdo = dbConn();
+  $startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
+
+  // get list of reports
+  $statement = "SELECT UNIQUE tls.serial AS serial, mindate, maxdate, reportid, domain, org, email, summary_success, summary_failure, policy_mode
+                FROM tls
+                LEFT JOIN tlsrecord ON tls.serial=tlsrecord.serial
+                WHERE tls.serial IN (
+                  SELECT serial
+                  FROM tlsrecord
+                  WHERE recv_mx = :mx) AND mindate BETWEEN :startdate AND NOW()";
+  
+  if ($domain == 'all') {
+    $params = array(':mx' => $mx, ':startdate' => $startDate);
+  }
+  else {
+    $statement .= " AND domain = :domain";
+    $params = array(':mx' => $mx, ':startdate' => $startDate, ':domain' => $domain);
+  }
+
+  $statement .= " ORDER BY org, mindate ASC";
+
+  $reports = dbQuery($pdo, $statement, $params);
+
+  // now get the details of entries and stick into a 4d array
+  $entries = [];
+  foreach ($reports as $report) {
+    $serial = $report['serial'];
+    $statement = "SELECT type, count
+                  FROM tlsrecord
+                  WHERE recv_mx = :mx AND serial = :serial";
+    $params = array(':mx' => $mx, ':serial' => $serial);
+
+    $results = dbQuery($pdo, $statement, $params);
+
+    foreach ($results as $result) {
+      if(!isset($entries[$serial][$result['type']])) {
+        $entries[$serial][$result['type']] = $result['count'];
+      }
+      else {
+        $entries[$serial][$result['type']] += $result['count'];
+      }
+    }
+  }
+
+  reciever_details($reports, $entries, $domain, $dateRange, $mx);
 
   $pdo = NULL;
 }

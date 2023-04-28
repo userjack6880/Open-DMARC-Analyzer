@@ -58,6 +58,6 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
     <div id="header">
       <a href="index.php"><h1 class="header">Open Report Analyzer</h1></a>
     </div>
-    <?php control_bar($page, $domain, $dateRange, $ip); ?>
+    <?php control_bar($page, $domain, $dateRange, $ip, $mx); ?>
     <div id="wrapper">
 

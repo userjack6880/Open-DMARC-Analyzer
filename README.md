@@ -3,7 +3,7 @@
 
 Open Report Analyzer is an Open Source and MTA-STS TLS Report Analyzer to be used with reports that have been parsed by [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser).
 
-Open Report Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Additionally, it was expanded to include MTA-STS and TLS reports. Open Report Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
+Open Report Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Additionally, it was expanded to include MTA-STS SMTP TLS reports. Open Report Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
 
 Open Report Analyzer Version 2 Alpha 1 (2-α1) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
@@ -107,8 +107,10 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 ## 2-α1
 - New Version
+- MTA-STS SMTP TLS report support
 - Name change to better include the full extent of what this project does
 - PostgreSQL Validation and Fixes
+- Optimizations
 
 See `CHANGELOG` under `docs` for full details of all changes.
 

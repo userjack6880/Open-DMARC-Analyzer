@@ -33,71 +33,26 @@ include_once 'includes.php';
 
 // Pull in URI Gets
 
-// Range ----------------------------------------------------------------------
-if (!empty($_GET['range'])) {
-  $dateRange = htmlspecialchars($_GET['range']);
-}
-elseif (isset($_POST['range'])) {
-  $dateRange = htmlspecialchars($_POST['range']);
-}
-else {
-  $dateRange = DATE_RANGE;
-}
-
-// Page -----------------------------------------------------------------------
-if (isset($_GET['page'])) {
-  $page = htmlspecialchars($_GET['page']);
-}
-elseif (isset($_POST['page'])) {
-  $page = htmlspecialchars($_POST['page']);
-}
-else {
-  $page = "index";
-}
-
-// Domain ---------------------------------------------------------------------
-if (isset($_GET['domain'])) {
-  $domain = htmlspecialchars($_GET['domain']);
-}
-elseif (isset($_POST['domain'])) {
-  $domain = htmlspecialchars($_POST['domain']);
-}
-else {
-  $domain = "all";
-}
-
-// IPs ------------------------------------------------------------------------
-if (isset($_GET['ip'])) {
-  $ip = htmlspecialchars($_GET['ip']);
-}
-elseif (isset($_POST['ip'])) {
-  $ip = htmlspecialchars($_POST['ip']);
-}
-else {
-  $ip = '';
-}
-
-// ReportID -------------------------------------------------------------------
-if (isset($_GET['report'])) {
-  $report = htmlspecialchars($_GET['report']);
-}
-elseif (isset($_POST['report'])) {
-  $report = htmlspecialchars($_POST['report']);
-}
-else {
-  $report = '';
-}
+$dateRange  = getArg('range',DATE_RANGE);
+$page       = getArg('page','index');
+$domain     = getArg('domain','all');
+$ip         = getArg('ip','');
+$mx         = getArg('mx','');
+$report     = getArg('report','');
 
 // End URI gets
 
 // Page Header
-page_header($page, $domain, $dateRange, $ip);
+page_header($page, $domain, $dateRange, $ip, $mx);
 
 if ($page == "index") {
   dashboard($dateRange, $domain);
 }
 elseif ($page == "sender") {
   senderDashboard($dateRange, $domain, $ip);
+}
+elseif ($page == "reciever") {
+  recieverDashboard($dateRange, $domain, $mx);
 }
 elseif ($page == "report") {
   reportDashboard($report);

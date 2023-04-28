@@ -50,7 +50,7 @@ function page_title($page) {
 }
 
 // Control Bar ----------------------------------
-function control_bar($page, $domain, $dateRange, $ip = '') {
+function control_bar($page, $domain, $dateRange, $ip = '', $mx = '') {
   // get some variables out of current daterange
   $dateWord = dateWord($dateRange);
   $dateLtr = dateLtr($dateRange);
@@ -58,7 +58,7 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
   $startdate = date("Y-m-d H:i:s",strtotime(strtolower("-$dateNum $dateWord")));
 
   // pages that need domain controls
-  if ($page == "index" || $page == "sender") {
+  if ($page == "index" || $page == "sender" || $page == "reciever") {
 
     $domains = getDomains($dateRange);
     if (count($domains) == 1 && $page != "sender") {
@@ -91,7 +91,22 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
               <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=all'>&larr; Back</a> | Since $startdate\n";
       }
       else {
-        echo "<h1>Sender $ip for $domain</h1><br />\n
+//        echo "<h1>Sender $ip for $domain</h1><br />\n
+        echo "<h1>Sender $ip</h1><br />\n
+              <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=$domain'>&larr; Back</a> | Since $startdate\n";
+      }
+    }
+    if ($page == "reciever") {
+      if ($domain == "all") {
+        echo "
+              <h1>Reciever $mx</h1><br />\n
+              <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=all'>&larr; Back</a> | Since $startdate\n";
+      }
+      else {
+//        echo "
+//              <h1>Reciever $mx for $domain</h1><br />\n
+        echo "
+              <h1>Reciever $mx</h1><br />\n
               <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=$domain'>&larr; Back</a> | Since $startdate\n";
       }
     }
@@ -602,8 +617,16 @@ function domain_details($d_stats, $t_stats, $domain, $dateRange) {
 
           echo "
               <div class=dov-bar-in-ip>\n
-                <div style='width: 500px'>\n
-                  <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=reciever&domain=$domain&mx=$mx'>$mx</a></h3>\n
+                <div style='width: 500px'>\n";
+          if ($mx == 'unknown') {
+            echo "
+                  <h3 class=dov-bar-in-ip-h3>$mx</h3>\n";
+          }
+          else {
+            echo "
+                  <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=reciever&domain=$domain&mx=$mx'>$mx</a></h3>\n";
+          }
+          echo "
                 </div>\n
                 <div style='left: 600px; width:calc(100% - 1000px);'>\n
                   <table class=dov>\n
@@ -885,6 +908,7 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 
 }
 
+// Report Details -------------------------------
 function report_details($data, $report) {
 
   if ($data[0]['ip6'] != '') { $ip = $data[0]['ip6']; }
@@ -988,4 +1012,102 @@ function report_details($data, $report) {
   
   echo "</table>\n";
 }
+
+// Sender Details -------------------------------
+function reciever_details($reports, $entries, $domain, $dateRange, $mx) {
+  $first = 1;
+  foreach ($reports as $report) {
+    if ($first) {
+      echo "
+  <div class=dov-bar style='margin-top: 0;height:200px;'>\n";
+      $first = 0;
+    }
+    else {
+      echo "
+  <div class=dov-bar style='height:200px;'>\n";
+    }
+    echo "
+    <div class=dov-bar-in style='height:200px;'>\n
+      <div class=report-left>\n
+        <div class=report-inner>\n
+          Report ID<br />\n
+          Date Range<br />\n
+          Reporting Organization<br />\n
+          Report Origin Email<br />\n
+          Policy Mode<br />\n
+          Summary Success<br />\n
+          Summary Failure<br />\n
+        </div>\n
+      </div>\n
+      <div class=report-right>\n
+        <div class=report-inner>\n
+          ".$report['reportid']."<br \>\n
+          ".$report['mindate']." - ".$report['maxdate']."<br \>\n
+          ".$report['org']."<br \>\n
+          ".$report['email']."<br \>\n
+          ".$report['policy_mode']."<br \>\n
+          ".$report['summary_success']."<br \>\n
+          ".$report['summary_failure']."<br \>\n
+        </div>\n
+      </div>\n
+    </div>\n
+  </div>\n
+  <table style='margin: 30px auto 0 auto; width:1000px;' class=centered>\n
+    <thead>\n
+      <tr>\n
+        <td style='width:200px; padding:5px;'>Type</td>\n
+        <td style='width:500px; padding:5px;'>Description</td>\n
+        <td style='width:50px; padding 5px;'>Count</td>\n
+      </tr>\n
+    </thead>\n";
+    foreach ($entries[$report['serial']] as $type => $count) {
+      echo "
+      <tr>\n
+        <td style='padding: 5px;'>$type</td>\n
+        <td style='padding: 5px;'>";
+      
+      // RFC 8640 descriptions, or rather, eximplied with fix
+      if      ($type == 'starttls-no-supported')      { 
+        echo "recipient MX does not support STARTTLS"; 
+      }
+      elseif  ($type == 'certificate-host-mismatch') { 
+        echo "certificate presented did not adhere to the constraints specified in the MTA-STS or DANE policy - check SAN"; 
+      }
+      elseif  ($type == 'certificate-expired')        { 
+        echo "certificate has expired";
+      }
+      elseif  ($type == 'tlsa-invalid')               {
+        echo "validation in the TLSA record - check RR";
+       }
+      elseif  ($type == 'dnssec-invalid')             { 
+        echo "no valid records returned";
+      }
+      elseif  ($type == 'dane-required')              { 
+        echo "sending system is configured to require DANE TLSA records, but none were found";
+      }
+      elseif  ($type == 'certificate-not-trusted')    { 
+        echo "untrusted/unknown CA, name constraints, chain errors, etc";
+      }
+      elseif  ($type == 'sts-policy-invalid')         { 
+        echo "validation error for overall MTA-STS policy";
+      }
+      elseif  ($type == 'sts-webpki-invalid')         { 
+        echo "MTA-STS policy could not be authenticated using PKIX";
+      }
+      elseif  ($type == 'validation-failure')         { 
+        echo "general failure";
+      }
+      elseif  ($type == 'sts-policy-fetch-error')     { }
+      else { echo "unknown/invlid reason"; }
+
+      echo "
+        </td>\n
+        <td style='padding: 5px;'>$count</td>\n
+      </tr>\n";
+    }
+    echo "
+  </table>\n";
+  }
+}
+
 ?>
