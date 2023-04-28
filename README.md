@@ -126,9 +126,9 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Support Level    | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- | ---------------- |
-| Version 1 Release Candidate 1       | Full Support     | 15 May 2023      | ~15 June 2023    | 31 December 2023 |
-| Version 1 Beta 4                    | Critical Support | 26 April 2023    | 15 May 2023      | ~15 June 2023    |
-| Version 1 Beta 3                    | End of Life      | 19 April 2023    | 26 April 2023    | 15 May 2023      |
+| Version 1 Release Candidate 1       | Full Support     | 28 April 2023    | 15 May 2023      | 31 December 2023 |
+| Version 1 Beta 4                    | Critical Support | 26 April 2023    | 28 April 2023    | 15 May 2023      |
+| Version 1 Beta 3                    | End of Life      | 19 April 2023    | 26 April 2023    | 28 April 2023    |
 
 # Contributing
 
