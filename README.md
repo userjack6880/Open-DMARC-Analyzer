@@ -107,7 +107,7 @@ Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 ## 2-α1
 - New Version
-- MTA-STS SMTP TLS report support
+- MTA-STS SMTP TLS report support (Issue #74)
 - Name change to better include the full extent of what this project does
 - PostgreSQL Validation and Fixes
 - Optimizations
