@@ -8,6 +8,7 @@ Due to the limited time available to developrs to maintain support, dates must b
 | Version 1 (Stable)                  | 15 May 2023      | 15 May 2024      | 31 December 2024 |
 | Version 1 Release Candidate 1       | 28 April 2023    | 15 May 2023      | 31 December 2023 |
 
+
 # Support Cycle
 
 - Pre-stable versions recieve one version cycle of full spport and one cycle of critical support before being considered end of life. Due to the lack of release cycle for these versions, support time can wildly vary.
