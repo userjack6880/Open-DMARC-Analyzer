@@ -18,9 +18,11 @@ Open Report Analyzer Version 2 Alpha 1 (2-α1) is an [Anomaly \<Codebase\>](http
 
 One of the following 2 packages are required to be installed.
 
-**[jsmitty12/phpWhois](https://github.com/jsmitty12/phpWhois/)**
+**[kevinoo/phpWhois](https://github.com/kevinoo/phpWhois)**
 
 It is highly recommended that you install this package using composer. Instructions are found on the package's git page. This is required, and will replace most GeoIP data if you disable the MaxMind DB reader package. This package *will* require PHP 7 or newer.
+
+*PLEASE NOTE: if you are using the jsmitty12/phpWhois package, it does not support PHP 8 properly. Please remove it and use the newer kevinoo/phpWhois package.*
 
 **[MaxMind DB Reader PHP API](https://github.com/maxmind/MaxMind-DB-Reader-php)**
 
