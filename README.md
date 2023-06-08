@@ -3,7 +3,7 @@
 
 Open Report Analyzer is an Open Source and MTA-STS TLS Report Analyzer to be used with reports that have been parsed by [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser).
 
-Open Report Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Additionally, it was expanded to include MTA-STS SMTP TLS reports. Open Report Analyzer will run on any webserver that supports PHP 7.4+ and MySQL 15.1+.
+Open Report Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Additionally, it was expanded to include MTA-STS SMTP TLS reports. Open Report Analyzer will run on any webserver that supports PHP 7.4+ and MariaDB 10.5+.
 
 Open Report Analyzer Version 2 Alpha 1 (2-α1) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
@@ -11,7 +11,7 @@ Open Report Analyzer Version 2 Alpha 1 (2-α1) is an [Anomaly \<Codebase\>](http
 - Apache 2 or equivalent
 - PHP 5 (PHP 7+ required for phpWhois)
 - PHP PDO
-- MySQL 15.1 (or equivalent) *or* PostgreSQL 13.9
+- MariaDB 10.5 (or equivalent) *or* PostgreSQL 13.9
 - **A database that is pre-populated with data from [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser)**
 
 # Dependencies
