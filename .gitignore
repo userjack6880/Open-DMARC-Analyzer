@@ -1,6 +1,4 @@
 config.php
 vendor/
-composer.json
-composer.lock
 composer.phar
 includes/geolite2.mmdb
