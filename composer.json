@@ -1,0 +1,11 @@
+{
+    "name": "systemanomaly/open-dmarc-analyzer",
+    "description": "Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by Open Report Parser.",
+    "homepage": "https://github.com/userjack6880/Open-DMARC-Analyzer",
+    "type": "project",
+    "license": "GPL-3.0-only",
+    "require": {
+        "kevinoo/phpwhois": "^6.2",
+        "maxmind-db/reader": "^1.11"
+    }
+}
