@@ -109,6 +109,8 @@ The image is available on [GitHub Container Registry](https://github.com/userjac
 
 All config options are available as environment variables. Along with `ALLOW_INSTALL` which needs to be set to `1` to allow the install.php script to run when requested inside the container.
 
+There is also a pre-built `docker-compose.yml` file that can be used to deploy the container and its requirements. It is recommended to use this file as a template, and modify it to your needs.
+
 # Tested System Configurations
 
 | OS              | HTTP          | PHP    | SQL             |

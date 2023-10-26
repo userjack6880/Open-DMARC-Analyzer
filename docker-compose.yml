@@ -1,0 +1,53 @@
+version: "3.8"
+services:
+  mariadb:
+    image: mariadb:latest
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - /opt/dmarc/mysql/:/var/lib/mysql
+    environment:
+      MARIADB_ROOT_PASSWORD: superlongpasswordforroot
+      MARIADB_DATABASE: dmarc
+      MARIADB_USER: dmarc
+      MARIADB_PASSWORD: dmarc
+  parser:
+    image: ghcr.io/userjack6880/open-report-parser:latest
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    restart: unless-stopped
+    tty: true
+    environment:
+      DBHOST: mariadb
+      DBUSER: dmarc
+      DBPASS: dmarc
+      DBNAME: dmarc
+      IMAPAUTH: simple
+      IMAPSERVER: email.example.com
+      IMAPUSER: youremailhere@example.com
+      IMAPPASS: yourpasswordhere
+      IMAPPORT: 993
+      IMAPSSL: 1
+      IMAPDMARCFOLDER: INBOX
+      IMAPDMARCPROC: INBOX/Processed
+      IMAPDMARCERR: INBOX/Not Processed
+      IMAPIGNOREERROR: 1
+  analyzer:
+    image: ghcr.io/userjack6880/open-dmarc-analyzer:latest
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      DB_HOST: mariadb
+      DB_USER: dmarc
+      DB_PASS: dmarc
+      DB_NAME: dmarc
+      GEO_ENABLE: 0
