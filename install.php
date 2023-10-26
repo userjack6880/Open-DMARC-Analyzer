@@ -27,6 +27,11 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ---------------------------------------------------------------------------- */
 
+// Install protection
+if (getenv("ALLOW_INSTALL") != 1) {
+  die("Installation is not allowed. Please set ALLOW_INSTALL=1 in your environment to enable installation.");
+}
+
 // Includes
 include_once 'includes.php';
 

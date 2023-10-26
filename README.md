@@ -49,6 +49,10 @@ Optionally, a [zip file of the latest release](https://github.com/userjack6880/O
 
 Once downloaded and installed in a desired directory, install either jsmitty12's phpWhois package or the MaxMind DB Reader package through composer. Rename `config.php.pub` to `config.php` and edit the configuration for your environment (see the next section on **Configuration Options** for details). Finally, run `install.php` to create the database view used by this software package.
 
+```sh
+ALLOW_INSTALL=1 php install.php
+```
+
 `install.php` should remove itself and `mysql.sql` once complete. If permissions aren't given, `install.php` may not delete those files. It is recommended to manually delete these.
 
 # Configuration Options
@@ -97,6 +101,13 @@ define('DATE_RANGE', '-1w');
 Defines the standard starting date range for data presented. All pages where dates are relevant start at a certain point and end at the time the page is loaded. This option defines where that starting point is, and the increment by which that starting date is changed.
 
 Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
+
+# Docker
+A docker image is provided for ease of deployment. The image is based on the official PHP 8.2 image, and is configured to use Apache 2.4. The image is configured to use the MaxMind DB Reader package, and the GeoLite2 City database is included in the image.
+
+The image is available on [GitHub Container Registry](https://github.com/userjack6880/Open-DMARC-Analyzer/pkgs/container/open-dmarc-parser).
+
+All config options are available as environment variables. Along with `ALLOW_INSTALL` which needs to be set to `1` to allow the install.php script to run when requested inside the container.
 
 # Tested System Configurations
 
