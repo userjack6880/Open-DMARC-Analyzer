@@ -11,7 +11,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Copy in the tool and config file
 COPY . /var/www/html/
-COPY config.php.pub-docker /var/www/html/config.php.conf
+COPY config.php.pub-docker /var/www/html/config.php
 WORKDIR /var/www/html/
 
 # Install dependencies
