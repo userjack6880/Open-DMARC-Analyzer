@@ -15,7 +15,7 @@ on:
 
 env:
   DOCKER_OWNER: ${{ github.repository_owner }}
-  DOCKER_CONTAINER: Open-Report-Analyzer
+  DOCKER_CONTAINER: Open-DMARC-Analyzer
 
 jobs:
   build:
