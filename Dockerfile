@@ -4,7 +4,7 @@ FROM php:8.2-apache
 
 # Install dependencies
 RUN apt-get update -y \
-    && apt-get install -y git
+    && apt-get install -y git libpq-dev
 
 # Copy in composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
@@ -17,3 +17,6 @@ WORKDIR /var/www/html/
 # Install dependencies
 RUN composer require kevinoo/phpwhois:^6.3
 RUN composer require maxmind-db/reader:~1.0
+
+# Enable php modules
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
