@@ -2,6 +2,10 @@ FROM composer:lts as composer
 
 FROM php:8.2-apache
 
+# Install dependencies
+RUN apt-get update -y \
+    && apt-get install -y git
+
 # Copy in composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
