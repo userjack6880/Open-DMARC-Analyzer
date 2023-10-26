@@ -20,3 +20,6 @@ RUN composer require maxmind-db/reader:~1.0
 
 # Enable php modules
 RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+
+# Setup to use the stock php production config
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
