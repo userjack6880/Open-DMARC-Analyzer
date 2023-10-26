@@ -103,7 +103,7 @@ Defines the standard starting date range for data presented. All pages where dat
 Valid date signifiers are `m`, `w`, and `d` for "month", "week", and "day".
 
 # Docker
-A docker image is provided for ease of deployment. The image is based on the official PHP 8.2 image, and is configured to use Apache 2.4. The image is configured to use the MaxMind DB Reader package, and the GeoLite2 City database is included in the image.
+A docker image is provided for ease of deployment. The image is based on the official PHP 8.2 image, and is configured to use Apache 2.4.
 
 The image is available on [GitHub Container Registry](https://github.com/userjack6880/Open-DMARC-Analyzer/pkgs/container/open-dmarc-parser).
 
