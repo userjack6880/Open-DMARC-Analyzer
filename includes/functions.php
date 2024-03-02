@@ -405,7 +405,7 @@ function getDomains($dateRange) {
   $domains = dbQuery($pdo, $statement, $params);
 
   foreach ($domains as $key => $domain) {
-    $domain = array_map('htmlspecialchars', $domain);
+    $domain = htmlspecialchars_array($domain);
     $domains[$key] = $domain;
   }
 

@@ -869,7 +869,7 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
   }
   
   foreach ($stats as $stat) {
-    $stat       = array_map('htmlspecialchars',$stat);
+    $stat       = htmlspecialchars_array($stat);
     $dkimresult = $stat['dkimresult'] ?: 'unknown';
     $dkim_align = $stat['dkim_align'] ?: 'unknown';
     $spfresult  = $stat['spfresult']  ?: 'unknown';
@@ -912,7 +912,7 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 function report_details($data, $report) {
 
   if ($data[0]['ip6'] != '') { $ip = $data[0]['ip6']; }
-  $data[0] = array_map('htmlspecialchars',$data[0]);
+  $data[0] = htmlspecialchars_array($data[0]);
   if ($data[0]['ip6'] != '') { $data[0]['ip6'] = $ip; }
 
   if ($data[0]['policy_adkim'] == 'r')      { $dkim_policy = 'Relaxed'; }
@@ -974,7 +974,7 @@ function report_details($data, $report) {
   
   foreach ($data as $row) {
     $ip         = get_ip($row['ip'],$row['ip6']);
-    $row        = array_map('htmlspecialchars',$row);
+    $row        = htmlspecialchars_array($row);
     $dkimresult = $row['dkimresult'] ?: 'unknown';
     $dkim_align = $row['dkim_align'] ?: 'unknown';
     $spfresult  = $row['spfresult']  ?: 'unknown';

@@ -1,0 +1,61 @@
+<?php
+/* ----------------------------------------------------------------------------
+
+Open DMARC Analyzer - Open Source DMARC Analyzer
+Copyright (C) 2023 - John Bradley (userjack6880)
+
+config.php
+  configuration file
+
+Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+
+-------------------------------------------------------------------------------
+
+This file is part of Open DMARC Analyzer.
+
+Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software 
+Foundation, either version 3 of the License, or (at your option) any later 
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY 
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with 
+this program.  If not, see <https://www.gnu.org/licenses/>.
+
+---------------------------------------------------------------------------- */
+
+// Cache env
+$env = getenv();
+
+// Database Settings
+
+define('DB_HOST', isset($env['DB_HOST']) ? $env['DB_HOST'] : 'localhost');
+define('DB_USER', isset($env['DB_USER']) ? $env['DB_USER'] : 'dmarc');
+define('DB_PASS', isset($env['DB_PASS']) ? $env['DB_PASS'] : 'password');
+define('DB_NAME', isset($env['DB_NAME']) ? $env['DB_NAME'] : 'dmarc');
+define('DB_PORT', isset($env['DB_PORT']) ? $env['DB_PORT'] : '3306'); // default port 3306, 5432 for pgsql
+define('DB_TYPE', isset($env['DB_TYPE']) ? $env['DB_TYPE'] : 'mysql'); // supported mysql and pgsql
+
+// Debug Settings
+
+define('DEBUG', isset($env['DEBUG']) ? intval($env['DEBUG']) : 1);
+
+// Template Settings
+
+define('TEMPLATE', isset($env['TEMPLATE']) ? $env['TEMPLATE'] : 'openda');
+
+// Package Loader
+define('AUTO_LOADER', isset($env['AUTO_LOADER']) ? $env['AUTO_LOADER'] : 'vendor/autoload.php');   // autoloader for composer installed libraries
+
+// GeoIP2 Settings
+define('GEO_ENABLE', isset($env['GEO_ENABLE']) ? intval($env['GEO_ENABLE']) : 1);                        // 0 - disable GeoIP2, 1 - enable GeoIP2
+define('GEO_DB', isset($env['GEO_DB']) ? $env['GEO_DB'] : 'includes/geolite2.mmdb');     // location of GeoIP2 database
+
+// Date Range
+
+define('DATE_RANGE', isset($env['DATE_RANGE']) ? $env['DATE_RANGE'] : '-1w');
+
+?>
