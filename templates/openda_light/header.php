@@ -1,19 +1,19 @@
 <?php
 /* ----------------------------------------------------------------------------
 
-Open DMARC Analyzer - Open Source DMARC Analyzer
+Open Report Analyzer
 Copyright (C) 2023 - John Bradley (userjack6880)
 
 templates/openda/header.php
-  header for the Open DMARC Analyzer default template
+  header for the Open Report Analyzer default template
 
-Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+Available at: https://github.com/userjack6880/Open-Report-Analyzer
 
 -------------------------------------------------------------------------------
 
-This file is part of Open DMARC Analyzer.
+This file is part of Open Report Analyzer.
 
-Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
+Open Report Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
 version.
@@ -56,7 +56,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
   </head>
   <body>
     <div id="header">
-      <a href="index.php"><h1 class="header">Open DMARC Analyzer</h1></a>
+      <a href="index.php"><h1 class="header">Open Report Analyzer</h1></a>
     </div>
     <?php control_bar($page, $domain, $dateRange, $ip); ?>
     <div id="wrapper">

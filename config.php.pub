@@ -1,19 +1,19 @@
 <?php
 /* ----------------------------------------------------------------------------
 
-Open DMARC Analyzer - Open Source DMARC Analyzer
+Open Report Analyzer
 Copyright (C) 2023 - John Bradley (userjack6880)
 
 config.php
   configuration file
 
-Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+Available at: https://github.com/userjack6880/Open-Report-Analyzer
 
 -------------------------------------------------------------------------------
 
-This file is part of Open DMARC Analyzer.
+This file is part of Open Report Analyzer.
 
-Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
+Open Report Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
 version.
@@ -30,11 +30,14 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Database Settings
 
 define('DB_HOST', 'localhost');
-define('DB_USER', 'dmarc');
+define('DB_USER', 'openreport');
 define('DB_PASS', 'password');
-define('DB_NAME', 'dmarc');
+define('DB_NAME', 'openreport');
 define('DB_PORT', '3306'); // default port 3306, 5432 for pgsql
 define('DB_TYPE', 'mysql'); // supported mysql and pgsql
+
+// Report Type Settings
+define('REPORT_TYPE', 'dmarc'); // supported dmarc, tls, all
 
 // Debug Settings
 
@@ -45,9 +48,11 @@ define('DEBUG', 1);
 define('TEMPLATE', 'openda');
 
 // Package Loader
+
 define('AUTO_LOADER', 'vendor/autoload.php');   // autoloader for composer installed libraries
 
 // GeoIP2 Settings
+
 define('GEO_ENABLE', 1);                        // 0 - disable GeoIP2, 1 - enable GeoIP2
 define('GEO_DB', 'includes/geolite2.mmdb');     // location of GeoIP2 database
 

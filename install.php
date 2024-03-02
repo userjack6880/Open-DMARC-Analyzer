@@ -1,19 +1,19 @@
 <?php
 /* ----------------------------------------------------------------------------
 
-Open DMARC Analyzer - Open Source DMARC Analyzer
+Open Report Analyzer
 Copyright (C) 2023 - John Bradley (userjack6880)
 
 install.php
   installer to aid with setting up a new installation
 
-Available at: https://github.com/userjack6880/Open DMARC Analyzer
+Available at: https://github.com/userjack6880/Open-Report-Analyzer
 
 -------------------------------------------------------------------------------
 
-This file is part of Open DMARC Analyzer.
+This file is part of Open Report Analyzer.
 
-Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
+Open Report Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
 version.
@@ -72,6 +72,8 @@ foreach ($lines as $line)
     }
     catch (PDOException $e) {
       echo " failed: ".$e->getMessage()."<br>";
+      echo "<br>please check to see if 
+<a href=https://github.com/userjack6880/Open-Report-Parser>Open Report Parser</a> is installed<br>";
       exit();
     }
     echo " success<br>";
@@ -91,20 +93,20 @@ if (unlink('mysql.sql') == true) {
   echo "DELETED &rarr; mysql.sql<br>";
 }
 else {
-  echo "FAILED &rarr; mysql.sql<br>";
+  echo "FAILED &rarr; mysql.sql<br>manually delete file<br>";
 }
 
 if (unlink('pgsql.sql') == true) {
   echo "DELETED &rarr; pgsql.sql<br>";
 }
 else {
-  echo "FAILED &rarr; pgsql.sql<br>";
+  echo "FAILED &rarr; pgsql.sql<br>manually delete file<br>";
 }
 
 if (unlink(__FILE__) == true) {
   echo "DELETED &rarr; install.php<br>";
 }
 else {
-  echo "FAILED &rarr; install.php<br>";
+  echo "FAILED &rarr; install.php<br>manually delete file<br>";
 }
 ?>

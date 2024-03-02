@@ -1,19 +1,19 @@
 <?php
 /* ----------------------------------------------------------------------------
 
-Open DMARC Analyzer - Open Source DMARC Analyzer
+Open Report Analyzer - Open Source DMARC and MTA-STS Report Analyzer
 Copyright (C) 2023 - John Bradley (userjack6880)
 
 templates/openda/footer.php
-  footer for the Open DMARC Analyzer default template
+  footer for the Open Report Analyzer light-variant default template
 
-Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+Available at: https://github.com/userjack6880/Open-Report-Analyzer
 
 -------------------------------------------------------------------------------
 
-This file is part of Open DMARC Analyzer.
+This file is part of Open Report Analyzer.
 
-Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
+Open Report Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
 version.
@@ -32,7 +32,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
   </div>
   <div id="footer">
     <p>
-      <a href="https://github.com/userjack6880/Open-DMARC-Analyzer">Open DMARC Analyzer</a> <?php oda_version(); ?><br />
+      <a href="https://github.com/userjack6880/Open-Report-Analyzer">Open Report Analyzer</a> <?php oda_version(); ?><br />
       <a href="https://systemanomaly.com/codebase"><img src="templates/openda_light/codebase_logo.png" alt="Anomaly <Codebase>" height="50px"></a>
     </p>
   </div>

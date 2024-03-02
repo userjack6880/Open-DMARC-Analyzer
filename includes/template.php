@@ -1,20 +1,20 @@
 <?php
 /* ----------------------------------------------------------------------------
 
-Open DMARC Analyzer - Open Source DMARC Analyzer
+Open Report Analyzer
 Copyright (C) 2023 - John Bradley (userjack6880)
 
 includes/template.php
   template structures to be called by main page scripts
   this is not the full visual templates
 
-Available at: https://github.com/userjack6880/Open-DMARC-Analyzer
+Available at: https://github.com/userjack6880/Open-Report-Analyzer
 
 -------------------------------------------------------------------------------
 
-This file is part of Open DMARC Analyzer.
+This file is part of Open Report Analyzer.
 
-Open DMARC Analyzer is free software: you can redistribute it and/or modify it under
+Open Report Analyzer is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software 
 Foundation, either version 3 of the License, or (at your option) any later 
 version.
@@ -31,7 +31,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 // Versioning -----------------------------------------------------------------
 function oda_version() {
 
-  echo "1";
+  echo "2-α1";
 
 }
 
@@ -43,14 +43,14 @@ function javascript() { ?>
 
 // Page Title -----------------------------------
 function page_title($page) {
-  echo "Open DMARC Analyzer";
+  echo "Open Report Analyzer";
   if ($page == "index") {
     echo " - Dashboard";
   }
 }
 
 // Control Bar ----------------------------------
-function control_bar($page, $domain, $dateRange, $ip = '') {
+function control_bar($page, $domain, $dateRange, $ip = '', $mx = '') {
   // get some variables out of current daterange
   $dateWord = dateWord($dateRange);
   $dateLtr = dateLtr($dateRange);
@@ -58,7 +58,7 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
   $startdate = date("Y-m-d H:i:s",strtotime(strtolower("-$dateNum $dateWord")));
 
   // pages that need domain controls
-  if ($page == "index" || $page == "sender") {
+  if ($page == "index" || $page == "sender" || $page == "reciever") {
 
     $domains = getDomains($dateRange);
     if (count($domains) == 1 && $page != "sender") {
@@ -91,7 +91,22 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
               <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=all'>&larr; Back</a> | Since $startdate\n";
       }
       else {
-        echo "<h1>Sender $ip for $domain</h1><br />\n
+//        echo "<h1>Sender $ip for $domain</h1><br />\n
+        echo "<h1>Sender $ip</h1><br />\n
+              <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=$domain'>&larr; Back</a> | Since $startdate\n";
+      }
+    }
+    if ($page == "reciever") {
+      if ($domain == "all") {
+        echo "
+              <h1>Reciever $mx</h1><br />\n
+              <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=all'>&larr; Back</a> | Since $startdate\n";
+      }
+      else {
+//        echo "
+//              <h1>Reciever $mx for $domain</h1><br />\n
+        echo "
+              <h1>Reciever $mx</h1><br />\n
               <a href='".$_SERVER['PHP_SELF']."?range=-$dateNum$dateLtr&page=index&domain=$domain'>&larr; Back</a> | Since $startdate\n";
       }
     }
@@ -141,126 +156,12 @@ function control_bar($page, $domain, $dateRange, $ip = '') {
 }
 
 // Overview Bar ---------------------------------
-function overview_bar($stats, $domain) {
-  // extract stats
-  $total  = 0;
-  $policy = '';
-  $policy_pct = 0;
-  $dmarc_none = 0;
-  $dmarc_quar = 0;
-  $dmarc_rjct = 0;
-  $dmarc_comp = 0;
-  $dkim_pass_aligned = 0;
-  $dkim_pass_noalign = 0;
-  $spf_pass_aligned  = 0;
-  $spf_pass_noalign  = 0;
-
-  if ($domain == "all") {
-    $domain_count = 0;
-    foreach ($stats as $stat) {
-      $stat = htmlspecialchars_array($stat);
-      $total = $total+$stat['total_messages'];
-      if ($stat['none'] > 0)                { $dmarc_none = $dmarc_none+$stat['none']; }
-      if ($stat['quarantine'] > 0)          { $dmarc_quar = $dmarc_quar+$stat['quarantine']; }
-      if ($stat['reject'] > 0)              { $dmarc_rjct = $dmarc_rjct+$stat['reject']; }
-      if ($stat['compliant'] > 0)           { $dmarc_comp = $dmarc_comp+$stat['compliant']; }
-      if ($stat['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $dkim_pass_aligned+$stat['dkim_pass_aligned']; }
-      if ($stat['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $dkim_pass_noalign+$stat['dkim_pass_unaligned']; }
-      if ($stat['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $spf_pass_aligned+$stat['spf_pass_aligned']; }
-      if ($stat['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $spf_pass_noalign+$stat['spf_pass_unaligned']; }
-      $domain_count++;
-    }
-
-    // clunky, but detects if we have more than one domain, and changes all to a single domain if it's just one
-    if ($domain_count == 1) {
-      $domain     = $stats[0]['domain'];
-      $policy     = ucfirst($stats[0]['policy_p']);
-      $policy_pct = $stats[0]['policy_pct'];
-    }
-  }
-  else {
-    $stats[0]   = htmlspecialchars_array($stats[0]);
-    $total      = $stats[0]['total_messages'];
-    $policy     = ucfirst($stats[0]['policy_p']);
-    $policy_pct = $stats[0]['policy_pct'];
-    if ($stats[0]['none'] > 0)                { $dmarc_none = $stats[0]['none']; }
-    if ($stats[0]['quarantine'] > 0)          { $dmarc_quar = $stats[0]['quarantine']; }
-    if ($stats[0]['reject'] > 0)              { $dmarc_rjct = $stats[0]['reject']; }
-    if ($stats[0]['compliant'] > 0)           { $dmarc_comp = $stats[0]['compliant']; }
-    if ($stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stats[0]['dkim_pass_aligned']; }
-    if ($stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stats[0]['dkim_pass_unaligned']; }
-    if ($stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stats[0]['spf_pass_aligned']; }
-    if ($stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stats[0]['spf_pass_unaligned']; }
-  }
-
-// stat calculations
-  if ($dmarc_none) {
-    $dmarc_comp_pct = number_format(100 * ($dmarc_comp / $dmarc_none));
-    $dkim_comp_pct  = number_format(100 * ($dkim_pass_aligned / $dmarc_none));
-    $dkim_pass_pct  = number_format(100 * (((int)$dkim_pass_aligned + (int)$dkim_pass_noalign) / $dmarc_none));
-    $spf_comp_pct   = number_format(100 * ($spf_pass_aligned  / $dmarc_none));
-    $spf_pass_pct   = number_format(100 * (((int)$spf_pass_aligned  + (int)$spf_pass_noalign)  / $dmarc_none));
-  }
-  else {
-    $dmarc_comp_pct = 0;
-    $dkim_comp_pct  = 0;
-    $dkim_pass_pct  = 0;
-    $spf_comp_pct   = 0;
-    $spf_pass_pct   = 0;
-  }
-
-  // overview details
-  echo "<div id=overviewbar>\n
-          <div id=overviewbarleft>\n
-            <div id=overviewinnerleft>\n
-              Total Messages<br />\n
-              <span class=overviewtotal>$total</span>\n";
-  if ($domain != "all") {
-    echo     "<br />\n$policy_pct% $policy\n";
-  }
-  echo     "</div>\n
-            <div id=overviewinnerright>\n
-              <div class=ovir-left>\n
-                Accepted<br />\n
-                Quarantined<br />\n
-                Rejected</br />\n
-              </div>\n
-              <div class=ovir-right>\n
-                <span class=pass>$dmarc_none</span><br />\n
-                <span class=warn>$dmarc_quar</span><br />\n
-                <span class=fail>$dmarc_rjct</span><br />\n
-              </div>\n
-            </div>\n
-          </div>\n
-          <div id=overviewbarright>\n
-            <div id=ovbr-in>\n
-              Percent Compliant<br />\n
-              <span class=overviewtotal>$dmarc_comp_pct%</span><br />\n
-              <span class=perc-title>DKIM</span><br />\n
-              <div class=perc-bar>\n
-                <div class=gray-per style='width:$dkim_pass_pct%'></div>\n
-                <div class=green-per style='width:$dkim_comp_pct%'></div>\n
-              </div>\n
-              <span class=perc-text>$dkim_comp_pct% Aligned | $dkim_pass_pct% Passed</span><br />\n
-              <span class=perc-title>SPF</span><br />\n
-              <div class=perc-bar>\n
-                <div class=gray-per style='width:$spf_pass_pct%'></div>\n
-                <div class=green-per style='width:$spf_comp_pct%'></div>\n
-              </div>\n
-              <span class=perc-text>$spf_comp_pct% Aligned | $spf_pass_pct% Passed</span><br />\n
-            </div>\n
-          </div>\n
-        </div>\n";
-
-  // returns a modified domain if only one is detected
-  return $domain;
-}
-
-// Overview Bar ---------------------------------
-function domain_overview($stats, $dateRange) {
-  foreach ($stats as $stat) {
-    $stat = htmlspecialchars_array($stat);
-    // extract stats
+function overview_bar($d_stats, $t_stats, $domain) {
+  if (REPORT_TYPE == "all" || REPORT_TYPE == "dmarc") {
+    // extract dmarc stats
+    $total  = 0;
+    $policy = '';
+    $policy_pct = 0;
     $dmarc_none = 0;
     $dmarc_quar = 0;
     $dmarc_rjct = 0;
@@ -270,20 +171,44 @@ function domain_overview($stats, $dateRange) {
     $spf_pass_aligned  = 0;
     $spf_pass_noalign  = 0;
 
-    $domain     = $stat['domain'];
-    $total      = $stat['total_messages'];
-    $policy     = ucfirst($stat['policy_p']);
-    $policy_pct = $stat['policy_pct'];
-    if ($stat['none'] > 0)                { $dmarc_none = $stat['none']; }
-    if ($stat['quarantine'] > 0)          { $dmarc_quar = $stat['quarantine']; }
-    if ($stat['reject'] > 0)              { $dmarc_rjct = $stat['reject']; }
-    if ($stat['compliant'] > 0)           { $dmarc_comp = $stat['compliant']; }
-    if ($stat['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $stat['dkim_pass_aligned']; }
-    if ($stat['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $stat['dkim_pass_unaligned']; }
-    if ($stat['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $stat['spf_pass_aligned']; }
-    if ($stat['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $stat['spf_pass_unaligned']; }
+    if ($domain == "all") {
+      $domain_count = 0;
+      foreach ($d_stats as $stat) {
+        $stat = array_map('htmlspecialchars',$stat);
+        $total = $total+$stat['total_messages'];
+        if ($stat['none'] > 0)                { $dmarc_none = $dmarc_none+$stat['none']; }
+        if ($stat['quarantine'] > 0)          { $dmarc_quar = $dmarc_quar+$stat['quarantine']; }
+        if ($stat['reject'] > 0)              { $dmarc_rjct = $dmarc_rjct+$stat['reject']; }
+        if ($stat['compliant'] > 0)           { $dmarc_comp = $dmarc_comp+$stat['compliant']; }
+        if ($stat['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $dkim_pass_aligned+$stat['dkim_pass_aligned']; }
+        if ($stat['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $dkim_pass_noalign+$stat['dkim_pass_unaligned']; }
+        if ($stat['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $spf_pass_aligned+$stat['spf_pass_aligned']; }
+        if ($stat['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $spf_pass_noalign+$stat['spf_pass_unaligned']; }
+        $domain_count++;
+      }
 
-    $sender_count = getSenderCount($dateRange, $domain);
+      // clunky, but detects if we have only one domain, and changes all to a single domain if it's just one
+      if ($domain_count == 1) {
+        $domain     = $d_stats[0]['domain'];
+        $policy     = ucfirst($d_stats[0]['policy_p']);
+        $policy_pct = $d_stats[0]['policy_pct'];
+      }
+    }
+    else {
+      $d_stats[0]   = array_map('htmlspecialchars',$d_stats[0]);
+  //    $total      = $d_stats[0]['total_messages'];
+      $policy     = ucfirst($d_stats[0]['policy_p']);
+      $policy_pct = $d_stats[0]['policy_pct'];
+      if ($d_stats[0]['total_messages'] > 0)      { $total = $d_stats[0]['total_messages']; }
+      if ($d_stats[0]['none'] > 0)                { $dmarc_none = $d_stats[0]['none']; }
+      if ($d_stats[0]['quarantine'] > 0)          { $dmarc_quar = $d_stats[0]['quarantine']; }
+      if ($d_stats[0]['reject'] > 0)              { $dmarc_rjct = $d_stats[0]['reject']; }
+      if ($d_stats[0]['compliant'] > 0)           { $dmarc_comp = $d_stats[0]['compliant']; }
+      if ($d_stats[0]['dkim_pass_aligned'] > 0)   { $dkim_pass_aligned = $d_stats[0]['dkim_pass_aligned']; }
+      if ($d_stats[0]['dkim_pass_unaligned'] > 0) { $dkim_pass_noalign = $d_stats[0]['dkim_pass_unaligned']; }
+      if ($d_stats[0]['spf_pass_aligned'] > 0)    { $spf_pass_aligned  = $d_stats[0]['spf_pass_aligned']; }
+      if ($d_stats[0]['spf_pass_unaligned'] > 0)  { $spf_pass_noalign  = $d_stats[0]['spf_pass_unaligned']; }
+    }
 
     // stat calculations
     if ($dmarc_none) {
@@ -300,50 +225,345 @@ function domain_overview($stats, $dateRange) {
       $spf_comp_pct   = 0;
       $spf_pass_pct   = 0;
     }
+  }
+
+  if (REPORT_TYPE == "all" || REPORT_TYPE == "tls") {
+    // extract tls stats
+    $tls_mode = 'unknown';
+    $tls_success = 0;
+    $tls_failure = 0;
+    $tls_success_pct = 0;
+    $tls_total = 0;
+
+    foreach ($t_stats as $stat) {
+      $stat = array_map('htmlspecialchars',$stat);
+      // this should pick up the latest policy mode
+      if ($stat['policy_mode'] != '') { $tls_mode = $stat['policy_mode']; }
+      if ($stat['summary_success'] > 0) { $tls_success = $tls_success+$stat['summary_success']; }
+      if ($stat['summary_failure'] > 0) { $tls_failure = $tls_failure+$stat['summary_failure']; }
+    }
+
+    // stat calculation
+    $tls_total = $tls_success + $tls_failure;
+    if ($tls_total > 0) {
+      $tls_success_pct = number_format(100 * ($tls_success / $tls_total));
+    }
+  }
+
+  // overview details
+  echo "
+        <div id=overviewbar>\n";
+  if (REPORT_TYPE == "all") {
+    echo "
+          <div id=overviewbarleft>\n
+            <div id=ovbr-in>\n";
+    if ($tls_total == 0) {
+      echo "
+              <span class=perc-title>No MTA-STS Information</span>\n";  
+    }
+    else {
+      echo "
+              <span class=ov-title>MTA-STS Statistics</span><br \><br \>\n
+              Mode<br />\n
+                <span class=perc-text>$tls_mode</span><br \>\n
+              Total Messages<br \>\n
+                <span class=perc-text>$tls_total</span><br \>\n
+              Success Rate<br \>\n
+                <div class=perc-bar style='margin-top:5px'>\n
+                  <div class=green-per style='width:$tls_success_pct%'></div>\n
+                </div>\n
+                <span class=perc-text>$tls_success Success | $tls_failure Failure</span><br \>\n";
+    }
+    echo "
+            </div>\n
+          </div>\n";
+  }
+  elseif (REPORT_TYPE == "dmarc") {
+    echo "
+              <div id=overviewbarleft-wide>\n
+            <span class=ov-title>DMARC Statistics</span>
+            <div id=overviewinnerleft>\n
+              Total Messages<br />\n
+              <span class=overviewtotal>$total</span>\n";
+    if ($domain != "all" && $total > 0) {
+      echo "
+              <br />\n$policy_pct% $policy\n";
+    }
+    echo "
+            </div>\n
+            <div id=overviewinnerright>\n
+              <div class=ovir-left>\n
+                Accepted<br />\n
+                Quarantined<br />\n
+                Rejected</br />\n
+              </div>\n
+              <div class=ovir-right>\n
+                <span class=pass>$dmarc_none</span><br />\n
+                <span class=warn>$dmarc_quar</span><br />\n
+                <span class=fail>$dmarc_rjct</span><br />\n
+              </div>\n
+            </div>\n
+          </div>\n";
+  }
+  else {
+    echo "
+          <div id=overviewbarcenter-wide>\n
+            <div id=ovbr-wide>\n
+              <span class=ov-title>MTA-STS Statistics</span> | Mode: $tls_mode \n
+                                                             | Messages: $tls_total\n
+                                                             | $tls_success Success\n
+                                                             | $tls_failure Failure<br \>\n
+            </div>
+          </div>";
+  }
+
+  if (REPORT_TYPE == "dmarc" || REPORT_TYPE == "all") {
+    echo "
+          <div id=overviewbarright>\n
+            <div id=ovbr-in>\n";
+  // if no messages are presented, we need to inform that there's no
+  // compliance data
+    if ($total == 0) {
+      echo "
+              <span class=perc-title>No Compliance Information</span>\n";
+    }
+    else {
+      echo "
+              Percent Compliant<br />\n
+              <span class=overviewtotal>$dmarc_comp_pct%</span><br />\n
+              <span class=perc-title>DKIM</span><br />\n
+              <div class=perc-bar>\n
+                <div class=gray-per style='width:$dkim_pass_pct%'></div>\n
+                <div class=green-per style='width:$dkim_comp_pct%'></div>\n
+              </div>\n
+              <span class=perc-text>$dkim_comp_pct% Aligned | $dkim_pass_pct% Passed</span><br />\n
+              <span class=perc-title>SPF</span><br />\n
+              <div class=perc-bar>\n
+                <div class=gray-per style='width:$spf_pass_pct%'></div>\n
+                <div class=green-per style='width:$spf_comp_pct%'></div>\n
+              </div>\n
+              <span class=perc-text>$spf_comp_pct% Aligned | $spf_pass_pct% Passed</span><br />\n";
+    }
+    echo "
+            </div>\n
+          </div>\n";
+  }
+  if (REPORT_TYPE == "all") {
+    echo "
+          <div id=overviewbarcenter>\n
+            <span class=ov-title>DMARC Statistics</span>
+            <div id=overviewinnerleft>\n
+              Total Messages<br />\n
+              <span class=overviewtotal>$total</span>\n";
+    if ($domain != "all" && $total > 0) {
+      echo "
+              <br />\n$policy_pct% $policy\n";
+    }
+    echo "
+            </div>\n
+            <div id=overviewinnerright>\n
+              <div class=ovir-left>\n
+                Accepted<br />\n
+                Quarantined<br />\n
+                Rejected</br />\n
+              </div>\n
+              <div class=ovir-right>\n
+                <span class=pass>$dmarc_none</span><br />\n
+                <span class=warn>$dmarc_quar</span><br />\n
+                <span class=fail>$dmarc_rjct</span><br />\n
+              </div>\n
+            </div>\n
+          </div>\n";
+  }
+  echo "
+        </div>\n";
+
+  // returns a modified domain if only one is detected
+  return $domain;
+}
+
+// Overview Bar ---------------------------------
+function domain_overview($d_stats, $t_stats, $dateRange) {
+  $data = [];
+
+  // dmarc data processing
+  foreach ($d_stats as $stat) {
+    $stat = array_map('htmlspecialchars',$stat);
+    $domain     = $stat['domain'];
+
+    // extract stats
+    $data[$domain]['dmarc_none'] = 0;
+    $data[$domain]['dmarc_quar'] = 0;
+    $data[$domain]['dmarc_rjct'] = 0;
+    $data[$domain]['dmarc_comp'] = 0;
+    $data[$domain]['dkim_pass_aligned'] = 0;
+    $data[$domain]['dkim_pass_noalign'] = 0;
+    $data[$domain]['spf_pass_aligned']  = 0;
+    $data[$domain]['spf_pass_noalign']  = 0;
+
+    // prefill these for the next step
+    $data[$domain]['tls_mode']    = 'unknown';
+    $data[$domain]['tls_success'] = 0;
+    $data[$domain]['tls_failure'] = 0;
+    $data[$domain]['tls_total']   = 0;
+
+    $data[$domain]['dmarc_total']      = $stat['total_messages'];
+    $data[$domain]['dmarc_policy']     = ucfirst($stat['policy_p']);
+    $data[$domain]['dmarc_policy_pct'] = $stat['policy_pct'];
+    if ($stat['none'] > 0)                { $data[$domain]['dmarc_none'] = $stat['none']; }
+    if ($stat['quarantine'] > 0)          { $data[$domain]['dmarc_quar'] = $stat['quarantine']; }
+    if ($stat['reject'] > 0)              { $data[$domain]['dmarc_rjct'] = $stat['reject']; }
+    if ($stat['compliant'] > 0)           { $data[$domain]['dmarc_comp'] = $stat['compliant']; }
+    if ($stat['dkim_pass_aligned'] > 0)   { $data[$domain]['dkim_pass_aligned'] = $stat['dkim_pass_aligned']; }
+    if ($stat['dkim_pass_unaligned'] > 0) { $data[$domain]['dkim_pass_noalign'] = $stat['dkim_pass_unaligned']; }
+    if ($stat['spf_pass_aligned'] > 0)    { $data[$domain]['spf_pass_aligned']  = $stat['spf_pass_aligned']; }
+    if ($stat['spf_pass_unaligned'] > 0)  { $data[$domain]['spf_pass_noalign']  = $stat['spf_pass_unaligned']; }
+
+//    $sender_count = getSenderCount($dateRange, $domain); // this may be a source of slowness, as it's a query
+
+    // stat calculations
+    if ($data[$domain]['dmarc_none']) {
+      $data[$domain]['dmarc_comp_pct'] = number_format(100 * ($data[$domain]['dmarc_comp'] / $data[$domain]['dmarc_none']));
+      $data[$domain]['dkim_comp_pct']  = number_format(100 * ($data[$domain]['dkim_pass_aligned'] / $data[$domain]['dmarc_none']));
+      $data[$domain]['dkim_pass_pct']  = number_format(100 * (((int)$data[$domain]['dkim_pass_aligned'] + (int)$data[$domain]['dkim_pass_noalign']) / $data[$domain]['dmarc_none']));
+      $data[$domain]['spf_comp_pct']   = number_format(100 * ($data[$domain]['spf_pass_aligned']  / $data[$domain]['dmarc_none']));
+      $data[$domain]['spf_pass_pct']   = number_format(100 * (((int)$data[$domain]['spf_pass_aligned']  + (int)$data[$domain]['spf_pass_noalign'])  / $data[$domain]['dmarc_none']));
+    }
+    else {
+      $data[$domain]['dmarc_comp_pct'] = 0;
+      $data[$domain]['dkim_comp_pct']  = 0;
+      $data[$domain]['dkim_pass_pct']  = 0;
+      $data[$domain]['spf_comp_pct']   = 0;
+      $data[$domain]['spf_pass_pct']   = 0;
+    }
+  }
+
+  // tls data processing
+  foreach ($t_stats as $stat) {
+    $stat = array_map('htmlspecialchars',$stat);
+    $domain = $stat['domain'];
+
+    // extract stats
+    if (isset($data[$stat['domain']]['tls_mode'])) {
+      if ($stat['policy_mode'] != '')   { $data[$domain]['tls_mode']     = $stat['policy_mode']; }
+      if ($stat['summary_success'] > 0) { $data[$domain]['tls_success'] += $stat['summary_success']; }
+      if ($stat['summary_failure'] > 0) { $data[$domain]['tls_failure'] += $stat['summary_failure']; }
+    }
+    else {
+      $data[$domain]['tls_mode']    = 'unknown';
+      $data[$domain]['tls_success'] = 0;
+      $data[$domain]['tls_failure'] = 0;
+      $data[$domain]['tls_total']   = 0;
+
+      // for entries without DMARC data
+      $data[$domain]['dmarc_none']  = 0;
+      $data[$domain]['dmarc_quar']  = 0;
+      $data[$domain]['dmarc_rjct']  = 0;
+      $data[$domain]['dmarc_comp']  = 0;
+      $data[$domain]['dmarc_total'] = 0;
+      $data[$domain]['dmarc_policy'] = 'unknown';
+      $data[$domain]['dmarc_policy_pct']  = 0;
+      $data[$domain]['dkim_pass_aligned'] = 0;
+      $data[$domain]['dkim_pass_noalign'] = 0;
+      $data[$domain]['spf_pass_aligned']  = 0;
+      $data[$domain]['spf_pass_noalign']  = 0;
+
+      if ($stat['policy_mode'] != '')   { $data[$domain]['tls_mode']     = $stat['policy_mode']; }
+      if ($stat['summary_success'] > 0) { $data[$domain]['tls_success'] += $stat['summary_success']; }
+      if ($stat['summary_failure'] > 0) { $data[$domain]['tls_failure'] += $stat['summary_failure']; }
+    }
+  }
+
+  foreach ($data as $domain => $entry) {
+    // some after (or I guess before) calculations
+    $entry['tls_total'] = $entry['tls_success'] + $entry['tls_failure'];
 
     // overview details
     echo "<div class=dov-bar>\n
             <div class=dov-bar-in>\n
               <div class=dov-bar-in-domain>\n
-                <h1 class=dov-bar-head>$domain - <a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=index&domain=$domain'>$sender_count Senders</a></h1>\n
-              </div>\n
+                <h1 class=dov-bar-head>\n
+                  <a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=index&domain=$domain'>$domain</a>\n
+                </h1>\n
+              </div>\n";
+    if ($entry['dmarc_policy'] == 'unknown') {
+      echo "
+              <div class=dov-bar-in-dstats-alignment style='text-align:center; margin-top: 40px'>\n
+                <span style='margin-top: 50px;'>No Compliance Data</span>\n";
+    }
+    else {
+      echo "
               <div class=dov-bar-in-dstats-alignment>\n
                 <span class=perc-text style='text-align:left'>DMARC Compliance</span>\n
                 <div class=perc-bar>\n
-                  <div class=green-per style='width:$dmarc_comp_pct%'></div>\n
+                  <div class=green-per style='width:".$entry['dmarc_comp_pct']."%'></div>\n
                 </div>\n
                 <span class=perc-text style='text-align:left'>DKIM</span>\n
                 <div class=perc-bar>\n
-                  <div class=gray-per style='width:$dkim_pass_pct%'></div>\n
-                  <div class=green-per style='width:$dkim_comp_pct%'></div>\n
+                  <div class=gray-per style='width:".$entry['dkim_pass_pct']."%'></div>\n
+                  <div class=green-per style='width:".$entry['dkim_comp_pct']."%'></div>\n
                 </div>\n
                 <span class=perc-text style='text-align:left'>SPF</span>\n
                 <div class=perc-bar>\n
-                  <div class=gray-per style='width:$spf_pass_pct%'></div>\n
-                  <div class=green-per style='width:$spf_comp_pct%'></div>\n
-                </div>\n
+                  <div class=gray-per style='width:".$entry['spf_pass_pct']."%'></div>\n
+                  <div class=green-per style='width:".$entry['spf_comp_pct']."%'></div>\n
+                </div>\n";
+    }
+    echo "
               </div>\n
               <div class=dov-bar-in-dstats-totals>\n
                 <table class=dov>\n
                   <tr class=dov>\n
-                    <td class=dov>$total Messages</td>\n
-                    <td class=dov>$policy_pct% $policy</td>\n
-                    <td class=dov>";
-    if ($dmarc_quar > 0) {
-      echo "<span class='warn'>$dmarc_quar</span>";
+                    <td class=dov style='width:20%; text-align: right; padding-right: 20px;'>DMARC</td>\n
+                    <td class=dov style='width:20%'>".$entry['dmarc_total']." Messages Sent</td>\n";
+    if ($entry['dmarc_policy'] == 'unknown') {
+      echo "
+                    <td class=dov style='width:20%'>".$entry['dmarc_policy']."</td>\n";
     }
     else {
-      echo "$dmarc_quar";
-    } 
-    echo " Quarantined</td>\n
-                    <td class=dov>";
-    if ($dmarc_rjct > 0) {
-      echo "<span class='fail'>$dmarc_rjct</span>";
+      echo "
+                    <td class=dov style='width:20%'>".$entry['dmarc_policy_pct']."% ".$entry['dmarc_policy']."</td>\n";
+    }
+    echo "
+                    <td class=dov style='width:20%'>\n";
+    if ($entry['dmarc_quar'] > 0) {
+      echo "
+                      <span class='warn'>".$entry['dmarc_quar']."</span>";
     }
     else {
-      echo "$dmarc_rjct";
+      echo "
+                      ".$entry['dmarc_quar'];
     } 
-    echo " Rejected</td>\n
+    echo " Quarantined\n
+                    </td>\n
+                    <td class=dov style='width:20%'>\n";
+    if ($entry['dmarc_rjct'] > 0) {
+      echo "
+                      <span class='fail'>".$entry['dmarc_rjct']."</span>";
+    }
+    else {
+      echo "
+                      ".$entry['dmarc_rjct'];
+    } 
+    echo " Rejected\n
+                    </td>\n
+                  </tr>\n
+                  <tr class=dov>\n
+                    <td class=dov style='text-align: right; padding-right: 20px;'>MTA-STS</td>\n
+                    <td class=dov>".$entry['tls_total']." Messages Recieved</td>\n
+                    <td class=dov>".$entry['tls_mode']."</td>\n
+                    <td class=dov>".$entry['tls_success']." Success</td>\n
+                    <td class=dov>\n";
+    if ($entry['tls_failure'] > 0) {
+      echo "
+                      <span class='fail'>".$entry['tls_failure']."</span>";
+    }
+    else {
+      echo "
+                      ".$entry['tls_failure'];
+    }
+    echo " Failure\n
+                    </td>\n
                   </tr>\n
                 </table>\n
               </div>\n
@@ -353,105 +573,226 @@ function domain_overview($stats, $dateRange) {
 }
 
 // Domain Details -------------------------------
-function domain_details($stats, $domain, $dateRange) {
-  $entries = count($stats);
-  $height = $entries * 100;
-  echo "<h2 class=section>Domain Summary</h2>\n
-        <div class=dov-bar style='height:".$height."px'>\n
-          <div class=dov-bar-in style='height:".$height."px'>\n";
-
-  foreach ($stats as $stat) {
-    $compliant  = 0;
-    $none       = 0;
-    $quarantine = 0;
-    $reject     = 0;
-    $dkim_pass  = 0;
-    $dkim_align = 0;
-    $spf_pass   = 0;
-    $spf_align  = 0;
-
-    // extract stats - this'll be sorted by senderIP
-    $ip         = get_ip($stat['ip'], $stat['ip6']);
-    $stat       = htmlspecialchars_array($stat);
-    $messages   = $stat['messages'];
-    if ($stat['compliant'] > 0)  { $compliant  = $stat['compliant']; }
-    if ($stat['none'] > 0)       { $none       = $stat['none']; }
-    if ($stat['quarantine'] > 0) { $quarantine = $stat['quarantine']; }
-    if ($stat['reject'] > 0)     { $reject     = $stat['reject']; }
-    if ($stat['dkim_pass'] > 0)  { $dkim_pass  = $stat['dkim_pass']; }
-    if ($stat['dkim_align'] > 0) { $dkim_align = $stat['dkim_align']; }
-    if ($stat['spf_pass'] > 0)   { $spf_pass   = $stat['spf_pass']; }
-    if ($stat['spf_align'] > 0)  { $spf_align  = $stat['spf_align']; }
-
-    // calculate stats
-    $dmarc_comp_pct = number_format(100 * ($compliant  / $messages));
-    if ($none > 0) {
-      $dkim_comp_pct = number_format(100 * ($dkim_align / $none));
-      $dkim_pass_pct = number_format(100 * ($dkim_pass  / $none));
-      $spf_comp_pct  = number_format(100 * ($spf_align  / $none));
-      $spf_pass_pct  = number_format(100 * ($spf_pass   / $none));
-    }
-    else {
-      // sometimes we get entries that are full reject
-      $dkim_comp_pct = 0;
-      $dkim_pass_pct = 0;
-      $spf_comp_pct  = 0;
-      $spf_pass_pct  = 0;
+function domain_details($d_stats, $t_stats, $domain, $dateRange) {
+  if (REPORT_TYPE == "all" || REPORT_TYPE == "tls") {
+    $t_entries = 0;
+    $t_success = [];
+    $t_failure = [];
+    $t_mx      = [];
+    echo "<br>";
+    // do summations here
+    foreach ($t_stats as $stat) {
+      $stat       = array_map('htmlspecialchars',$stat);
+      if ($stat['recv_mx'] == '') { $stat['recv_mx'] = 'unknown'; }
+      if (!isset($t_success[$stat['recv_mx']]) && !isset($t_failure[$stat['recv_mx']])) {
+        $t_success[$stat['recv_mx']] = 0;
+        $t_failure[$stat['recv_mx']] = 0;
+        if ($stat['summary_success'] > 0) { $t_success[$stat['recv_mx']] = $stat['summary_success']; }
+        if ($stat['summary_failure'] > 0) { $t_failure[$stat['recv_mx']] = $stat['summary_failure']; }
+        array_push($t_mx, $stat['recv_mx']);
+        $t_entries++;
+      }
+      else {
+        $t_success[$stat['recv_mx']] += $stat['summary_success'];
+        $t_failure[$stat['recv_mx']] += $stat['summary_failure'];
+      }
     }
 
-    // now present
-    echo "<div class=dov-bar-in-ip>\n
-            <div style='width:400px'>\n
-              <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=sender&domain=$domain&ip=".$ip['ip']."'>".$ip['ip']."</a></h3>\n
-              <span class=dov-bar-small>".gethostbyaddr($ip['ip'])."</span>\n
+    $t_height = $t_entries * 100;
+
+    echo "
+        <h2 class=section>Domain Recievers</h2>\n";
+
+    if ($t_height != 0) {
+      echo "
+          <div class=dov-bar style='height:".$t_height."px'>\n
+            <div class=dov-bar-in style='height:".$t_height."px'>\n";
+        foreach ($t_mx as $mx) {
+          // calculations
+          $total = $t_success[$mx] + $t_failure[$mx];
+          $tls_total = $t_success[$mx] + $t_failure[$mx];
+          if ($tls_total > 0) {
+            $tls_success_pct = number_format(100 * ($t_success[$mx] / $tls_total));
+          }
+
+          echo "
+              <div class=dov-bar-in-ip>\n
+                <div style='width: 500px'>\n";
+          if ($mx == 'unknown') {
+            echo "
+                  <h3 class=dov-bar-in-ip-h3>$mx</h3>\n";
+          }
+          else {
+            echo "
+                  <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=reciever&domain=$domain&mx=$mx'>$mx</a></h3>\n";
+          }
+          echo "
+                </div>\n
+                <div style='left: 600px; width:calc(100% - 1000px);'>\n
+                  <table class=dov>\n
+                    <tr class=dov>\n
+                      <td class=dov style='min-width:100px'><strong>Total Messages</strong></td>\n
+                      <td class=dov style='min-width:100px'><strong>Success</strong></td>\n
+                      <td class=dov style='min-width:100px'><strong>Failure</strong></td>\n
+                    </tr>\n
+                    <tr class=dov>\n
+                      <td class=dov>$total</td>\n
+                      <td class=dov>$t_success[$mx]</td>\n
+                      <td class=dov>$t_failure[$mx]</td>\n
+                    </tr>\n
+                  </table>\n
+                </div>\n
+                <div style='right:20px;width:350px'>\n
+                  Success Rate<br \>\n
+                  <div class=perc-bar style='margin-top:5px'>\n
+                    <div class=green-per style='width:$tls_success_pct%'></div>\n
+                  </div>\n
+                </div>\n
+              </div>\n";
+        }
+      echo "
             </div>\n
-            <div style='left:420px; width:calc(100% - 770px); width:-moz-calc(100% - 770px); width:-webkit-calc(100% - 770px);'>\n
-              <table class=dov>\n
-                <tr class=dov>\n
-                  <td class=dov style='min-width:100px'><strong>Messages</strong></td>\n
-                  <td class=dov style='min-width:100px'><strong>Compliant</strong></td>\n
-                  <td class=dov style='min-width:100px'><strong>Quarantined</strong></td>\n
-                  <td class=dov style='min-width:100px'><strong>Rejected</strong></td>\n
-                </tr>\n
-                <tr class=dov>\n
-                  <td class=dov>$messages</td>\n
-                  <td class=dov>$dmarc_comp_pct%</td>\n
-                  <td class=dov>";
-    if ($quarantine > 0) {
-      echo "<span class='warn'>$quarantine</span>";
+          </div>\n";
     }
     else {
-      echo "$quarantine";
-    }
-    echo "</td>\n
-                  <td class=dov>";
-    if ($quarantine > 0) {
-      echo "<span class='fail'>$reject</span>";
-    }
-    else {
-      echo "$reject";
-    }
-    echo "</td>\n
-                </tr>\n
-              </table>\n
-            </div>\n
-            <div style='right:20px;width:350px'>\n
-              <span class=perc-text style='text-align:left'>DKIM</span>\n
-              <div class=perc-bar>\n
-                <div class=gray-per style='width:$dkim_pass_pct%'></div>\n
-                <div class=green-per style='width:$dkim_comp_pct%'></div>\n
-              </div>\n
-              <span class=perc-text style='text-align:left'>SPF</span>\n
-              <div class=perc-bar>\n
-                <div class=gray-per style='width:$spf_pass_pct%'></div>\n
-                <div class=green-per style='width:$spf_comp_pct%'></div>\n
+      echo "
+          <div class=dov-bar style='height: 100px'>\n
+            <div class=dov-bar-in style='height: 100px'>\n
+              <div class=dov-bar-in-ip>\n
+                <div>\n
+                  <h3 class=dov-bar-in-ip-h3>No MTA-STS Data</h3>\n
+                </div>\n
               </div>\n
             </div>\n
-           </div>\n";
+          </div>\n";
+    }
   }
+  
+  if (REPORT_TYPE == "all" || REPORT_TYPE == "dmarc") {
+    $d_entries = count($d_stats);
+    $d_height = $d_entries * 100;
+    echo "
+        <h2 class=section>Domain Senders</h2>\n";
 
-  echo "  </div>\n
-        </div>\n";
+    if ($d_height != 0) {
+      echo "
+          <div class=dov-bar style='height:".$d_height."px'>\n
+            <div class=dov-bar-in style='height:".$d_height."px'>\n";
+
+      foreach ($d_stats as $stat) {
+        $compliant  = 0;
+        $none       = 0;
+        $quarantine = 0;
+        $reject     = 0;
+        $dkim_pass  = 0;
+        $dkim_align = 0;
+        $spf_pass   = 0;
+        $spf_align  = 0;
+
+        // extract stats - this'll be sorted by senderIP
+        $ip         = get_ip($stat['ip'], $stat['ip6']);
+        $stat       = array_map('htmlspecialchars',$stat);
+        $messages   = $stat['messages'];
+        if ($stat['compliant'] > 0)  { $compliant  = $stat['compliant']; }
+        if ($stat['none'] > 0)       { $none       = $stat['none']; }
+        if ($stat['quarantine'] > 0) { $quarantine = $stat['quarantine']; }
+        if ($stat['reject'] > 0)     { $reject     = $stat['reject']; }
+        if ($stat['dkim_pass'] > 0)  { $dkim_pass  = $stat['dkim_pass']; }
+        if ($stat['dkim_align'] > 0) { $dkim_align = $stat['dkim_align']; }
+        if ($stat['spf_pass'] > 0)   { $spf_pass   = $stat['spf_pass']; }
+        if ($stat['spf_align'] > 0)  { $spf_align  = $stat['spf_align']; }
+
+        // calculate stats
+        $dmarc_comp_pct = number_format(100 * ($compliant  / $messages));
+        if ($none > 0) {
+          $dkim_comp_pct = number_format(100 * ($dkim_align / $none));
+          $dkim_pass_pct = number_format(100 * ($dkim_pass  / $none));
+          $spf_comp_pct  = number_format(100 * ($spf_align  / $none));
+          $spf_pass_pct  = number_format(100 * ($spf_pass   / $none));
+        }
+        else {
+          // sometimes we get entries that are full reject
+          $dkim_comp_pct = 0;
+          $dkim_pass_pct = 0;
+          $spf_comp_pct  = 0;
+          $spf_pass_pct  = 0;
+        }
+
+        // now present
+        echo "
+              <div class=dov-bar-in-ip>\n
+                <div style='width:400px'>\n
+                  <h3 class=dov-bar-in-ip-h3><a href='".$_SERVER['PHP_SELF']."?range=$dateRange&page=sender&domain=$domain&ip=".$ip['ip']."'>".$ip['ip']."</a></h3>\n
+                  <span class=dov-bar-small>".gethostbyaddr($ip['ip'])."</span>\n
+                </div>\n
+                <div style='left:450px; width:calc(100% - 870px);'>\n
+                  <table class=dov>\n
+                    <tr class=dov>\n
+                      <td class=dov style='min-width:100px'><strong>Messages</strong></td>\n
+                      <td class=dov style='min-width:100px'><strong>Compliant</strong></td>\n
+                      <td class=dov style='min-width:100px'><strong>Quarantined</strong></td>\n
+                      <td class=dov style='min-width:100px'><strong>Rejected</strong></td>\n
+                    </tr>\n
+                    <tr class=dov>\n
+                      <td class=dov>$messages</td>\n
+                      <td class=dov>$dmarc_comp_pct%</td>\n
+                      <td class=dov>";
+        if ($quarantine > 0) {
+          echo "
+                        <span class='warn'>$quarantine</span>";
+        }
+        else {
+          echo "
+                        $quarantine";
+        }
+        echo "
+                      </td>\n
+                      <td class=dov>";
+        if ($quarantine > 0) {
+          echo "
+                        <span class='fail'>$reject</span>";
+        }
+        else {
+          echo "
+                        $reject";
+        }
+        echo "
+                      </td>\n
+                    </tr>\n
+                  </table>\n
+                </div>\n
+                <div style='right:20px;width:350px'>\n
+                  <span class=perc-text style='text-align:left'>DKIM</span>\n
+                  <div class=perc-bar>\n
+                    <div class=gray-per style='width:$dkim_pass_pct%'></div>\n
+                    <div class=green-per style='width:$dkim_comp_pct%'></div>\n
+                  </div>\n
+                  <span class=perc-text style='text-align:left'>SPF</span>\n
+                  <div class=perc-bar>\n
+                    <div class=gray-per style='width:$spf_pass_pct%'></div>\n
+                    <div class=green-per style='width:$spf_comp_pct%'></div>\n
+                  </div>\n
+                </div>\n
+              </div>\n";
+      }
+
+      echo "  
+            </div>\n
+          </div>\n";
+    }
+    else {
+      echo "
+          <div class=dov-bar style='height: 100px'>\n
+            <div class=dov-bar-in style='height: 100px'>\n
+              <div class=dov-bar-in-ip>\n
+                <div>\n
+                  <h3 class=dov-bar-in-ip-h3>No DMARC Data</h3\n
+                </div>\n
+              </div>\n
+            </div>\n
+          </div\n";
+    }
+  }
 }
 
 // Sender Details -------------------------------
@@ -567,6 +908,7 @@ function sender_details($geo_data, $stats, $domain, $dateRange, $ip) {
 
 }
 
+// Report Details -------------------------------
 function report_details($data, $report) {
 
   if ($data[0]['ip6'] != '') { $ip = $data[0]['ip6']; }
@@ -670,4 +1012,102 @@ function report_details($data, $report) {
   
   echo "</table>\n";
 }
+
+// Sender Details -------------------------------
+function reciever_details($reports, $entries, $domain, $dateRange, $mx) {
+  $first = 1;
+  foreach ($reports as $report) {
+    if ($first) {
+      echo "
+  <div class=dov-bar style='margin-top: 0;height:200px;'>\n";
+      $first = 0;
+    }
+    else {
+      echo "
+  <div class=dov-bar style='height:200px;'>\n";
+    }
+    echo "
+    <div class=dov-bar-in style='height:200px;'>\n
+      <div class=report-left>\n
+        <div class=report-inner>\n
+          Report ID<br />\n
+          Date Range<br />\n
+          Reporting Organization<br />\n
+          Report Origin Email<br />\n
+          Policy Mode<br />\n
+          Summary Success<br />\n
+          Summary Failure<br />\n
+        </div>\n
+      </div>\n
+      <div class=report-right>\n
+        <div class=report-inner>\n
+          ".$report['reportid']."<br \>\n
+          ".$report['mindate']." - ".$report['maxdate']."<br \>\n
+          ".$report['org']."<br \>\n
+          ".$report['email']."<br \>\n
+          ".$report['policy_mode']."<br \>\n
+          ".$report['summary_success']."<br \>\n
+          ".$report['summary_failure']."<br \>\n
+        </div>\n
+      </div>\n
+    </div>\n
+  </div>\n
+  <table style='margin: 30px auto 0 auto; width:1000px;' class=centered>\n
+    <thead>\n
+      <tr>\n
+        <td style='width:200px; padding:5px;'>Type</td>\n
+        <td style='width:500px; padding:5px;'>Description</td>\n
+        <td style='width:50px; padding 5px;'>Count</td>\n
+      </tr>\n
+    </thead>\n";
+    foreach ($entries[$report['serial']] as $type => $count) {
+      echo "
+      <tr>\n
+        <td style='padding: 5px;'>$type</td>\n
+        <td style='padding: 5px;'>";
+      
+      // RFC 8640 descriptions, or rather, eximplied with fix
+      if      ($type == 'starttls-no-supported')      { 
+        echo "recipient MX does not support STARTTLS"; 
+      }
+      elseif  ($type == 'certificate-host-mismatch') { 
+        echo "certificate presented did not adhere to the constraints specified in the MTA-STS or DANE policy - check SAN"; 
+      }
+      elseif  ($type == 'certificate-expired')        { 
+        echo "certificate has expired";
+      }
+      elseif  ($type == 'tlsa-invalid')               {
+        echo "validation in the TLSA record - check RR";
+       }
+      elseif  ($type == 'dnssec-invalid')             { 
+        echo "no valid records returned";
+      }
+      elseif  ($type == 'dane-required')              { 
+        echo "sending system is configured to require DANE TLSA records, but none were found";
+      }
+      elseif  ($type == 'certificate-not-trusted')    { 
+        echo "untrusted/unknown CA, name constraints, chain errors, etc";
+      }
+      elseif  ($type == 'sts-policy-invalid')         { 
+        echo "validation error for overall MTA-STS policy";
+      }
+      elseif  ($type == 'sts-webpki-invalid')         { 
+        echo "MTA-STS policy could not be authenticated using PKIX";
+      }
+      elseif  ($type == 'validation-failure')         { 
+        echo "general failure";
+      }
+      elseif  ($type == 'sts-policy-fetch-error')     { }
+      else { echo "unknown/invlid reason"; }
+
+      echo "
+        </td>\n
+        <td style='padding: 5px;'>$count</td>\n
+      </tr>\n";
+    }
+    echo "
+  </table>\n";
+  }
+}
+
 ?>

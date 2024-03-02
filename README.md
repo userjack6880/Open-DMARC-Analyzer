@@ -1,17 +1,17 @@
-# Open DMARC Analyzer
-![Open DMARC Analyzer Screenshot](docs/images/oda-screenshot.jpg?raw=true)
+# Open Report Analyzer
+![Open Report Analyzer Screenshot](docs/images/oda-screenshot.jpg?raw=true)
 
-Open DMARC Analyzer is an Open Source DMARC Report Analyzer to be used with DMARC reports that have been parsed by [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser).
+Open Report Analyzer is an Open Source and MTA-STS TLS Report Analyzer to be used with reports that have been parsed by [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser).
 
-Open DMARC Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Open DMARC Analyzer will run on any webserver that supports PHP 7.4+ and MariaDB 10.5+.
+Open Report Analyzer was written because there didn't seem to be a full-featured self-hosted report analyzer that provided enough details to make heads or tails of a large volume of DMARC reports that come into medium to large-sized organizations. While other solutions required paid subscriptions or have part of it hosted on AWS, Additionally, it was expanded to include MTA-STS SMTP TLS reports. Open Report Analyzer will run on any webserver that supports PHP 7.4+ and MariaDB 10.5+.
 
-Open DMARC Analyzer Version 1 is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
+Open Report Analyzer Version 2 Alpha 1 (2-α1) is an [Anomaly \<Codebase\>](https://systemanomaly.com/codebase) project by John Bradley (john@systemanomaly.com)
 
 # Minimum Requirements
 - Apache 2 or equivalent
 - PHP 5 (PHP 7+ required for phpWhois)
 - PHP PDO
-- MariaDB 10.5 (or equivalent) *or* PostgreSQL 13
+- MariaDB 10.5 (or equivalent) *or* PostgreSQL 13.9
 - **A database that is pre-populated with data from [Open Report Parser](https://github.com/userjack6880/Open-Report-Parser)**
 
 # Dependencies
@@ -33,19 +33,19 @@ $reader = new MaxMind\Db\Reader(GEO_DB);
 
 It is highly recommended that you install this package using composer. Instructions are found on the package's git page.
 
-You will also need the GeoLite2 database from MaxMind (or any other compatible DB). It can be obtained from [here](https://dev.maxmind.com/geoip/geoip2/geolite2/). Open DMARC Analyzer makes use of the GeoLite2 City database.
+You will also need the GeoLite2 database from MaxMind (or any other compatible DB). It can be obtained from [here](https://dev.maxmind.com/geoip/geoip2/geolite2/). Open Report Analyzer makes use of the GeoLite2 City database.
 
 The MaxMind library is not distributed with this project, and is ultimately an optional feature to the project as a whole, unless you are using PHP 5.
 
-# Setting up Open DMARC Analyzer
+# Setting up Open Report Analyzer
 
-Obtaining Open DMARC Analyzer through `git` is probably the easiest way, in addition to doing occasional pulls to get up-to-date versions.
+Obtaining Open Report Analyzer through `git` is probably the easiest way, in addition to doing occasional pulls to get up-to-date versions.
 
 ```
-git clone https://github.com/userjack6880/Open-DMARC-Analyzer.git
+git clone https://github.com/userjack6880/Open-Report-Analyzer.git
 ```
 
-Optionally, a [zip file of the latest release](https://github.com/userjack6880/Open-DMARC-Analyzer/releases) can be downloaded.
+Optionally, a [zip file of the latest release](https://github.com/userjack6880/Open-Report-Analyzer/releases) can be downloaded.
 
 Once downloaded and installed in a desired directory, install either jsmitty12's phpWhois package or the MaxMind DB Reader package through composer. Rename `config.php.pub` to `config.php` and edit the configuration for your environment (see the next section on **Configuration Options** for details). Finally, run `install.php` to create the database view used by this software package.
 
@@ -60,12 +60,19 @@ ALLOW_INSTALL=1 php install.php
 **Database Options**
 ```php
 define('DB_HOST', 'localhost');
-define('DB_USER', 'dmarc');
+define('DB_USER', 'openreport');
 define('DB_PASS', 'password');
-define('DB_NAME', 'dmarc');
+define('DB_NAME', 'openreport');
 define('DB_PORT', '3306'); // default port 3306, 5432 for pgsql
 define('DB_TYPE', 'mysql'); // supported mysql and pgsql
 ```
+
+**Report Type Option**
+```php
+define('REPORT_TYPE', 'all'); // supported dmarc, tls, all
+```
+
+Defaults to 
 
 **Debug Settings**
 ```php
@@ -107,7 +114,12 @@ A docker image is provided for ease of deployment. The image is based on the off
 
 The image is available on [GitHub Container Registry](https://github.com/userjack6880/Open-DMARC-Analyzer/pkgs/container/open-dmarc-parser).
 
-All config options are available as environment variables. Along with `ALLOW_INSTALL` which needs to be set to `1` to allow the install.php script to run when requested inside the container.
+## 2-α1
+- New Version
+- MTA-STS SMTP TLS report support (Issue #74)
+- Name change to better include the full extent of what this project does
+- PostgreSQL Validation and Fixes
+- Optimizations
 
 There is also a pre-built `docker-compose.yml` file that can be used to deploy the container and its requirements. It is recommended to use this file as a template, and modify it to your needs.
 
@@ -121,7 +133,7 @@ There is also a pre-built `docker-compose.yml` file that can be used to deploy t
 | Debian 11.6     | Apache 2.4.56 | 7.4.33 | PostgreSQL 13.9 |
 | CentOS 7.6.1810 | Apache 2.4.6  | 5.4.16 | MariaDB 5.5.65  |
 
-If you have a system configuration not listed, and would like to contribue this data, please [provide feedback](https://github.com/userjack6880/Open-Dmarc-Analyzer/issues).
+If you have a system configuration not listed, and would like to contribue this data, please [provide feedback](https://github.com/userjack6880/Open-Report-Analyzer/issues).
 
 # Release Cycle and Versioning
 
@@ -133,6 +145,7 @@ Support will be provided as outlined in the following schedule. For more details
 
 | Version                             | Released         | End of Support   | End of Life      |
 | ----------------------------------- | ---------------- | ---------------- | ---------------- |
+| Version 2 Alpha 1                   | 15 May 2023      | TBD              | TBD              |
 | Version 1 (Stable)                  | 15 May 2023      | 15 May 2024      | 31 December 2024 |
 
 # Contributing
@@ -144,8 +157,8 @@ Public contributions are encouraged. Please review `CONTRIBUTING` under `docs` f
 Primary Contributors
 - John Bradley - Initial Work
 
-Thanks to [all who contributed](https://github.com/userjack6880/Open-DMARC-Analyzer/graphs/contributors) and [have given feedback](https://github.com/userjack6880/Open-DMARC-Analyzer/issues?q=is%3Aissue).
+Thanks to [all who contributed](https://github.com/userjack6880/Open-Report-Analyzer/graphs/contributors) and [have given feedback](https://github.com/userjack6880/Open-Report-Analyzer/issues?q=is%3Aissue).
 
 # Licenses and Copyrights
 
-Copyright © 2023 John Bradley (userjack6880). Open DMARC Analyzer is released under GNU GPLv3. See `LICENSE`.
+Copyright © 2023 John Bradley (userjack6880). Open Report Analyzer is released under GNU GPLv3. See `LICENSE`.
