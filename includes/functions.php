@@ -165,6 +165,7 @@ function getDMARCStats($dateRange,$domain) {
 }
 // JSON ----------------------------------------
 function json($dateRange, $domain){
+  //Get the stats that are stored in the DB
   $recordedStats = ["d_stats" => [], "t_stats" => []];
 
   if (REPORT_TYPE == "all" || REPORT_TYPE == "dmarc") {
@@ -175,6 +176,7 @@ function json($dateRange, $domain){
     $recordedStats["t_stats"] = getTLSStats($dateRange,$domain);
   }
 
+  //Create the empty results object that will be outputted
   $numericStats = ["summary_success", "summary_failure", "total_messages", "none", "quarantine", "reject", "dkim_pass_aligned", "dkim_pass_unaligned", "spf_pass_aligned", "spf_pass_unaligned", "compliant"];
   $pctStats = ["policy_pct"];
 
@@ -189,14 +191,17 @@ function json($dateRange, $domain){
     $allStats[$statName] = 0;
   }
 
+  //Process the stats
   foreach($recordedStats as $recordedStatName=>$recordedStat){
     foreach($recordedStat as $stats){
       $domain = $stats["domain"];
+      //Check if we are processing a new domain
       if(!array_key_exists($domain, $domainStats)){
         $domainStats[$domain] = ["dmarc" => [], "mtasts" => []];
         $totalDomains++;
       }
       
+      //Go through each stat and add it to the allstats totals
       foreach($stats as $statName=>$statValue){
         if(in_array($statName, $numericStats) || in_array($statName, $pctStats)){
           if($statValue == null){
@@ -206,6 +211,7 @@ function json($dateRange, $domain){
         }
       }
 
+      //Store the full stats in the domain record
       if($recordedStatName == "d_stats"){
         $domainStats[$domain]["dmarc"] = $stats;
       }elseif($recordedStatName == "t_stats"){
@@ -214,6 +220,7 @@ function json($dateRange, $domain){
     }
   }
 
+  //Convert percentage stats
   foreach($pctStats as $statName){
     $allStats[$statName] = $allStats[$statName] / $totalDomains;
   }
