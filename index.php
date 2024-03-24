@@ -57,6 +57,11 @@ elseif ($page == "reciever") {
 elseif ($page == "report") {
   reportDashboard($report);
 }
+elseif ($page == "json") {
+  header('Content-Type: application/json');
+  json($dateRange, $domain);
+  die();
+}
 else {
   echo "<h1>Invalid Page</h1>\n";
 }

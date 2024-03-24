@@ -83,6 +83,152 @@ function getArg($arg,$default) {
 
 // Page Functions -------------------------------------------------------------
 
+// Get TLS Statistics -------------------------------------------------------
+function getTLSStats($dateRange,$domain){
+  $pdo = dbConn();
+  $startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
+
+  $statement = "SELECT policy_mode, summary_success, summary_failure, mindate, maxdate, domain
+  FROM tls
+  WHERE mindate BETWEEN :startdate AND NOW()";
+  if ($domain == "all") {
+    $params[':startdate'] = $startDate;
+  }
+  else {
+    $statement .= " AND domain = :domain";
+    $params = array(':startdate' => $startDate, ':domain' => $domain);
+  }
+  $statement .= " ORDER BY maxdate";
+
+  $t_stats = dbQuery($pdo, $statement, $params);
+  return $t_stats;
+}
+
+// Get DMARC Statistics -------------------------------------------------------
+function getDMARCStats($dateRange,$domain) {
+  $pdo = dbConn();
+  $startDate = date("Y-m-d H:i:s",strtotime(strtolower("-".dateNum($dateRange)." ".dateWord($dateRange))));
+
+  $statement = "SELECT t1.domain, total_messages, t1.policy_p, t1.policy_pct, t2.none, t3.quarantine, t4.reject, 
+  t5.dkim_pass as dkim_pass_aligned, t6.dkim_pass as dkim_pass_unaligned,
+  t7.spf_pass as spf_pass_aligned, t8.spf_pass as spf_pass_unaligned, t9.compliant
+  FROM (
+  SELECT
+    domain, sum(rcount) AS total_messages, policy_p, policy_pct
+  FROM report_stats
+  WHERE mindate BETWEEN :startdate AND NOW()
+  GROUP BY domain, policy_p, policy_pct
+  ) t1
+  LEFT JOIN (SELECT domain, sum(rcount) AS none 
+              FROM report_stats 
+              WHERE mindate BETWEEN :startdate AND NOW()
+                AND disposition = 'none' GROUP BY disposition, domain) t2 ON t1.domain=t2.domain
+  LEFT JOIN (SELECT domain, sum(rcount) AS quarantine 
+              FROM report_stats 
+              WHERE mindate BETWEEN :startdate AND NOW()
+                AND disposition = 'quarantine' GROUP BY disposition, domain) t3 on t1.domain=t3.domain
+  LEFT JOIN (SELECT domain, sum(rcount) AS reject 
+              FROM report_stats 
+              WHERE mindate BETWEEN :startdate AND NOW() 
+                AND disposition = 'reject' GROUP BY disposition, domain) t4 on t1.domain=t4.domain
+  LEFT JOIN (SELECT domain, sum(rcount) as dkim_pass 
+              FROM report_stats 
+              WHERE mindate BETWEEN :startdate AND NOW()
+                AND disposition = 'none' AND dkimresult = 'pass' AND dkim_align = 'pass' GROUP BY domain) t5 on t1.domain=t5.domain
+  LEFT JOIN (SELECT domain, sum(rcount) as dkim_pass 
+              FROM report_stats 
+              WHERE mindate BETWEEN :startdate AND NOW()
+                AND disposition = 'none' AND dkimresult = 'pass' AND NOT dkim_align = 'pass' GROUP BY domain) t6 on t1.domain=t6.domain
+  LEFT JOIN (SELECT domain, sum(rcount) as spf_pass 
+              FROM report_stats 
+              WHERE mindate BETWEEN :startdate AND NOW()
+                AND disposition = 'none' AND spfresult = 'pass' AND spf_align = 'pass' GROUP BY domain) t7 on t1.domain=t7.domain
+  LEFT JOIN (SELECT domain, sum(rcount) as spf_pass 
+              FROM report_stats 
+              WHERE mindate BETWEEN :startdate AND NOW()
+                AND disposition = 'none' AND spfresult = 'pass' AND NOT spf_align = 'pass' GROUP BY domain) t8 on t1.domain=t8.domain
+  LEFT JOIN (SELECT domain, sum(rcount) as compliant
+              FROM report_stats
+              WHERE mindate BETWEEN :startdate AND NOW()
+                AND disposition = 'none' AND ((spfresult = 'pass' AND spf_align = 'pass') OR (dkimresult = 'pass' AND dkim_align = 'pass'))
+          GROUP BY domain) t9 on t1.domain=t9.domain";
+  if ($domain == "all") {
+    $params[':startdate'] = $startDate;
+  }
+  else {
+    $statement .= " WHERE t1.domain = :domain";
+    $params = array(':startdate' => $startDate, ':domain' => $domain);
+  }
+
+  $d_stats = dbQuery($pdo, $statement, $params);
+  return $d_stats;
+}
+// JSON ----------------------------------------
+function json($dateRange, $domain){
+  //Get the stats that are stored in the DB
+  $recordedStats = ["d_stats" => [], "t_stats" => []];
+
+  if (REPORT_TYPE == "all" || REPORT_TYPE == "dmarc") {
+    $recordedStats["d_stats"] = getDMARCStats($dateRange,$domain);
+  }
+
+  if (REPORT_TYPE == "all" || REPORT_TYPE == "tls") {
+    $recordedStats["t_stats"] = getTLSStats($dateRange,$domain);
+  }
+
+  //Create the empty results object that will be outputted
+  $numericStats = ["summary_success", "summary_failure", "total_messages", "none", "quarantine", "reject", "dkim_pass_aligned", "dkim_pass_unaligned", "spf_pass_aligned", "spf_pass_unaligned", "compliant"];
+  $pctStats = ["policy_pct"];
+
+  $allStats = [];
+  $domainStats = [];
+  $totalDomains = 0;
+
+  foreach($numericStats as $statName){
+    $allStats[$statName] = 0;
+  }
+  foreach($pctStats as $statName){
+    $allStats[$statName] = 0;
+  }
+
+  //Process the stats
+  foreach($recordedStats as $recordedStatName=>$recordedStat){
+    foreach($recordedStat as $stats){
+      $domain = $stats["domain"];
+      //Check if we are processing a new domain
+      if(!array_key_exists($domain, $domainStats)){
+        $domainStats[$domain] = ["dmarc" => [], "mtasts" => []];
+        $totalDomains++;
+      }
+      
+      //Go through each stat and add it to the allstats totals
+      foreach($stats as $statName=>$statValue){
+        if(in_array($statName, $numericStats) || in_array($statName, $pctStats)){
+          if($statValue == null){
+            $statValue = 0;
+          }
+          $allStats[$statName] = $allStats[$statName] + $statValue;
+        }
+      }
+
+      //Store the full stats in the domain record
+      if($recordedStatName == "d_stats"){
+        $domainStats[$domain]["dmarc"] = $stats;
+      }elseif($recordedStatName == "t_stats"){
+        $domainStats[$domain]["mtasts"] = $stats;
+      }
+    }
+  }
+
+  //Convert percentage stats
+  foreach($pctStats as $statName){
+    $allStats[$statName] = $allStats[$statName] / $totalDomains;
+  }
+
+  $out = ["all" => $allStats, "domains" => $domainStats];
+  echo json_encode($out);
+}
+
 // Dashboard ------------------------------------
 function dashboard($dateRange,$domain) {
   $pdo = dbConn();
@@ -90,58 +236,7 @@ function dashboard($dateRange,$domain) {
 
   // Get broad DMARC statistics
   if (REPORT_TYPE == "all" || REPORT_TYPE == "dmarc") {
-    $statement = "SELECT t1.domain, total_messages, t1.policy_p, t1.policy_pct, t2.none, t3.quarantine, t4.reject, 
-                  t5.dkim_pass as dkim_pass_aligned, t6.dkim_pass as dkim_pass_unaligned,
-                  t7.spf_pass as spf_pass_aligned, t8.spf_pass as spf_pass_unaligned, t9.compliant
-                  FROM (
-                  SELECT
-                    domain, sum(rcount) AS total_messages, policy_p, policy_pct
-                  FROM report_stats
-                  WHERE mindate BETWEEN :startdate AND NOW()
-                  GROUP BY domain, policy_p, policy_pct
-                  ) t1
-                  LEFT JOIN (SELECT domain, sum(rcount) AS none 
-                              FROM report_stats 
-                              WHERE mindate BETWEEN :startdate AND NOW()
-                                AND disposition = 'none' GROUP BY disposition, domain) t2 ON t1.domain=t2.domain
-                  LEFT JOIN (SELECT domain, sum(rcount) AS quarantine 
-                              FROM report_stats 
-                              WHERE mindate BETWEEN :startdate AND NOW()
-                                AND disposition = 'quarantine' GROUP BY disposition, domain) t3 on t1.domain=t3.domain
-                  LEFT JOIN (SELECT domain, sum(rcount) AS reject 
-                              FROM report_stats 
-                              WHERE mindate BETWEEN :startdate AND NOW() 
-                                AND disposition = 'reject' GROUP BY disposition, domain) t4 on t1.domain=t4.domain
-                  LEFT JOIN (SELECT domain, sum(rcount) as dkim_pass 
-                              FROM report_stats 
-                              WHERE mindate BETWEEN :startdate AND NOW()
-                                AND disposition = 'none' AND dkimresult = 'pass' AND dkim_align = 'pass' GROUP BY domain) t5 on t1.domain=t5.domain
-                  LEFT JOIN (SELECT domain, sum(rcount) as dkim_pass 
-                              FROM report_stats 
-                              WHERE mindate BETWEEN :startdate AND NOW()
-                                AND disposition = 'none' AND dkimresult = 'pass' AND NOT dkim_align = 'pass' GROUP BY domain) t6 on t1.domain=t6.domain
-                  LEFT JOIN (SELECT domain, sum(rcount) as spf_pass 
-                              FROM report_stats 
-                              WHERE mindate BETWEEN :startdate AND NOW()
-                                AND disposition = 'none' AND spfresult = 'pass' AND spf_align = 'pass' GROUP BY domain) t7 on t1.domain=t7.domain
-                  LEFT JOIN (SELECT domain, sum(rcount) as spf_pass 
-                              FROM report_stats 
-                              WHERE mindate BETWEEN :startdate AND NOW()
-                                AND disposition = 'none' AND spfresult = 'pass' AND NOT spf_align = 'pass' GROUP BY domain) t8 on t1.domain=t8.domain
-                  LEFT JOIN (SELECT domain, sum(rcount) as compliant
-                              FROM report_stats
-                              WHERE mindate BETWEEN :startdate AND NOW()
-                                AND disposition = 'none' AND ((spfresult = 'pass' AND spf_align = 'pass') OR (dkimresult = 'pass' AND dkim_align = 'pass'))
-                          GROUP BY domain) t9 on t1.domain=t9.domain";
-    if ($domain == "all") {
-      $params[':startdate'] = $startDate;
-    }
-    else {
-      $statement .= " WHERE t1.domain = :domain";
-      $params = array(':startdate' => $startDate, ':domain' => $domain);
-    }
-
-    $d_stats = dbQuery($pdo, $statement, $params);
+    $d_stats = getDMARCStats($dateRange,$domain);
   }
   else {
     $d_stats = [];
@@ -149,19 +244,7 @@ function dashboard($dateRange,$domain) {
 
   // get broad TLS statistics
   if (REPORT_TYPE == "all" || REPORT_TYPE == "tls") {
-    $statement = "SELECT policy_mode, summary_success, summary_failure, mindate, maxdate, domain
-                  FROM tls
-                  WHERE mindate BETWEEN :startdate AND NOW()";
-    if ($domain == "all") {
-      $params[':startdate'] = $startDate;
-    }
-    else {
-      $statement .= " AND domain = :domain";
-      $params = array(':startdate' => $startDate, ':domain' => $domain);
-    }
-    $statement .= " ORDER BY maxdate";
-
-    $t_stats = dbQuery($pdo, $statement, $params);
+    $t_stats = getTLSStats($dateRange,$domain);
   }
   else {
     $t_stats = [];

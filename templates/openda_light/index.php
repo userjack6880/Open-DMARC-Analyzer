@@ -28,7 +28,7 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 ---------------------------------------------------------------------------- */
 
 // Header
-function page_header ($page, $domain, $dateRange, $ip) { include_once("header.php"); }
+function page_header ($page, $domain, $dateRange, $ip, $mx) { $page != "json" ? include_once("header.php"): ""; }
 
 // Footer
 function page_footer () { include_once("footer.php"); }
